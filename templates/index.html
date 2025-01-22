@@ -1,1 +1,20 @@
 <!-- Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details. -->
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/index.css')}}">
+{% endblock %}
+
+{% block body %}
+    <div class="navbar">
+        <a href="/ditte">
+            <button>Ditte</button>
+        </a>
+        <a href="/cantieri">
+            <button>Cantieri</button>
+        </a>
+    </div>
+
+    <div class="container">
+        <h1>Ciao, {{ username }}</h1>
+    </div>
+{% endblock %}

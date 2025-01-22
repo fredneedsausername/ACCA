@@ -4,15 +4,26 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import passwords
 from werkzeug.security import generate_password_hash, check_password_hash
 import fredbconn
+import fredauth
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
 
 @app.route("/")
+@fredauth.authorized
 def index():
-    if 'user' in session:
-        return render_template("index.html", username = session['user']) # username = session['user'] usato in jinja
-    return render_template("login.html")
+    return render_template("index.html", username = session['user']) # username = session['user'] usato in jinja
+
+
+@app.route("/ditte")
+@fredauth.authorized
+def ditte():
+    return render_template("ditte.html")
+
+@app.route("/cantieri")
+@fredauth.authorized
+def ditte():
+    return render_template("ditte.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -22,7 +33,6 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        #TODO cambia con la struttura vera del db
         @fredbconn.connected_to_database
         def fetch_info(cursor):
             cursor.execute("SELECT password, abilitato FROM utenti WHERE username = %s", (username,))
@@ -48,17 +58,10 @@ def login():
     return render_template("login.html")
 
 
-@app.route("/") 
-def dashboard():
-    if "user" in session:
-        return render_template("dashboard.html", username=session["user"])
-    return redirect(url_for("login"))
-
-
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("login"))
+    return redirect("/login")
 
 
 if __name__ == "__main__":
