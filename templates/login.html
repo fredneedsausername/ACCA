@@ -1,29 +1,34 @@
 <!-- Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details. -->
-<!DOCTYPE html>
+
 <html lang="en">
-
-{% block css %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename = 'css/login.css')}}">
-{% endblock %}
+    <title>Effettua il login</title>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="{{ messages[0][0] }}">{{ messages[0][1] }}</div>
+        {% endif %}
+        {% endwith %}
+        <form action="/login" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="login-button">Login</button>
+        </form>
+    </div>
+</body>
+</html>
 
-{% block body %}
-<div class="login-container">
-    <h1>Login</h1>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="{{ messages[0][0] }}">{{ messages[0][1] }}</div>
-    {% endif %}
-    {% endwith %}
-    <form action="/login" method="POST">
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" required>
-        </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit" class="login-button">Login</button>
-    </form>
-</div>
-{% endblock %}
+
+

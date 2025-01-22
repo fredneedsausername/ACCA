@@ -1,0 +1,27 @@
+<!-- Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details. -->
+{% extends "base.html" %}
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename = 'css/dipendenti.css')}}">
+{% endblock %}
+{% block body %}
+    <table>
+        <thead>
+            <tr>
+                <th class="yellow">DITTA</th>
+                <th class="blue">NOME</th>
+                <th class="blue">COGNOME DIPENDENTE</th>
+                <th class="green">NOTE</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Aziendona Srl</td>
+                <td>Mario</td>
+                <td>Rossi</td>
+                <td>Questa è una nota</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="fixed-button">Aggiungi dipendente</button>
+{% endblock %}

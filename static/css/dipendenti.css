@@ -1,0 +1,66 @@
+/* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+}
+
+thead th {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.yellow {
+    background-color: #fdeb73;
+}
+
+.blue {
+    background-color: #9bd4f3;
+}
+
+.green {
+    background-color: #a8e786;
+}
+
+tbody td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+#fixed-button {
+    position: fixed;
+    margin: 0 10px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    top: 10%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#fixed-button:hover {
+    background-color: #0056b3;
+}

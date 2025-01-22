@@ -20,10 +20,30 @@ def index():
 def ditte():
     return render_template("ditte.html")
 
-@app.route("/cantieri")
+
+@app.route("/dipendenti")
 @fredauth.authorized
-def ditte():
-    return render_template("ditte.html")
+def dipendenti():
+    
+    
+
+    @fredbconn.connected_to_database
+    def fetch_is_admin(cursor):
+        cursor.execute("""
+        SELECT is_admin
+        FROM utenti
+        WHERE username = %s
+        """, (session['user'],))
+        return cursor.fetchone()
+
+    result = fetch_is_admin()
+
+    # Have to repeat the process of result validation in case the account was removed in between the "authorized" check and this db query
+    if result is None: 
+        flash("Il suo account è stato rimosso.", "autenticazione-fallita")
+        return redirect("/login")
+
+    return render_template("dipendenti.html", dipendenti = dipendenti)
 
 
 @app.route("/login", methods=["GET", "POST"])
