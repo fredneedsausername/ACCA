@@ -65,7 +65,7 @@ tbody tr:hover {
     background-color: #0056b3;
 }
 
-.autenticazione-fallita {
+.error {
     padding: 10px;
     margin-bottom: 15px;
     border-radius: 5px;

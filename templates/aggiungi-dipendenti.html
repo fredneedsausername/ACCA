@@ -7,7 +7,16 @@
 
 
 {% block body %}
-
+<form method="POST" action="/aggiungi-dipendenti">
+    <label for="choices">Choose an option:</label>
+    <select name="choices" id="choices">
+        <option value="option1">Option 1</option>
+        <option value="option2">Option 2</option>
+        <option value="option3">Option 3</option>
+        <option value="option4">Option 4</option>
+    </select>
+    <button type="submit">Submit</button>
+</form>
 {% endblock %}
 
 
