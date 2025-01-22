@@ -2,7 +2,7 @@
 """fredauth
 
 Functionality:
-    Use the authorized function to ensure that 'user' is in the flask session
+    Use the authorized function to ensure that the user is authorized
 """
 
 from .fred_auth import authorized

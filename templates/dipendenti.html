@@ -4,6 +4,13 @@
     <link rel="stylesheet" href="{{ url_for('static', filename = 'css/dipendenti.css')}}">
 {% endblock %}
 {% block body %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="{{ messages[0][0] }}">{{ messages[0][1] }}</div>
+    {% endif %}
+    {% endwith %}
+
     <table>
         <thead>
             <tr>
@@ -23,5 +30,7 @@
         </tbody>
     </table>
 
-    <button id="fixed-button">Aggiungi dipendente</button>
+    <form action="/aggiungi-dipendenti" method="GET">
+        <button type="submit" id="fixed-button">Aggiungi dipendente</button>
+    </form>
 {% endblock %}

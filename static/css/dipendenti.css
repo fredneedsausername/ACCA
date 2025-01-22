@@ -64,3 +64,12 @@ tbody tr:hover {
 #fixed-button:hover {
     background-color: #0056b3;
 }
+
+.autenticazione-fallita {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    font-size: 30px;
+}
