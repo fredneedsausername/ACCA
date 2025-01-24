@@ -1,0 +1,54 @@
+<!-- Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.-->
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/aggiungi-dipendenti.css')}}">
+{% endblock %}
+
+{% block body %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="{{ messages[0][0] }}">{{ messages[0][1] }}</div>
+{% endif %}
+{% endwith %}
+
+<div class="dipendente-container">
+    <h1>Aggiorna Dipendente</h1>
+    <form action="/aggiorna-dipendente" method="POST">
+        <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome" value = "{{ nome }}" required>
+        </div>
+        <div class="form-group">
+            <label for="cognome">Cognome</label>
+            <input type="text" id="cognome" name="cognome" value = "{{ cognome }}" required>
+        </div>
+        <div class="form-group">
+            <label for="ditta">Ditta</label>
+            <select id="ditta" name="ditta">
+                {% for ditta in ditte %}
+                <option value="{{ ditta }}" {% if ditta == selected_ditta %}selected{% endif %}>
+                    {{ ditta }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group-checkbox">
+            <input type="checkbox" id="badge_emesso" name="is_badge_already_emesso" value="yes"
+                {% if is_badge_already_emesso %}checked{% endif %}>
+            <label for="badge_emesso">Badge Emesso</label>
+        </div>
+        <div class="form-group-checkbox">
+            <input type="checkbox" id="autorizzato" name="autorizzato" value="yes"
+                {% if autorizzato %}checked{% endif %}>
+            <label for="autorizzato">Autorizzato</label>
+        </div>
+        <div class="form-group">
+            <label for="note">Note</label>
+            <input type="text" id="note" name="note" value="{{ note }}">
+        </div>
+        <button type="submit" class="crea-button">Aggiorna</button>
+    </form>
+</div>
+{% endblock %}

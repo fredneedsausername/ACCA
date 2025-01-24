@@ -20,22 +20,22 @@
                 <th class="red">AUTORIZZATO</th>
                 <th class="red">BADGE EMESSO</th>
                 <th class="green">NOTE</th>
+                <th>AZIONI</th>
             </tr>
         </thead>
         <tbody>
             {% for dipendente in dipendenti %}
             <tr>
                 <td>{{ dipendente[0] }}</td> <!-- nome ditta -->
-
                 <td>{{ dipendente[1] }}</td> <!-- nome dipendente -->
-
                 <td>{{ dipendente[2] }}</td> <!-- cognome -->
-
                 <td><input type="checkbox" class="blue-checkbox" {% if dipendente[3] == 1 %}checked{% endif %} disabled></td> <!-- autorizzato -->
-
                 <td><input type="checkbox" class="blue-checkbox" {% if dipendente[4] == 1 %}checked{% endif %} disabled></td> <!-- badge emesso -->
-
                 <td>{{ dipendente[5] }}</td> <!-- note -->
+                <td class="action-buttons">
+                    <button onclick="confirmAction('elimina', {{ dipendente[6] }})" class="btn btn-danger">Elimina</button>
+                    <button onclick="confirmAction('aggiorna', {{ dipendente[6] }})" class="btn btn-primary">Aggiorna</button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -44,4 +44,8 @@
     <form action="/aggiungi-dipendenti" method="GET">
         <button type="submit" id="fixed-button">Aggiungi dipendente</button>
     </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dipendenti.js') }}"></script>
 {% endblock %}

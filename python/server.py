@@ -10,6 +10,7 @@ import fredauth
 #TODO metti che il testo delle note se è troppo fa i puntini (su css)
 #TODO aggiungi bottone logout
 #TODO fare una interfaccia grafica e un form per aggiungere i dipendenti
+#TODO aggiungi funzionalità di sorting
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
@@ -82,6 +83,83 @@ class Dipendente:
         """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5]))
 
 
+@app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
+@fredauth.authorized
+def aggiorna_dipendente():
+
+    if request.method == "GET":
+        # Extract the ID from the query parameters
+        dipendente_id = request.args.get('id')
+
+        @fredbconn.connected_to_database
+        def fetch_info(cursor):
+            cursor.execute("""
+                SELECT 
+                    nome,
+                    cognome,
+                    ditta_id,
+                    is_badge_already_emesso,
+                    autorizzato,
+                    note
+                FROM 
+                    dipendenti
+                WHERE 
+                    id = %s;
+            """, (dipendente_id,))
+            
+            dipendente_tuple = cursor.fetchone()
+
+            if dipendente_tuple is None:
+                return None
+
+            ret = {
+                "nome": dipendente_tuple[0],
+                "cognome": dipendente_tuple[1],
+                "selected_ditta": dipendente_tuple[2],
+                "is_badge_already_emesso": dipendente_tuple[3],
+                "autorizzato": dipendente_tuple[4],
+                "note": dipendente_tuple[5]
+            }
+
+            cursor.execute("""
+                SELECT nome
+                FROM ditte;
+            """)
+            
+            ditte_names_tuple = cursor.fetchall()
+
+            # Flatten the tuple of tuples into a single tuple of names
+            ditte_names = tuple(name[0] for name in ditte_names_tuple)
+
+            # Add the ditte entry to the dictionary
+            ret["ditte"] = ditte_names
+
+            return ret
+        
+        fetched = fetch_info()
+
+        if fetched is None: return redirect("/dipendenti")
+
+        return render_template("aggiorna-dipendente.html", **fetch_info())
+
+    if request.method == "POST":
+        ...
+
+
+@app.route('/elimina-dipendente', methods=['POST'])
+@fredauth.authorized
+def elimina_dipendente():
+    data = request.get_json()
+    dipendente_id = data.get('id')
+    
+    # Esegui l’eliminazione dal DB o altre operazioni necessarie
+    # e.g., Dipendente.query.filter_by(id=dipendente_id).delete()
+    # db.session.commit()
+
+    # Dopo l'eliminazione, reindirizza l’utente (per esempio alla lista dei dipendenti)
+    return redirect(url_for('lista_dipendenti'))
+
+
 @app.route("/")
 @fredauth.authorized
 def index():
@@ -107,7 +185,8 @@ def show_dipendenti():
             dipendenti.cognome,  
             dipendenti.is_badge_already_emesso, 
             dipendenti.autorizzato,
-            dipendenti.note
+            dipendenti.note,
+            dipendenti.id
         FROM 
             dipendenti
         JOIN 
