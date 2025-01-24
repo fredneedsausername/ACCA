@@ -78,6 +78,16 @@ tbody tr:hover {
     font-size: 30px;
 }
 
+.success {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #d4edda; /* Light green background */
+    color: #155724; /* Dark green text */
+    font-size: 30px;
+    text-align: center;
+}
+
 /* Compact blue checkboxes */
 .blue-checkbox {
     appearance: none;

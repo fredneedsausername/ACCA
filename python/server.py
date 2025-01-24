@@ -140,11 +140,53 @@ def aggiorna_dipendente():
 
         if fetched is None: return redirect("/dipendenti")
 
-        return render_template("aggiorna-dipendente.html", **fetch_info())
+        fetched["dipendente_id"] = dipendente_id
+
+        return render_template("aggiorna-dipendente.html", **fetched)
 
     if request.method == "POST":
-        ...
+        nome = request.form.get('nome')
+        cognome = request.form.get('cognome')
+        ditta = request.form.get('ditta')
+        is_badge_already_emesso = (1 if (request.form.get('is_badge_already_emesso') == 'yes') else 0)
+        autorizzato = (1 if (request.form.get('autorizzato') == 'yes') else 0)
+        note = request.form.get('note')
+        dipendente_id = request.form.get("dipendente_id")
 
+        @fredbconn.connected_to_database
+        def fetch_info(cursor):
+            cursor.execute("""
+            SELECT id
+            FROM ditte
+            WHERE nome = %s
+            """, (ditta,))
+            
+            return cursor.fetchone()
+        
+        fetched = fetch_info()
+
+        if fetched is None: return redirect("/dipendenti")
+
+        ditta_id = fetched[0]
+
+        @fredbconn.connected_to_database
+        def update_db(cursor):
+            cursor.execute("""
+            UPDATE dipendenti
+            SET nome = %s,
+                cognome = %s,
+                ditta_id = %s,
+                is_badge_already_emesso = %s,
+                autorizzato = %s,
+                note = %s
+                
+            WHERE id = %s
+            """, (nome, cognome, ditta_id, is_badge_already_emesso, autorizzato, note, dipendente_id))
+
+        update_db()
+
+        flash("Dipendente aggiornato con successo", "success")
+        return redirect("/dipendenti")
 
 @app.route('/elimina-dipendente', methods=['POST'])
 @fredauth.authorized
