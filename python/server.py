@@ -84,7 +84,7 @@ class Dipendente:
 
 
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
-@fredauth.authorized
+@fredauth.authorized("admin")
 def aggiorna_dipendente():
 
     if request.method == "GET":
@@ -189,7 +189,7 @@ def aggiorna_dipendente():
         return redirect("/dipendenti")
 
 @app.route('/elimina-dipendente', methods=['POST'])
-@fredauth.authorized
+@fredauth.authorized("user")
 def elimina_dipendente():
     data = request.get_json()
     dipendente_id = data.get('id')
@@ -203,19 +203,19 @@ def elimina_dipendente():
 
 
 @app.route("/")
-@fredauth.authorized
+@fredauth.authorized("user")
 def index():
     return render_template("index.html", username = session['user']) # username = session['user'] usato in jinja
 
 
 @app.route("/ditte")
-@fredauth.authorized
+@fredauth.authorized("user")
 def ditte():
     return render_template("ditte.html")
 
 
 @app.route("/dipendenti")
-@fredauth.authorized
+@fredauth.authorized("user")
 def show_dipendenti():
 
     @fredbconn.connected_to_database
@@ -245,23 +245,8 @@ def show_dipendenti():
 
 
 @app.route("/aggiungi-dipendenti", methods=["GET", "POST"])
-@fredauth.authorized
+@fredauth.authorized("admin")
 def aggiungi_dipendenti():
-
-    @fredbconn.connected_to_database
-    def fetch_is_admin(cursor):
-        cursor.execute("""
-        SELECT is_admin
-        FROM utenti
-        WHERE username = %s
-        """, (session["user"],))
-        return cursor.fetchone()
-    
-    # Will never return None because of fredauth.authorized
-    if fetch_is_admin()[0] == 0:
-        flash("Il suo account non dispone delle autorizzazioni necessarie per aggiungere o modificare dipendenti",
-                "error")
-        return redirect("/dipendenti")
     
     if request.method == "GET":
 
