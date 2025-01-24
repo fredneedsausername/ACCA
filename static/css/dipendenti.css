@@ -1,7 +1,6 @@
 /* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
     background-color: #f4f4f4;
 }
 
@@ -30,8 +29,13 @@ thead th {
     background-color: #a8e786;
 }
 
+.red {
+    background-color: #f76a6a; /* A soft red color */
+}
+
 tbody td {
     padding: 10px;
+    
     border: 1px solid #ddd;
 }
 
@@ -49,7 +53,7 @@ tbody tr:hover {
     padding: 15px 30px;
     font-size: 18px;
     font-weight: bold;
-    top: 10%;
+    top: 8%;
     right: 20px;
     transform: translateY(-50%);
     padding: 10px 20px;
@@ -73,3 +77,36 @@ tbody tr:hover {
     color: #721c24;
     font-size: 30px;
 }
+
+/* Compact blue checkboxes */
+.blue-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 16px; /* Smaller width */
+    height: 16px; /* Smaller height */
+    border: 2px solid #ccc;
+    border-radius: 3px; /* Slightly smaller border radius */
+    cursor: not-allowed; /* Disable cursor interaction */
+    position: relative;
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    vertical-align: middle; /* Align with text */
+  }
+  
+  /* Style the checkbox when checked */
+  .blue-checkbox:checked {
+    background-color: #007bff; /* Blue background */
+    border-color: #007bff; /* Blue border */
+  }
+  
+  /* Add a checkmark using a pseudo-element */
+  .blue-checkbox:checked::after {
+    content: "✔"; /* Checkmark symbol */
+    font-size: 12px; /* Smaller checkmark */
+    color: white; /* White checkmark */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }

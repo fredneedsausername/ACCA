@@ -16,12 +16,13 @@ app.secret_key = passwords.app_secret_key
 
 class Dipendente:
 
-    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, autorizzato: int):
+    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, autorizzato: int, note: str):
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
         self.is_badge_already_emesso = is_badge_already_emesso
         self.autorizzato = autorizzato
+        self.note = note
     
     @classmethod
     def from_form(cls):
@@ -39,7 +40,7 @@ class Dipendente:
         cognome = request.form.get("cognome")
         if (cognome == None) or (cognome == ""): raise BadRequest("cognome")
 
-        ditta_name = request.form.get("ditta_name")
+        ditta_name = request.form.get("ditta")
         if ditta_name is None: raise BadRequest("ditta_name")
 
         is_badge_already_emesso = request.form.get("is_badge_already_emesso")
@@ -50,11 +51,13 @@ class Dipendente:
         if autorizzato is None: autorizzato = 0
         if autorizzato == "yes": autorizzato = 1
 
-        return cls(nome, cognome, ditta_name, is_badge_already_emesso, autorizzato)
+        note = request.form.get("note")
+
+        return cls(nome, cognome, ditta_name, is_badge_already_emesso, autorizzato, note)
     
     
     def get_fields(self):
-        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.autorizzato
+        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.autorizzato, self.note
     
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
@@ -74,9 +77,9 @@ class Dipendente:
             return redirect("/aggiungi-dipendenti")
 
         cursor.execute("""
-        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, autorizzato)
-        VALUES (%s, %s, %s, %s, %s)
-        """, (fields[0], fields[1], ditta_id, fields[3], fields[4]))
+        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, autorizzato, note)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5]))
 
 
 @app.route("/")
@@ -93,8 +96,31 @@ def ditte():
 
 @app.route("/dipendenti")
 @fredauth.authorized
-def dipendenti():
-    return render_template("dipendenti.html", dipendenti = dipendenti)
+def show_dipendenti():
+
+    @fredbconn.connected_to_database
+    def fetch_dipendenti_data(cursor):
+        cursor.execute("""
+        SELECT 
+            ditte.nome AS nome_ditta,
+            dipendenti.nome AS nome_dipendente, 
+            dipendenti.cognome,  
+            dipendenti.is_badge_already_emesso, 
+            dipendenti.autorizzato,
+            dipendenti.note
+        FROM 
+            dipendenti
+        JOIN 
+            ditte
+        ON 
+            dipendenti.ditta_id = ditte.id
+        """)
+
+        return cursor.fetchall()
+
+    fetched = fetch_dipendenti_data()
+
+    return render_template("dipendenti.html", dipendenti = fetched)
 
 
 @app.route("/aggiungi-dipendenti", methods=["GET", "POST"])
@@ -117,7 +143,26 @@ def aggiungi_dipendenti():
         return redirect("/dipendenti")
     
     if request.method == "GET":
-        return render_template("aggiungi-dipendenti.html")
+
+        @fredbconn.connected_to_database
+        def fetch_ditte(cursor):
+            cursor.execute("""
+            SELECT nome
+            FROM ditte
+            """)
+
+            fetched = cursor.fetchall()
+
+            ret = []
+
+            for row in fetched:
+                ret.append(row[0])
+            
+            return ret
+        
+        ditte = fetch_ditte()
+
+        return render_template("aggiungi-dipendenti.html", ditte = ditte)
     #TODO testa ognuno di questi messaggi di errore
     if request.method == "POST":
         try:
@@ -135,6 +180,8 @@ def aggiungi_dipendenti():
             return redirect("/aggiungi-dipendenti")
         else:
             dipendente.add_to_db()
+            flash("Dipendente aggiunto con successo", "success")
+            return redirect("/aggiungi-dipendenti")
 
 
 @app.route("/login", methods=["GET", "POST"])

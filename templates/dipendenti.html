@@ -17,16 +17,27 @@
                 <th class="yellow">DITTA</th>
                 <th class="blue">NOME</th>
                 <th class="blue">COGNOME DIPENDENTE</th>
+                <th class="red">AUTORIZZATO</th>
+                <th class="red">BADGE EMESSO</th>
                 <th class="green">NOTE</th>
             </tr>
         </thead>
         <tbody>
+            {% for dipendente in dipendenti %}
             <tr>
-                <td>Aziendona Srl</td>
-                <td>Mario</td>
-                <td>Rossi</td>
-                <td>Questa è una nota</td>
+                <td>{{ dipendente[0] }}</td> <!-- nome ditta -->
+
+                <td>{{ dipendente[1] }}</td> <!-- nome dipendente -->
+
+                <td>{{ dipendente[2] }}</td> <!-- cognome -->
+
+                <td><input type="checkbox" class="blue-checkbox" {% if dipendente[3] == 1 %}checked{% endif %} disabled></td> <!-- autorizzato -->
+
+                <td><input type="checkbox" class="blue-checkbox" {% if dipendente[4] == 1 %}checked{% endif %} disabled></td> <!-- badge emesso -->
+
+                <td>{{ dipendente[5] }}</td> <!-- note -->
             </tr>
+            {% endfor %}
         </tbody>
     </table>
 
