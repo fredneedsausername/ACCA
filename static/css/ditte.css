@@ -1,0 +1,170 @@
+/* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #fff;
+}
+
+thead th {
+    text-align: left;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.yellow {
+    background-color: #fdeb73;
+}
+
+.blue {
+    background-color: #9bd4f3;
+}
+
+.green {
+    background-color: #a8e786;
+}
+
+.red {
+    background-color: #f76a6a; /* A soft red color */
+}
+
+.orange {
+    background-color: #f7b76a
+}
+
+tbody td {
+    padding: 10px;
+    
+    border: 1px solid #ddd;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+#fixed-button {
+    position: fixed;
+    margin: 0 10px;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    top: 8%;
+    right: 20px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#fixed-button:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    font-size: 30px;
+}
+
+.success {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #d4edda; /* Light green background */
+    color: #155724; /* Dark green text */
+    font-size: 30px;
+    text-align: center;
+}
+
+/* Compact blue checkboxes */
+.blue-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 16px; /* Smaller width */
+    height: 16px; /* Smaller height */
+    border: 2px solid #ccc;
+    border-radius: 3px; /* Slightly smaller border radius */
+    cursor: not-allowed; /* Disable cursor interaction */
+    position: relative;
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    vertical-align: middle; /* Align with text */
+  }
+  
+  /* Style the checkbox when checked */
+  .blue-checkbox:checked {
+    background-color: #007bff; /* Blue background */
+    border-color: #007bff; /* Blue border */
+  }
+  
+  /* Add a checkmark using a pseudo-element */
+  .blue-checkbox:checked::after {
+    content: "✔"; /* Checkmark symbol */
+    font-size: 12px; /* Smaller checkmark */
+    color: white; /* White checkmark */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+.btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase;
+    min-width: 100px;
+}
+
+.btn-danger {
+    background-color: #f76a6a;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #e74c3c;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}

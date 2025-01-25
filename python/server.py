@@ -7,10 +7,15 @@ from werkzeug.exceptions import BadRequest
 import fredbconn
 import fredauth
 
-#TODO metti che il testo delle note se è troppo fa i puntini (su css)
 #TODO aggiungi bottone logout
-#TODO fare una interfaccia grafica e un form per aggiungere i dipendenti
 #TODO aggiungi funzionalità di sorting
+#TODO aggiungi messaggio di successo quando elimini dipendente, flash non funziona causa js
+#TODO fai report
+#TODO aggiungi menù ditte
+#TODO implementa elimina ditte
+#TODO implementa aggiorna ditte
+#TODO refactor finale codice
+#TODO capire se la partita iva debba essere not null
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
@@ -82,6 +87,85 @@ class Dipendente:
         VALUES (%s, %s, %s, %s, %s, %s)
         """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5]))
 
+
+class Ditta:
+
+    def get_fields(self): # This function is structured weird to make it not overflow the screen
+
+        ret = []
+        ret.append(self.nome)
+        ret.append(self.piva)
+        ret.append(self.scadenza_autorizzazione)
+        ret.append(self.blocca_accesso)
+        ret.append(self.nome_cognome_referente)
+        ret.append(self.email_referente)
+        ret.append(self.telefono_referente)
+
+        ret = tuple(ret)
+
+        return ret
+
+    @fredbconn.connected_to_database
+    def add_to_db(cursor, self):
+
+        fields = self.get_fields()
+
+        cursor.execute("""
+        INSERT INTO
+        ditte(nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
+        VALUES
+        (%s, %s, %s, %s, %s, %s, %s)
+        """, self.get_fields())
+    
+
+    def __init__(self, nome: str, piva: str, scadenza_autorizzazione: str,
+                 blocca_accesso: int, nome_cognome_referente: str, email_referente: str, telefono_referente: str):
+        self.nome = nome
+        self.piva = piva
+        self.scadenza_autorizzazione = scadenza_autorizzazione
+        self.blocca_accesso = blocca_accesso
+        self.nome_cognome_referente = nome_cognome_referente
+        self.email_referente = email_referente
+        self.telefono_referente = telefono_referente
+    
+
+    @classmethod
+    def from_form(cls):
+
+        nome = request.form.get("nome")
+        if not nome:
+            nome = "No"
+
+        piva = request.form.get("piva", "")
+        if not piva:
+            piva = "No"
+        
+        scadenza_autorizzazione = request.form.get("scadenza_autorizzazione", "")
+        if not scadenza_autorizzazione:
+            scadenza_autorizzazione = "No"
+
+        blocca_accesso = request.form.get("blocca_accesso")
+        if blocca_accesso is None: blocca_accesso = 0
+        if blocca_accesso == "yes": blocca_accesso = 1
+
+        scadenza_autorizzazione = request.form.get("scadenza_autorizzazione", "")
+        if not scadenza_autorizzazione:
+            scadenza_autorizzazione = "No"
+        
+        nome_cognome_referente = request.form.get("nome_cognome_referente", "")
+        if not nome_cognome_referente:
+            nome_cognome_referente = "No"
+        
+        email_referente = request.form.get("email_referente", "")
+        if not email_referente:
+            email_referente = "No"
+        
+        telefono_referente = request.form.get("telefono_referente", "")
+        if not telefono_referente:
+            telefono_referente = "No"
+
+        return cls(nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
+    
 
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
 @fredauth.authorized("admin")
@@ -193,14 +277,19 @@ def aggiorna_dipendente():
 def elimina_dipendente():
     data = request.get_json()
     dipendente_id = data.get('id')
+
+    @fredbconn.connected_to_database
+    def eliminate_dipendente(cursor):
+        cursor.execute("""
+        DELETE
+        FROM dipendenti
+        WHERE id = %s
+        """, (dipendente_id,))
     
-    # Esegui l’eliminazione dal DB o altre operazioni necessarie
-    # e.g., Dipendente.query.filter_by(id=dipendente_id).delete()
-    # db.session.commit()
+    eliminate_dipendente()
 
-    # Dopo l'eliminazione, reindirizza l’utente (per esempio alla lista dei dipendenti)
-    return redirect(url_for('lista_dipendenti'))
-
+    flash("Dipendente eliminato con successo", "success")
+    return redirect("/dipendenti")
 
 @app.route("/")
 @fredauth.authorized("user")
@@ -211,7 +300,62 @@ def index():
 @app.route("/ditte")
 @fredauth.authorized("user")
 def ditte():
-    return render_template("ditte.html")
+
+    @fredbconn.connected_to_database
+    def fetch_ditte_info(cursor):
+        cursor.execute("""
+        SELECT id, nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
+        FROM ditte
+        """)
+
+        fetched = cursor.fetchall()
+
+        return fetched
+
+    fetched = fetch_ditte_info()
+
+    return render_template("ditte.html", ditte = fetched)
+
+
+@app.route("/aggiorna-ditta")
+@fredauth.authorized("user")
+def aggiorna_ditta():
+    ...
+
+
+@app.route("/aggiungi-ditte", methods=["GET", "POST"])
+@fredauth.authorized("user")
+def aggiungi_ditte():
+
+    if request.method == "GET":
+        return render_template("aggiungi-ditte.html")
+    
+    if request.method == "POST":
+        ditta = Ditta.from_form()
+
+        ditta.add_to_db()
+        flash("Ditta aggiunta con successo", "success")
+        return redirect("/aggiungi-ditte")
+
+
+@app.route("/elimina-ditta", methods=["POST"])
+@fredauth.authorized("user")
+def elimina_ditta():
+    data = request.get_json()
+    ditta_id = data.get('id')
+
+    @fredbconn.connected_to_database
+    def eliminate_ditta(cursor):
+        cursor.execute("""
+        DELETE
+        FROM ditte
+        WHERE id = %s
+        """, (ditta_id,))
+    
+    eliminate_ditta()
+
+    flash("Ditta eliminata con successo", "success")
+    return redirect("/ditte")
 
 
 @app.route("/dipendenti")

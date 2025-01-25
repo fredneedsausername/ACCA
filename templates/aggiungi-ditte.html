@@ -1,0 +1,49 @@
+<!-- Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.-->
+{% extends "base.html" %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/aggiungi-ditte.css')}}">
+{% endblock %}
+
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="{{ messages[0][0] }}">{{ messages[0][1] }}</div>
+{% endif %}
+{% endwith %}
+
+<div class="dipendente-container">
+    <h1>Crea Ditta</h1>
+    <form action="/aggiungi-ditte" method="POST">
+        <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" id="nome" name="nome" required>
+        </div>
+        <div class="form-group">
+            <label for="piva">Partita IVA</label>
+            <input type="text" id="piva" name="piva">
+        </div>
+        <div class="form-group">
+            <label for="scadenza_autorizzazione">Scadenza Autorizzazione</label>
+            <input type="text" id="scadenza_autorizzazione" name="scadenza_autorizzazione">
+        </div>
+        <div class="form-group">
+            <label for="nome_cognome_referente">Generalità Referente</label>
+            <input type="text" id="nome_cognome_referente" name="nome_cognome_referente">
+        </div>
+        <div class="form-group">
+            <label for="email_referente">Email Referente</label>
+            <input type="text" id="email_referente" name="email_referente">
+        </div>
+        <div class="form-group">
+            <label for="telefono_referente">Telefono Referente</label>
+            <input type="text" id="telefono_referente" name="telefono_referente">
+        </div>
+        <div class="form-group-checkbox">
+            <input type="checkbox" id="blocca_accesso" name="blocca_accesso" value="yes">
+            <label for="blocca_accesso">Blocca Accesso</label>
+        </div>
+        <button type="submit" class="crea-button">Crea</button>
+    </form>
+</div>
+{% endblock %}
