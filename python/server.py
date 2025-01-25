@@ -273,7 +273,7 @@ def aggiorna_dipendente():
         return redirect("/dipendenti")
 
 @app.route('/elimina-dipendente', methods=['POST'])
-@fredauth.authorized("user")
+@fredauth.authorized("admin")
 def elimina_dipendente():
     data = request.get_json()
     dipendente_id = data.get('id')
@@ -317,14 +317,91 @@ def ditte():
     return render_template("ditte.html", ditte = fetched)
 
 
-@app.route("/aggiorna-ditta")
-@fredauth.authorized("user")
+@app.route("/aggiorna-ditta", methods = ["GET", "POST"])
+@fredauth.authorized("admin")
 def aggiorna_ditta():
-    ...
+    if request.method == "GET":
+        # Extract the ID from the query parameters
+        ditta_id = request.args.get('id')
+
+        @fredbconn.connected_to_database
+        def fetch_info(cursor):
+            cursor.execute("""
+                SELECT 
+                    nome,
+                    piva,
+                    scadenza_autorizzazione,
+                    blocca_accesso,
+                    nome_cognome_referente,
+                    email_referente,
+                    telefono_referente
+                FROM
+                    ditte
+                WHERE 
+                    id = %s;
+            """, (ditta_id,))
+            
+            ditta_tuple = cursor.fetchone()
+
+            if ditta_tuple is None:
+                return None
+
+            ret = {
+                "nome": ditta_tuple[0],
+                "piva": ditta_tuple[1],
+                "scadenza_autorizzazione": ditta_tuple[2],
+                "blocca_accesso": ditta_tuple[3],
+                "nome_cognome_referente": ditta_tuple[4],
+                "email_referente": ditta_tuple[5],
+                "telefono_referente": ditta_tuple[6]
+            }
+
+            return ret
+        
+        fetched = fetch_info()
+
+        if fetched is None: return redirect("/ditte")
+
+        fetched["ditta_id"] = ditta_id
+
+        return render_template("aggiorna-ditta.html", **fetched)
+
+    if request.method == "POST":
+
+
+        nome = request.form.get("nome")
+        piva = request.form.get("piva")
+        scadenza_autorizzazione = request.form.get("scadenza_autorizzazione")
+        blocca_accesso = (1 if (request.form.get('blocca_accesso') == 'yes') else 0)
+        nome_cognome_referente = request.form.get("nome_cognome_referente")
+        email_referente = request.form.get("email_referente")
+        telefono_referente = request.form.get("telefono_referente")
+        ditta_id = request.form.get("ditta_id")
+
+        @fredbconn.connected_to_database
+        def update_db(cursor):
+            cursor.execute("""
+            UPDATE ditte
+            SET nome = %s,
+                piva = %s,
+                scadenza_autorizzazione = %s,
+                blocca_accesso = %s,
+                nome_cognome_referente = %s,
+                email_referente = %s,
+                telefono_referente = %s
+                
+            WHERE id = %s
+            """, (nome, piva, scadenza_autorizzazione, blocca_accesso,
+                  nome_cognome_referente, email_referente, telefono_referente, ditta_id))
+
+        update_db()
+
+        flash("Ditta aggiornata con successo", "success")
+        return redirect("/ditte")
 
 
 @app.route("/aggiungi-ditte", methods=["GET", "POST"])
-@fredauth.authorized("user")
+@fredauth.authorized("admin")
 def aggiungi_ditte():
 
     if request.method == "GET":
@@ -339,7 +416,7 @@ def aggiungi_ditte():
 
 
 @app.route("/elimina-ditta", methods=["POST"])
-@fredauth.authorized("user")
+@fredauth.authorized("admin")
 def elimina_ditta():
     data = request.get_json()
     ditta_id = data.get('id')
