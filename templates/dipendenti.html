@@ -33,7 +33,10 @@
                 <td><input type="checkbox" class="blue-checkbox" {% if dipendente[4] == 1 %}checked{% endif %} disabled></td> <!-- badge emesso -->
                 <td>{{ dipendente[5] }}</td> <!-- note -->
                 <td class="action-buttons">
-                    <button onclick="confirmAction('elimina', {{ dipendente[6] }})" class="btn btn-danger">Elimina</button>
+                    <form id="form-elimina-dipendente" action="/elimina-dipendente" method="POST">
+                        <button type="submit" class="btn btn-danger">Elimina</button>
+                        <input type="hidden" value = {{ dipendente[6] }}>
+                    </form>
                     <button onclick="confirmAction('aggiorna', {{ dipendente[6] }})" class="btn btn-primary">Aggiorna</button>
                 </td>
             </tr>

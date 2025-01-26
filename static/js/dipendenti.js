@@ -4,31 +4,7 @@ async function confirmAction(action, id) {
     const actionText = (action === 'elimina') ? 'eliminare' : 'aggiornare';
     const confirmMessage = `Sei sicuro di voler ${actionText} questo dipendente?`;
     
-    if (action === 'elimina') {
-        if (confirm(confirmMessage)) {
-            // POST for "delete"
-            await fetch('/elimina-dipendente', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: id })
-            })
-            .then(response => {
-                // If Flask sends a redirect (e.g., after deletion) we can follow it
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else if (!response.ok) {
-                    throw new Error('Errore durante l\'eliminazione');
-                }
-            })
-            .catch(error => {
-                console.error('Errore:', error);
-                alert('Errore durante l\'eliminazione del dipendente');
-            });
-        }
-        
-    } else if (action === 'aggiorna') {
+    if (action === 'aggiorna') {
         // GET for "update" – simply redirect to an update page with the ID
         window.location.href = `/aggiorna-dipendente?id=${id}`;
     }
@@ -42,3 +18,22 @@ function toggleDropdown() {
 function handleDropDownCercaDitteItemSelected(id) {
     window.location.href = `/dipendenti?id_ditta=${id}`
 }
+
+document.getElementById('myForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    const formData = new FormData(this);
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text()) // Get the response as HTML text
+    .then(html => {
+        // Replace the entire page's HTML with the new HTML
+        document.documentElement.innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
