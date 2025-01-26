@@ -5,33 +5,45 @@
 Il Progetto ACCA, o accesso cantieri, consiste in un gestionale di accesso ai cantieri per una azienda locale dalla quale sono stato commissionato.
 
 ## Database
+These is the SQL code to recreate the MySQL database the app runs on
 
-Attori: segretaria: usa il sito per mettere i dati, portiere: guarda i dati immessi, report settimanali (ancora poco chiari)
+CREATE DATABASE IF NOT EXISTS ACCA
+  CHARACTER SET utf8mb4;
 
+use ACCA;
 
-Utenti:
-- due livelli di autenticazione: admin e watcher
-- abilitato sì/no (per disattivarlo in un qualunque momento senza cancellare l'account)
-- nome utente
-- password
+CREATE TABLE IF NOT EXISTS utenti (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50),
+  password VARCHAR(50),
+  is_admin TINYINT,
+  abilitato TINYINT
+);
 
-Ditta:
-- nome
-- piva
-- note (campo testuale enorme di 1024 caratteri, se non più grande)
-- scadenza autorizzazione
-- autorizzata sì/no (per disattivarla in un qualunque momento senza cancellare l'account)
-- referente
+CREATE TABLE IF NOT EXISTS ditte (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150),
+  piva VARCHAR(20),
+  scadenza_autorizzazione VARCHAR(50),
+  blocca_accesso TINYINT,
+  nome_cognome_referente VARCHAR(100),
+  email_referente VARCHAR(100),
+  telefono_referente VARCHAR(20)
+);
 
-Referente:
-- nome e cognonme (unico campo)
-- email
-- numero telefonico
+CREATE TABLE IF NOT EXISTS dipendenti (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50),
+  cognome VARCHAR(50),
+  ditta_id INT UNSIGNED,
+  is_badge_already_emesso TINYINT,
+  autorizzato TINYINT,
+  note VARCHAR(512),
+  FOREIGN KEY (ditta_id) REFERENCES ditte(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
 
-Dipendente:
-- nome
-- ditra
-- badge già emesso (per quando un dipendente è stato censito ma il suo badge ancora non emesso)
-- autorizzato sì/no
-
-si può cercare un dipendente per nome, cognome, ditta di appartenenza. Da questa pagina è possibile esportare in pdf l'elenco delle persone trovate
+CREATE INDEX indice_nome ON dipendenti (nome);
+CREATE INDEX indice_cognome ON dipendenti (cognome);
+CREATE INDEX indice_ditta ON dipendenti (ditta_id);
