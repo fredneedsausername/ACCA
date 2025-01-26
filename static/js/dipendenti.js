@@ -19,21 +19,15 @@ function handleDropDownCercaDitteItemSelected(id) {
     window.location.href = `/dipendenti?id_ditta=${id}`
 }
 
-document.getElementById('myForm').addEventListener('submit', function (e) {
-    e.preventDefault(); // Prevent the default form submission
+document.getElementById('form-elimina-dipendente').addEventListener('submit', function (e) {
+    // Prevent the form from submitting immediately
+    e.preventDefault();
 
-    const formData = new FormData(this);
+    // Show a confirmation dialog
+    const isConfirmed = confirm('Sei sicuro di voler eliminare questo dipendente?');
 
-    fetch(this.action, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.text()) // Get the response as HTML text
-    .then(html => {
-        // Replace the entire page's HTML with the new HTML
-        document.documentElement.innerHTML = html;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    // If the user confirms, submit the form
+    if (isConfirmed) {
+        this.submit(); // "this" refers to the form
+    }
 });

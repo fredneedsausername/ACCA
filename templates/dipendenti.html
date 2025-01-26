@@ -35,7 +35,7 @@
                 <td class="action-buttons">
                     <form id="form-elimina-dipendente" action="/elimina-dipendente" method="POST">
                         <button type="submit" class="btn btn-danger">Elimina</button>
-                        <input type="hidden" value = {{ dipendente[6] }}>
+                        <input type="hidden" name = "id" value = {{ dipendente[6] }}>
                     </form>
                     <button onclick="confirmAction('aggiorna', {{ dipendente[6] }})" class="btn btn-primary">Aggiorna</button>
                 </td>
@@ -48,9 +48,7 @@
         <button type="submit" id="fixed-button">Aggiungi dipendente</button>
     </form>
 
-    <button onclick="toggleDropdown()" class="cerca-ditta-dropdown-button">
-        🔍 Cerca ditta
-      </button>
+    <button onclick="toggleDropdown()" class="cerca-ditta-dropdown-button">🔍 Cerca per ditta</button>
     
       <div id="cerca-ditta-dropdown-menu" class="cerca-ditta-dropdown-menu">
         {% for ditta in ditte %}

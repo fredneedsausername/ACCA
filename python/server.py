@@ -269,8 +269,7 @@ def aggiorna_dipendente():
 @app.route('/elimina-dipendente', methods=['POST'])
 @fredauth.authorized("admin")
 def elimina_dipendente():
-    data = request.get_json()
-    dipendente_id = data.get('id')
+    dipendente_id = request.form.get('id')
 
     @fredbconn.connected_to_database
     def eliminate_dipendente(cursor):
@@ -412,8 +411,8 @@ def aggiungi_ditte():
 @app.route("/elimina-ditta", methods=["POST"])
 @fredauth.authorized("admin")
 def elimina_ditta():
-    data = request.get_json()
-    ditta_id = data.get('id')
+    
+    ditta_id = request.form.get("id")
 
     @fredbconn.connected_to_database
     def eliminate_ditta(cursor):

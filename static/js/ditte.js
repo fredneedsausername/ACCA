@@ -4,32 +4,21 @@ function confirmAction(action, id) {
     const actionText = (action === 'elimina') ? 'eliminare' : 'aggiornare';
     const confirmMessage = `Sei sicuro di voler ${actionText} questa ditta?`;
     
-    if (action === 'elimina') {
-        if (confirm(confirmMessage)) {
-            // POST for "delete"
-            fetch('/elimina-ditta', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: id })
-            })
-            .then(response => {
-                // If Flask sends a redirect (e.g., after deletion) we can follow it
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else if (!response.ok) {
-                    throw new Error('Errore durante l\'eliminazione');
-                }
-            })
-            .catch(error => {
-                console.error('Errore:', error);
-                alert('Errore durante l\'eliminazione della ditta');
-            });
-        }
-        
-    } else if (action === 'aggiorna') {
+    if (action === 'aggiorna') {
         // GET for "update" – simply redirect to an update page with the ID
         window.location.href = `/aggiorna-ditta?id=${id}`;
     }
 }
+
+document.getElementById("form-elimina-ditta").addEventListener('submit', function (e) {
+    // Prevent the form from submitting immediately
+    e.preventDefault();
+
+    // Show a confirmation dialog
+    const isConfirmed = confirm('Sei sicuro di voler eliminare questa ditta?');
+
+    // If the user confirms, submit the form
+    if (isConfirmed) {
+        this.submit(); // "this" refers to the form
+    }
+});
