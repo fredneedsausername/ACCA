@@ -7,6 +7,7 @@ Il Progetto ACCA, o accesso cantieri, consiste in un gestionale di accesso ai ca
 ## Database
 These is the SQL code to recreate the MySQL database the app runs on
 
+```sql
 CREATE DATABASE IF NOT EXISTS ACCA
   CHARACTER SET utf8mb4;
 
@@ -47,3 +48,4 @@ CREATE TABLE IF NOT EXISTS dipendenti (
 CREATE INDEX indice_nome ON dipendenti (nome);
 CREATE INDEX indice_cognome ON dipendenti (cognome);
 CREATE INDEX indice_ditta ON dipendenti (ditta_id);
+```
