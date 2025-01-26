@@ -1,5 +1,5 @@
 /* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
-function confirmAction(action, id) {
+async function confirmAction(action, id) {
     // Build a confirmation message
     const actionText = (action === 'elimina') ? 'eliminare' : 'aggiornare';
     const confirmMessage = `Sei sicuro di voler ${actionText} questo dipendente?`;
@@ -7,7 +7,7 @@ function confirmAction(action, id) {
     if (action === 'elimina') {
         if (confirm(confirmMessage)) {
             // POST for "delete"
-            fetch('/elimina-dipendente', {
+            await fetch('/elimina-dipendente', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
