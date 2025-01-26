@@ -5,7 +5,7 @@
 Il Progetto ACCA, o accesso cantieri, consiste in un gestionale di accesso ai cantieri per una azienda locale dalla quale sono stato commissionato.
 
 ## Database
-These is the SQL code to recreate the MySQL database the app runs on
+This is the SQL code to recreate the MySQL database the app runs on:
 
 ```sql
 CREATE DATABASE IF NOT EXISTS ACCA
