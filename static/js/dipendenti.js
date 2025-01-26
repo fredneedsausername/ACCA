@@ -33,3 +33,12 @@ function confirmAction(action, id) {
         window.location.href = `/aggiorna-dipendente?id=${id}`;
     }
 }
+
+function toggleDropdown() {
+    const menu = document.getElementById('cerca-ditta-dropdown-menu');
+    menu.classList.toggle('show');
+}
+
+function handleDropDownCercaDitteItemSelected(id) {
+    window.location.href = `/dipendenti?id_ditta=${id}`
+}

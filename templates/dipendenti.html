@@ -44,6 +44,17 @@
     <form action="/aggiungi-dipendenti" method="GET">
         <button type="submit" id="fixed-button">Aggiungi dipendente</button>
     </form>
+
+    <button onclick="toggleDropdown()" class="cerca-ditta-dropdown-button">
+        🔍 Cerca ditta
+      </button>
+    
+      <div id="cerca-ditta-dropdown-menu" class="cerca-ditta-dropdown-menu">
+        {% for ditta in ditte %}
+        <button onclick="handleDropDownCercaDitteItemSelected({{ ditta[0] }})">{{ ditta[1] }}</button>
+        {% endfor %}
+      </div>
+
 {% endblock %}
 
 {% block scripts %}

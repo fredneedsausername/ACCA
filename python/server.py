@@ -7,15 +7,12 @@ from werkzeug.exceptions import BadRequest
 import fredbconn
 import fredauth
 
-#TODO aggiungi bottone logout
-#TODO aggiungi funzionalità di sorting
 #TODO aggiungi messaggio di successo quando elimini dipendente, flash non funziona causa js
 #TODO fai report
-#TODO aggiungi menù ditte
-#TODO implementa elimina ditte
-#TODO implementa aggiorna ditte
 #TODO refactor finale codice
-#TODO capire se la partita iva debba essere not null
+#TODO aggiungi funzionalità per ricercare per ditta
+#TODO aggiungi funzionalità per ricercare per cognome
+#TODO quando aggiungi un dipendente senza avere una ditta ti dice la ditta selezionata è stata rimossa
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
@@ -41,13 +38,10 @@ class Dipendente:
             Dipendente: an object of type Dipendente
         """
         nome = request.form.get("nome")
-        if (nome == None) or (nome == ""): raise BadRequest("nome")
 
         cognome = request.form.get("cognome")
-        if (cognome == None) or (cognome == ""): raise BadRequest("cognome")
 
         ditta_name = request.form.get("ditta")
-        if ditta_name is None: raise BadRequest("ditta_name")
 
         is_badge_already_emesso = request.form.get("is_badge_already_emesso")
         if is_badge_already_emesso is None: is_badge_already_emesso = 0
@@ -435,34 +429,84 @@ def elimina_ditta():
     return redirect("/ditte")
 
 
-@app.route("/dipendenti")
+@app.route("/dipendenti", methods=["GET", "POST"])
 @fredauth.authorized("user")
 def show_dipendenti():
 
-    @fredbconn.connected_to_database
-    def fetch_dipendenti_data(cursor):
-        cursor.execute("""
-        SELECT 
-            ditte.nome AS nome_ditta,
-            dipendenti.nome AS nome_dipendente, 
-            dipendenti.cognome,  
-            dipendenti.is_badge_already_emesso, 
-            dipendenti.autorizzato,
-            dipendenti.note,
-            dipendenti.id
-        FROM 
-            dipendenti
-        JOIN 
-            ditte
-        ON 
-            dipendenti.ditta_id = ditte.id
-        """)
+    if request.method == "GET":
 
-        return cursor.fetchall()
+        id_ditta = request.args.get("id_ditta")
 
-    fetched = fetch_dipendenti_data()
+        fetch_dipendenti_data = None
 
-    return render_template("dipendenti.html", dipendenti = fetched)
+        if id_ditta is not None:
+            @fredbconn.connected_to_database
+            def func(cursor):
+                cursor.execute("""
+                SELECT 
+                    ditte.nome AS nome_ditta,
+                    dipendenti.nome AS nome_dipendente, 
+                    dipendenti.cognome,  
+                    dipendenti.is_badge_already_emesso, 
+                    dipendenti.autorizzato,
+                    dipendenti.note,
+                    dipendenti.id
+                FROM 
+                    dipendenti
+                JOIN 
+                    ditte
+                ON 
+                    dipendenti.ditta_id = ditte.id
+                WHERE
+                    ditte.id = %s
+                """, (id_ditta,))
+
+                return cursor.fetchall()
+            
+            fetch_dipendenti_data = func
+
+        else:
+            @fredbconn.connected_to_database
+            def func(cursor):
+                cursor.execute("""
+                SELECT 
+                    ditte.nome AS nome_ditta,
+                    dipendenti.nome AS nome_dipendente, 
+                    dipendenti.cognome,  
+                    dipendenti.is_badge_already_emesso, 
+                    dipendenti.autorizzato,
+                    dipendenti.note,
+                    dipendenti.id
+                FROM 
+                    dipendenti
+                JOIN 
+                    ditte
+                ON 
+                    dipendenti.ditta_id = ditte.id
+                """)
+
+                return cursor.fetchall()
+            
+            fetch_dipendenti_data = func
+
+        fetched = fetch_dipendenti_data()
+
+        @fredbconn.connected_to_database
+        def fetch_ditte_names(cursor):
+            cursor.execute("""
+            SELECT id, nome
+            FROM ditte
+            """)
+
+            return cursor.fetchall()
+        
+        ditte = fetch_ditte_names()
+
+        return render_template("dipendenti.html", dipendenti = fetched, ditte = ditte)
+    
+    if request.method == "POST":
+        telefono_referente = request.form.get("telefono_referente")
+        
 
 
 @app.route("/aggiungi-dipendenti", methods=["GET", "POST"])
