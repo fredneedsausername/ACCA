@@ -183,7 +183,7 @@ def aggiorna_dipendente():
                 FROM 
                     dipendenti
                 WHERE 
-                    id = %s;
+                    id = %s
             """, (dipendente_id,))
             
             dipendente_tuple = cursor.fetchone()
@@ -202,7 +202,8 @@ def aggiorna_dipendente():
 
             cursor.execute("""
                 SELECT nome
-                FROM ditte;
+                FROM ditte
+                ORDER BY nome ASC
             """)
             
             ditte_names_tuple = cursor.fetchall()
@@ -300,6 +301,7 @@ def ditte():
         cursor.execute("""
         SELECT id, nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
         FROM ditte
+        ORDER BY nome ASC
         """)
 
         fetched = cursor.fetchall()
@@ -429,7 +431,7 @@ def elimina_ditta():
     return redirect("/ditte")
 
 
-@app.route("/dipendenti", methods=["GET", "POST"])
+@app.route("/dipendenti")
 @fredauth.authorized("user")
 def show_dipendenti():
 
@@ -459,6 +461,8 @@ def show_dipendenti():
                     dipendenti.ditta_id = ditte.id
                 WHERE
                     ditte.id = %s
+                ORDER BY
+                    dipendenti.cognome ASC
                 """, (id_ditta,))
 
                 return cursor.fetchall()
@@ -483,6 +487,8 @@ def show_dipendenti():
                     ditte
                 ON 
                     dipendenti.ditta_id = ditte.id
+                ORDER BY
+                    dipendenti.cognome ASC
                 """)
 
                 return cursor.fetchall()
@@ -496,6 +502,7 @@ def show_dipendenti():
             cursor.execute("""
             SELECT id, nome
             FROM ditte
+            ORDER BY nome ASC
             """)
 
             return cursor.fetchall()
@@ -503,10 +510,6 @@ def show_dipendenti():
         ditte = fetch_ditte_names()
 
         return render_template("dipendenti.html", dipendenti = fetched, ditte = ditte)
-    
-    if request.method == "POST":
-        telefono_referente = request.form.get("telefono_referente")
-        
 
 
 @app.route("/aggiungi-dipendenti", methods=["GET", "POST"])
@@ -520,6 +523,7 @@ def aggiungi_dipendenti():
             cursor.execute("""
             SELECT nome
             FROM ditte
+            ORDER BY nome ASC
             """)
 
             fetched = cursor.fetchall()
@@ -595,5 +599,5 @@ def logout():
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)

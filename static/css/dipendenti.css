@@ -242,3 +242,24 @@ tbody tr:hover {
     outline: 2px solid #007bff; /* Or any color/style you prefer */
     outline-offset: 2px;
   }
+
+.fixed-button-class {
+    position: fixed;
+    margin: 0 10px;
+    font-size: 18px;
+    font-weight: bold;
+    top: 8%;
+    right: 500px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fixed-button-class:hover {
+    background-color: #0056b3;
+}

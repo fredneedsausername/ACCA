@@ -50,11 +50,16 @@
 
     <button onclick="toggleDropdown()" class="cerca-ditta-dropdown-button">🔍 Cerca per ditta</button>
     
-      <div id="cerca-ditta-dropdown-menu" class="cerca-ditta-dropdown-menu">
+    <div id="cerca-ditta-dropdown-menu" class="cerca-ditta-dropdown-menu">
         {% for ditta in ditte %}
         <button onclick="handleDropDownCercaDitteItemSelected({{ ditta[0] }})">{{ ditta[1] }}</button>
         {% endfor %}
-      </div>
+    </div>
+    <!--
+    <form onclick="cercaPerCognome()">
+        <button type="submit" class="fixed-button-class">🔍 Cerca per cognome</button>
+    </form>
+    -->
 
 {% endblock %}
 
