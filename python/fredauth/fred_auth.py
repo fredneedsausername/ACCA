@@ -43,11 +43,11 @@ def authorized(auth_type):
                     result = fetch_abilitato()
 
                     if result is None:
-                        flash("Il suo account è stato rimosso.", "autenticazione-fallita")
+                        flash("Il suo account è stato rimosso.", "error")
                         return redirect("/login")
 
                     if result[0] == 0:
-                        flash("Il suo account è stato disabilitato.", "autenticazione-fallita")
+                        flash("Il suo account è stato disabilitato.", "error")
                         return redirect("/login")
 
                 return fn(*args, **kwargs)
