@@ -10,15 +10,20 @@ function confirmAction(action, id) {
     }
 }
 
-document.getElementById("form-elimina-ditta").addEventListener('submit', function (e) {
-    // Prevent the form from submitting immediately
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('[id="form-elimina-ditta"]').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent default submission
+            
+            // Show confirmation dialog
+            const isConfirmed = confirm('Sei sicuro di voler eliminare questa ditta?');
 
-    // Show a confirmation dialog
-    const isConfirmed = confirm('Sei sicuro di voler eliminare questa ditta?');
-
-    // If the user confirms, submit the form
-    if (isConfirmed) {
-        this.submit(); // "this" refers to the form
-    }
+            // If confirmed, submit the form
+            if (isConfirmed) {
+                this.submit();
+            }
+        });
+    });
 });
+
+

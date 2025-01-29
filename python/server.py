@@ -438,6 +438,7 @@ def show_dipendenti():
     if request.method == "GET":
 
         id_ditta = request.args.get("id_ditta")
+        cognome = request.args.get("cognome")
 
         fetch_dipendenti_data = None
 
@@ -469,7 +470,7 @@ def show_dipendenti():
             
             fetch_dipendenti_data = func
 
-        else:
+        elif cognome is not None:
             @fredbconn.connected_to_database
             def func(cursor):
                 cursor.execute("""
@@ -487,15 +488,46 @@ def show_dipendenti():
                     ditte
                 ON 
                     dipendenti.ditta_id = ditte.id
+                WHERE
+                    LOWER(dipendenti.cognome) = LOWER(%s)
                 ORDER BY
                     dipendenti.cognome ASC
-                """)
+                """, (cognome,))
 
                 return cursor.fetchall()
-            
+
             fetch_dipendenti_data = func
 
-        fetched = fetch_dipendenti_data()
+        # else:
+        #     @fredbconn.connected_to_database
+        #     def func(cursor):
+        #         cursor.execute("""
+        #         SELECT 
+        #             ditte.nome AS nome_ditta,
+        #             dipendenti.nome AS nome_dipendente, 
+        #             dipendenti.cognome,  
+        #             dipendenti.is_badge_already_emesso, 
+        #             dipendenti.autorizzato,
+        #             dipendenti.note,
+        #             dipendenti.id
+        #         FROM 
+        #             dipendenti
+        #         JOIN 
+        #             ditte
+        #         ON 
+        #             dipendenti.ditta_id = ditte.id
+        #         ORDER BY
+        #             dipendenti.cognome ASC
+        #         """)
+
+        #         return cursor.fetchall()
+            
+        #    fetch_dipendenti_data = func
+        
+        fetched = None
+        
+        if fetch_dipendenti_data is not None:
+            fetched = fetch_dipendenti_data()
 
         @fredbconn.connected_to_database
         def fetch_ditte_names(cursor):
@@ -599,5 +631,5 @@ def logout():
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)

@@ -19,15 +19,58 @@ function handleDropDownCercaDitteItemSelected(id) {
     window.location.href = `/dipendenti?id_ditta=${id}`
 }
 
-document.getElementById('form-elimina-dipendente').addEventListener('submit', function (e) {
-    // Prevent the form from submitting immediately
-    e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+    // Select all forms with the ID or class for deleting employees
+    document.querySelectorAll('[id="form-elimina-dipendente"]').forEach(form => {
+        form.addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent default submission
 
-    // Show a confirmation dialog
-    const isConfirmed = confirm('Sei sicuro di voler eliminare questo dipendente?');
+            // Show confirmation dialog
+            const isConfirmed = confirm('Sei sicuro di voler eliminare questo dipendente?');
 
-    // If the user confirms, submit the form
-    if (isConfirmed) {
-        this.submit(); // "this" refers to the form
+            // If confirmed, submit the form
+            if (isConfirmed) {
+                this.submit(); // "this" refers to the form
+            }
+        });
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("search-by-cognome-toggle");
+    const dropdown = document.getElementById("search-by-cognome-dropdown");
+    const searchButton = document.getElementById("search-by-cognome-submit");
+    const searchInput = document.getElementById("search-by-cognome-input");
+
+    // Toggle dropdown visibility
+    toggleButton.addEventListener("click", function (event) {
+        event.stopPropagation(); // Prevent event bubbling
+        dropdown.classList.toggle("show");
+    });
+
+    // Handle search submission
+    function handleSearch() {
+        const surname = searchInput.value.trim();
+        if (surname) {
+            window.location.href = `/dipendenti?cognome=${encodeURIComponent(surname)}`;
+        } else {
+            alert("Inserisci un cognome prima di cercare.");
+        }
     }
+
+    searchButton.addEventListener("click", handleSearch);
+
+    // Allow "Enter" key to trigger search
+    searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            handleSearch();
+        }
+    });
+
+    // Close dropdown if clicking outside
+    document.addEventListener("click", function (event) {
+        if (!dropdown.contains(event.target) && !toggleButton.contains(event.target)) {
+            dropdown.classList.remove("show");
+        }
+    });
 });
