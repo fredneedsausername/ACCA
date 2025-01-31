@@ -10,10 +10,31 @@ async function confirmAction(action, id) {
     }
 }
 
+function filterDitte(searchText) {
+    const menu = document.getElementById('cerca-ditta-dropdown-menu');
+    const buttons = menu.querySelectorAll('button');
+    
+    buttons.forEach(button => {
+        const text = button.textContent.toLowerCase();
+        button.style.display = text.includes(searchText.toLowerCase()) ? '' : 'none';
+    });
+}
+
 function toggleDropdown() {
     const menu = document.getElementById('cerca-ditta-dropdown-menu');
     menu.classList.toggle('show');
+    if (menu.classList.contains('show')) {
+        document.getElementById('cerca-ditta-search').focus();
+    }
 }
+
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('cerca-ditta-dropdown-menu');
+    const button = document.querySelector('.cerca-ditta-dropdown-button');
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.remove('show');
+    }
+});
 
 function handleDropDownCercaDitteItemSelected(id) {
     window.location.href = `/dipendenti?id_ditta=${id}`
@@ -74,3 +95,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+
