@@ -26,4 +26,41 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("search-by-nome-toggle");
+    const dropdown = document.getElementById("search-by-nome-dropdown");
+    const searchButton = document.getElementById("search-by-nome-submit");
+    const searchInput = document.getElementById("search-by-nome-input");
 
+    // Toggle dropdown visibility
+    toggleButton.addEventListener("click", function (event) {
+        event.stopPropagation(); // Prevent event bubbling
+        dropdown.classList.toggle("show");
+    });
+
+    // Handle search submission
+    function handleSearch() {
+        const name = searchInput.value.trim();
+        if (name) {
+            window.location.href = `/ditte?nome=${encodeURIComponent(name)}`;
+        } else {
+            alert("Inserisci un nome ditta prima di cercare.");
+        }
+    }
+
+    searchButton.addEventListener("click", handleSearch);
+
+    // Allow "Enter" key to trigger search
+    searchInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            handleSearch();
+        }
+    });
+
+    // Close dropdown if clicking outside
+    document.addEventListener("click", function (event) {
+        if (!dropdown.contains(event.target) && !toggleButton.contains(event.target)) {
+            dropdown.classList.remove("show");
+        }
+    });
+});

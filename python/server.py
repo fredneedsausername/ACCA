@@ -296,19 +296,34 @@ def index():
 @fredauth.authorized("user")
 def ditte():
 
-    @fredbconn.connected_to_database
-    def fetch_ditte_info(cursor):
-        cursor.execute("""
-        SELECT id, nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
-        FROM ditte
-        ORDER BY nome ASC
-        """)
+    nome = request.args.get("nome")
 
-        fetched = cursor.fetchall()
+    fetch_ditte_info = None
 
-        return fetched
+    if nome is not None:
+        @fredbconn.connected_to_database
+        def func(cursor):
+            cursor.execute("""
+            SELECT
+                id, nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
+            FROM
+                ditte
+            WHERE
+                INSTR(LOWER(ditte.nome), LOWER(%s)) > 0 
+            ORDER BY
+                nome ASC
+            """, (nome,))
 
-    fetched = fetch_ditte_info()
+            fetched = cursor.fetchall()
+
+            return fetched
+
+        fetch_ditte_info = func
+
+    fetched = None 
+
+    if fetch_ditte_info:
+        fetched = fetch_ditte_info()
 
     return render_template("ditte.html", ditte = fetched)
 
@@ -489,7 +504,7 @@ def show_dipendenti():
                 ON 
                     dipendenti.ditta_id = ditte.id
                 WHERE
-                    LOWER(dipendenti.cognome) = LOWER(%s)
+                    INSTR(LOWER(dipendenti.cognome), LOWER(%s)) > 0 
                 ORDER BY
                     dipendenti.cognome ASC
                 """, (cognome,))

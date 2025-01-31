@@ -26,6 +26,7 @@
         </tr>
     </thead>
     <tbody>
+        {% if ditte %}
         {% for ditta in ditte %}
         <tr>
             <td>{{ ditta[1] }}</td> <!-- nome ditta -->
@@ -44,12 +45,21 @@
             </td>
         </tr>
         {% endfor %}
+        {% endif %}
     </tbody>
 </table>
 
 <form action="/aggiungi-ditte" method="GET">
     <button type="submit" id="fixed-button">Aggiungi ditta</button>
 </form>
+
+<button type="button" class="fixed-button-class" id="search-by-nome-toggle">🔍 Cerca per nome ditta</button>
+
+<div class="search-by-nome-dropdown-menu" id="search-by-nome-dropdown">
+    <input type="text" class="search-by-nome-input" id="search-by-nome-input" placeholder="Nome ditta...">
+    <button class="search-by-nome-button" id="search-by-nome-submit">Cerca</button>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
