@@ -53,7 +53,7 @@
     <button onclick="toggleDropdown()" class="cerca-ditta-dropdown-button">🔍 Cerca per ditta</button>
 
     <div id="cerca-ditta-dropdown-menu" class="cerca-ditta-dropdown-menu">
-        <input type="text" id="cerca-ditta-search" class="search-by-cognome-input" placeholder="Cerca ditta..." oninput="filterDitte(this.value)">
+        <input type="text" id="cerca-ditta-search" class="search-by-ditta-input" placeholder="Cerca ditta..." oninput="filterDitte(this.value)">
         {% for ditta in ditte %}
         <button onclick="handleDropDownCercaDitteItemSelected({{ ditta[0] }})">{{ ditta[1] }}</button>
         {% endfor %}
