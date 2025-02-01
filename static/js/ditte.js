@@ -27,16 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const toggleButton = document.getElementById("search-by-nome-toggle");
     const dropdown = document.getElementById("search-by-nome-dropdown");
-    const searchButton = document.getElementById("search-by-nome-submit");
-    const searchInput = document.getElementById("search-by-nome-input");
-
-    // Toggle dropdown visibility
-    toggleButton.addEventListener("click", function (event) {
-        event.stopPropagation(); // Prevent event bubbling
-        dropdown.classList.toggle("show");
-    });
 
     // Handle search submission
     function handleSearch() {
@@ -48,15 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    searchButton.addEventListener("click", handleSearch);
-
-    // Allow "Enter" key to trigger search
-    searchInput.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            handleSearch();
-        }
-    });
-
     // Close dropdown if clicking outside
     document.addEventListener("click", function (event) {
         if (!dropdown.contains(event.target) && !toggleButton.contains(event.target)) {
@@ -64,3 +46,35 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+// Part that manages the cerca per nome ditta searchbar
+
+function filterDitte(searchText) {
+    const menu = document.getElementById('cerca-ditta-dropdown-menu');
+    const buttons = menu.querySelectorAll('button');
+    
+    buttons.forEach(button => {
+        const text = button.textContent.toLowerCase();
+        button.style.display = text.includes(searchText.toLowerCase()) ? '' : 'none';
+    });
+}
+
+function toggleDropdown() {
+    const menu = document.getElementById('cerca-ditta-dropdown-menu');
+    menu.classList.toggle('show');
+    if (menu.classList.contains('show')) {
+        document.getElementById('cerca-ditta-search').focus();
+    }
+}
+
+document.addEventListener('click', function(event) {
+    const menu = document.getElementById('cerca-ditta-dropdown-menu');
+    const button = document.querySelector('.cerca-ditta-dropdown-button');
+    if (!menu.contains(event.target) && !button.contains(event.target)) {
+        menu.classList.remove('show');
+    }
+});
+
+function handleDropDownCercaDitteItemSelected(nome) {
+    window.location.href = `/ditte?nome=${nome}`
+}

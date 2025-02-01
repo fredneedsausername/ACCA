@@ -218,7 +218,11 @@ def aggiorna_dipendente():
         
         fetched = fetch_info()
 
-        if fetched is None: return redirect("/dipendenti")
+        if fetched is None:
+            if dipendente_id:
+                return redirect("/dipendenti?id=" + dipendente_id)
+            else:
+                return redirect("/dipendenti")
 
         fetched["dipendente_id"] = dipendente_id
 
@@ -320,12 +324,30 @@ def ditte():
 
         fetch_ditte_info = func
 
-    fetched = None 
+
+    @fredbconn.connected_to_database
+    def fetch_ditte_names(cursor):
+        cursor.execute("""
+        SELECT
+            ditte.nome
+        FROM
+            ditte
+        ORDER BY
+            nome ASC
+        """)
+
+        fetched = cursor.fetchall()
+
+        return fetched
+
+    fetched_ditte_info = None 
 
     if fetch_ditte_info:
-        fetched = fetch_ditte_info()
+        fetched_ditte_info = fetch_ditte_info()
+    
+    ditte_names = fetch_ditte_names()
 
-    return render_template("ditte.html", ditte = fetched)
+    return render_template("ditte.html", ditte = fetched_ditte_info, ditte_names = ditte_names)
 
 
 @app.route("/aggiorna-ditta", methods = ["GET", "POST"])

@@ -147,6 +147,7 @@ tbody tr:hover {
 .btn-danger {
     background-color: #f76a6a;
     color: white;
+    padding: 8px 26px !important;
 }
 
 .btn-danger:hover {
@@ -267,3 +268,91 @@ tbody tr:hover {
 .fixed-button-class:hover {
     background-color: #0056b3;
 }
+
+.search-by-ditta-input {
+    width: 89%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    height: 20px;
+}
+
+.cerca-ditta-dropdown-button {
+    position: fixed;
+    top: 8%;
+    right: 193px;
+    transform: translateY(-50%);
+
+    padding: 10px 20px;
+    margin: 0 10px;
+    
+    font-size: 18px;
+    font-weight: bold;
+    
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .cerca-ditta-dropdown-button:hover {
+    background-color: #0056b3;
+  }
+
+  .cerca-ditta-dropdown-menu {
+    position: fixed;
+    /*
+     * Move it just below the button:
+     * The button is around 40px tall, so we add ~40px offset
+     * after reversing the translateY(-50%) from the button.
+     */
+    top: 10.5%; 
+    right: 200px;
+
+    display: none;    /* Hidden by default; toggled by JS */
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    /* Show up to 5 items before scrolling */
+    max-height: 200px;
+    overflow-y: auto;
+    
+    z-index: 1000;
+    width: 190px;
+  }
+
+  /* When "show" class is present, display the dropdown */
+  .cerca-ditta-dropdown-menu.show {
+    display: block;
+  }
+
+  /* Menu items */
+  .cerca-ditta-dropdown-menu button {
+    display: block;
+    width: 100%;                /* Make the button take up the entire width */
+    text-align: left;           /* Left-align the text, similar to link style */
+    
+    font-size: 16px;
+    color: #333;
+    background: none;           /* Remove default button background */
+    border: none;               /* Remove default button border */
+    padding: 10px 16px;
+    
+    cursor: pointer;
+  }
+  
+  .cerca-ditta-dropdown-menu button:hover {
+    background-color: #f0f0f0;  /* Same hover effect as your links */
+  }
+  
+  /* Optional: give a little focus style too */
+  .cerca-ditta-dropdown-menu button:focus {
+    outline: 2px solid #007bff; /* Or any color/style you prefer */
+    outline-offset: 2px;
+  }

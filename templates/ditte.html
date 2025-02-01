@@ -30,7 +30,7 @@
         {% for ditta in ditte %}
         <tr>
             <td>{{ ditta[1] }}</td> <!-- nome ditta -->
-            <td>{{ ditta[2] }}</td> <!-- piva -->
+            <td>{{ ditta[2] or "No"}}</td> <!-- piva -->
             <td>{{ ditta[3] or "No"}}</td> <!-- scadenza autorizzazione -->
             <td><input type="checkbox" class="blue-checkbox" {% if ditta[4] == 1 %}checked{% endif %} disabled></td> <!-- accesso bloccato -->
             <td>{{ ditta[5] or "No"}}</td> <!-- referente -->
@@ -53,12 +53,16 @@
     <button type="submit" id="fixed-button">Aggiungi ditta</button>
 </form>
 
-<button type="button" class="fixed-button-class" id="search-by-nome-toggle">🔍 Cerca per nome ditta</button>
+<button onclick="toggleDropdown()" class="cerca-ditta-dropdown-button">🔍 Cerca per ditta</button>
 
-<div class="search-by-nome-dropdown-menu" id="search-by-nome-dropdown">
-    <input type="text" class="search-by-nome-input" id="search-by-nome-input" placeholder="Nome ditta...">
-    <button class="search-by-nome-button" id="search-by-nome-submit">Cerca</button>
-</div>
+    <div id="cerca-ditta-dropdown-menu" class="cerca-ditta-dropdown-menu">
+        <input type="text" id="cerca-ditta-search" class="search-by-ditta-input" placeholder="Cerca ditta..." oninput="filterDitte(this.value)">
+        {% if ditte_names %}
+        {% for ditta in ditte_names %}
+        <button onclick="handleDropDownCercaDitteItemSelected('{{ ditta[0] }}')">{{ ditta[0] }}</button>
+        {% endfor %}
+        {% endif %}
+    </div>
 
 {% endblock %}
 
