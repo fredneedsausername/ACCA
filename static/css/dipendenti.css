@@ -33,6 +33,10 @@ thead th {
     background-color: #f76a6a; /* A soft red color */
 }
 
+.pink {
+    background-color: rgb(247, 164, 208);
+}
+
 tbody td {
     padding: 10px;
     

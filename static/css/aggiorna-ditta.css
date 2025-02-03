@@ -1,4 +1,45 @@
 /* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
+
+/* General Button Styling */
+.crea-button,
+.annulla-button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+/* Aggiorna (Update) Button */
+.crea-button {
+    background-color: #1E90FF;
+}
+
+.crea-button:hover {
+    background-color: #4169E1;
+}
+
+/* Annulla (Cancel) Button */
+.annulla-button {
+    background-color: #f76a6a;
+}
+
+.annulla-button:hover {
+    background-color: #e74c3c;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+/* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
 .dipendente-container {
     width: 100%;
     max-width: 400px;
@@ -79,43 +120,4 @@ body {
     color: #721c24;
     font-size: 30px;
     text-align: center;
-}
-
-/* General Button Styling */
-.crea-button,
-.annulla-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-    text-align: center;
-}
-
-/* Aggiorna (Update) Button */
-.crea-button {
-    background-color: #1E90FF;
-}
-
-.crea-button:hover {
-    background-color: #4169E1;
-}
-
-/* Annulla (Cancel) Button */
-.annulla-button {
-    background-color: #f76a6a;
-}
-
-.annulla-button:hover {
-    background-color: #e74c3c;
-}
-
-.button-container {
-    display: flex;
-    gap: 10px;
-    width: 100%;
 }

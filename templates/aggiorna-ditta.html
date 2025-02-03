@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block css %}
-<link rel="stylesheet" href="{{ url_for('static', filename = 'css/aggiungi-ditte.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename = 'css/aggiorna-ditta.css')}}">
 {% endblock %}
 
 {% block body %}
@@ -46,7 +46,12 @@
             <label for="blocca_accesso">Blocca Accesso</label>
         </div>
         <input type="hidden" name="ditta_id" value="{{ ditta_id }}">
-        <button type="submit" class="crea-button">Aggiorna</button>
+
+        <div class="button-container">
+            <button type="submit" class="crea-button">Aggiorna</button>
+            <button type="button" class="annulla-button">Annulla</button>
+        </div>
+
     </form>
 </div>
 {% endblock %}

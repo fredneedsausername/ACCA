@@ -324,6 +324,25 @@ def ditte():
 
         fetch_ditte_info = func
 
+    else:
+
+        @fredbconn.connected_to_database
+        def func(cursor):
+            cursor.execute("""
+            SELECT
+                id, nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
+            FROM
+                ditte
+            ORDER BY
+                nome ASC
+            """)
+
+            fetched = cursor.fetchall()
+
+            return fetched
+        
+        fetch_ditte_info = func
+
 
     @fredbconn.connected_to_database
     def fetch_ditte_names(cursor):
@@ -342,8 +361,7 @@ def ditte():
 
     fetched_ditte_info = None 
 
-    if fetch_ditte_info:
-        fetched_ditte_info = fetch_ditte_info()
+    fetched_ditte_info = fetch_ditte_info()
     
     ditte_names = fetch_ditte_names()
 
@@ -668,5 +686,5 @@ def logout():
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)
