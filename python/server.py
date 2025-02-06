@@ -226,6 +226,23 @@ def aggiorna_dipendente():
 
         fetched["dipendente_id"] = dipendente_id
 
+        @fredbconn.connected_to_database
+        def fetch_selected_ditta_name(cursor):
+            cursor.execute("""
+            SELECT
+                ditte.nome
+            FROM
+                ditte
+            WHERE
+                ditte.id = %s
+            """, (fetched["selected_ditta"]))
+
+            return cursor.fetchone()
+
+        fetched_selected_ditta_name = fetch_selected_ditta_name()
+
+        fetched["selected_ditta_name"] = fetched_selected_ditta_name[0]
+
         return render_template("aggiorna-dipendente.html", **fetched)
 
     if request.method == "POST":
@@ -686,5 +703,5 @@ def logout():
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)
