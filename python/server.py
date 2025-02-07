@@ -1,12 +1,14 @@
 # Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.
 
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
 import passwords
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequest
 import fredbconn
 import fredauth
 from waitress import serve
+import xlsxwriter
+import io
 
 #TODO aggiungi messaggio di successo quando elimini dipendente, flash non funziona causa js
 #TODO fai report
@@ -699,6 +701,215 @@ def login():
 def logout():
     session.clear()
     return redirect("/login")
+
+
+@app.route('/genera-report')
+def genera_report():
+
+    custom_data = [
+        ["Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso"],
+        ["Company B", "Jane", "Smith", "67890", "Another note"],
+        # You can add as many rows as needed.
+    ]
+    
+    aggiornato_string = "dis a test"
+    
+    # Create an in-memory output file for the new workbook.
+    output = io.BytesIO()
+    
+    # Create a workbook and add a worksheet.
+    # The workbook is created in memory.
+    workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+    worksheet = workbook.add_worksheet("report")
+    
+    # -----------------------------
+    # Define common formats
+    # -----------------------------
+    # Default cell format for data: font size 13, centered text, border=1.
+    default_format = workbook.add_format({
+        'font_size': 13,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+    })
+    
+    # Header cell common format: bold text, font size 14, centered, border=1.
+    header_format = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+    })
+    
+    # For horizontal padding we ensure the columns are wide enough.
+    # (XlsxWriter does not support explicit padding settings for cells.)
+    
+    # -----------------------------
+    # Specific header formats
+    # -----------------------------
+    # First column header ("DITTA"): yellow background and always bold.
+    ditta_header_format = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+        'bg_color': '#FFFF00'
+    })
+    # For every data row in the first column, text should be bold too.
+    ditta_data_format = workbook.add_format({
+        'bold': True,
+        'font_size': 13,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+    })
+    
+    # Second and third column headers: blue background (#00B0F0).
+    nome_header_format = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+        'bg_color': '#00B0F0'
+    })
+    # Data for these columns use the default (normal) format.
+    
+    # Fourth column header: "BADGE EMESSO" with pink background (#F7A4D0).
+    badge_header_format = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+        'bg_color': '#F7A4D0'
+    })
+    # Data for badge: normal text.
+    badge_data_format = default_format
+    
+    # Fifth column header: "NOTE" with green background (#92D050).
+    note_header_format = workbook.add_format({
+        'bold': True,
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+        'bg_color': '#92D050'
+    })
+    # Data for notes should be italic.
+    note_data_format = workbook.add_format({
+        'italic': True,
+        'font_size': 13,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+    })
+    
+    # -----------------------------
+    # Special first header cell with overflowing rich text
+    # -----------------------------
+    # This cell is the very first cell of the file.
+    # Its text is composed of two parts with different font sizes.
+    rich_format_18 = workbook.add_format({
+        'font_size': 18,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+    })
+    rich_format_14 = workbook.add_format({
+        'font_size': 14,
+        'align': 'center',
+        'valign': 'vcenter',
+        'border': 1,
+    })
+    # Write the rich string in cell A1.
+    # (By not merging, if adjacent cells are empty the text will overflow.)
+    worksheet.write_rich_string(0, 0,
+                                rich_format_18, "LISTA PERSONALE AUTORIZZATO ALL'INGRESSO",
+                                rich_format_14, aggiornato_string)
+    
+    # -----------------------------
+    # Write the header row (for the data columns) with additional horizontal padding
+    # -----------------------------
+    header_row = 1
+    worksheet.set_row(header_row, 38)  # Approximately 15 * 2.5 = 37.5
+
+    # Note the added spaces before and after the header text to simulate padding.
+    worksheet.write(header_row, 0, "  DITTA  ", ditta_header_format)
+    worksheet.write(header_row, 1, "  NOME  ", nome_header_format)
+    worksheet.write(header_row, 2, "  COGNOME DIPENDENTE  ", nome_header_format)
+    worksheet.write(header_row, 3, "  BADGE EMESSO  ", badge_header_format)
+    worksheet.write(header_row, 4, "  NOTE  ", note_header_format)
+    
+    # -----------------------------
+    # Insert custom data
+    # -----------------------------
+    # The custom data is supplied as a list of lists (each sublist is a row).
+    # Each row must provide data for:
+    # [DITTA, NOME, COGNOME DIPENDENTE, BADGE EMESSO, NOTE]
+    
+    data_start_row = header_row + 1
+    for row_idx, data_row in enumerate(custom_data):
+        current_row = data_start_row + row_idx
+        # Optionally set a standard row height (e.g. 15 points)
+        worksheet.set_row(current_row, 15)
+        
+        # Write each cell using the appropriate format:
+        # Column 0 (DITTA): always bold.
+        worksheet.write(current_row, 0, data_row[0], ditta_data_format)
+        # Column 1 (NOME)
+        worksheet.write(current_row, 1, data_row[1], default_format)
+        # Column 2 (COGNOME DIPENDENTE)
+        worksheet.write(current_row, 2, data_row[2], default_format)
+        # Column 3 (BADGE EMESSO)
+        worksheet.write(current_row, 3, data_row[3], badge_data_format)
+        # Column 4 (NOTE): italic
+        worksheet.write(current_row, 4, data_row[4], note_data_format)
+    
+    # -----------------------------
+    # Dynamically adjust column widths based on the longest text (header or data) plus extra padding
+    # -----------------------------
+    # Define header names (unpadded)
+    headers = ["DITTA", "NOME", "COGNOME DIPENDENTE", "BADGE EMESSO", "NOTE"]
+    num_columns = len(headers)
+    
+    # Initialize a list to hold the maximum length (in characters) for each column.
+    col_widths = [len(header) for header in headers]
+    
+    # Update each column width based on the data in custom_data.
+    # (Make sure 'custom_data' is defined before this snippet.)
+    for row in custom_data:
+        for i in range(num_columns):
+            cell_text = str(row[i])
+            # Measure the length of the cell text.
+            cell_length = len(cell_text)
+            if cell_length > col_widths[i]:
+                col_widths[i] = cell_length
+    
+    # Add extra padding to each column width. Increase the extra_padding value if needed.
+    extra_padding = 10  # This value can be adjusted as needed.
+    col_widths = [width + extra_padding for width in col_widths]
+    
+    # Set the width for each column individually.
+    for i, width in enumerate(col_widths):
+        worksheet.set_column(i, i, width)
+
+
+
+    
+    # Close the workbook before sending the data.
+    workbook.close()
+    output.seek(0)
+    
+    # Send the in-memory file as an attachment.
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name="report.xlsx",  # For Flask >=2.0; use attachment_filename for older versions.
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
 
 
 if __name__ == "__main__":
