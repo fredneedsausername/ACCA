@@ -36,7 +36,7 @@
                     <input type="text" id="ditta-search" placeholder="Cerca ditta..." class="ditta-search">
                     <div class="options-container">
                         {% for ditta in ditte %}
-                        <div class="option" data-value="{{ ditta }}">{{ ditta }}</div>
+                        <div class="option" data-value="{{ ditta[0] }}">{{ ditta[1] }}</div>
                         {% endfor %}
                     </div>
                 </div>

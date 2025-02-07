@@ -9,6 +9,7 @@ import fredauth
 from waitress import serve
 import xlsxwriter
 import io
+from datetime import datetime
 
 #TODO aggiungi messaggio di successo quando elimini dipendente, flash non funziona causa js
 #TODO fai report
@@ -203,18 +204,18 @@ def aggiorna_dipendente():
             }
 
             cursor.execute("""
-                SELECT nome
+                SELECT id, nome
                 FROM ditte
                 ORDER BY nome ASC
             """)
             
-            ditte_names_tuple = cursor.fetchall()
+            ditte_tuple = cursor.fetchall()
 
             # Flatten the tuple of tuples into a single tuple of names
-            ditte_names = tuple(name[0] for name in ditte_names_tuple)
+            ditte = tuple(ditta for ditta in ditte_tuple)
 
             # Add the ditte entry to the dictionary
-            ret["ditte"] = ditte_names
+            ret["ditte"] = ditte
 
             return ret
         
@@ -257,22 +258,6 @@ def aggiorna_dipendente():
         dipendente_id = request.form.get("dipendente_id")
 
         @fredbconn.connected_to_database
-        def fetch_info(cursor):
-            cursor.execute("""
-            SELECT id
-            FROM ditte
-            WHERE nome = %s
-            """, (ditta,))
-            
-            return cursor.fetchone()
-        
-        fetched = fetch_info()
-
-        if fetched is None: return redirect("/dipendenti")
-
-        ditta_id = fetched[0]
-
-        @fredbconn.connected_to_database
         def update_db(cursor):
             cursor.execute("""
             UPDATE dipendenti
@@ -284,7 +269,7 @@ def aggiorna_dipendente():
                 note = %s
                 
             WHERE id = %s
-            """, (nome, cognome, ditta_id, is_badge_already_emesso, autorizzato, note, dipendente_id))
+            """, (nome, cognome, ditta, is_badge_already_emesso, autorizzato, note, dipendente_id))
 
         update_db()
 
@@ -711,8 +696,10 @@ def genera_report():
         ["Company B", "Jane", "Smith", "67890", "Another note"],
         # You can add as many rows as needed.
     ]
-    
-    aggiornato_string = "dis a test"
+
+    todays_local_date = datetime.now().strftime("%d-%m-%Y")
+
+    aggiornato_string = " (Agg. " + todays_local_date + ")"
     
     # Create an in-memory output file for the new workbook.
     output = io.BytesIO()
@@ -817,12 +804,14 @@ def genera_report():
         'align': 'center',
         'valign': 'vcenter',
         'border': 1,
+        'bold': True
     })
     rich_format_14 = workbook.add_format({
         'font_size': 14,
         'align': 'center',
         'valign': 'vcenter',
         'border': 1,
+        'bold': True
     })
     # Write the rich string in cell A1.
     # (By not merging, if adjacent cells are empty the text will overflow.)
