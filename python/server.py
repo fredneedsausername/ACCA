@@ -697,13 +697,12 @@ def genera_report():
         cursor.execute("""
         SELECT
             dipendenti.autorizzato,
-            ditte.autorizzato,
-            ditte.nome AS nome_ditta,
-            dipendenti.nome AS nome_dipendente, 
+            ditte.blocca_accesso,
+            ditte.nome,
+            dipendenti.nome,
             dipendenti.cognome,  
             dipendenti.is_badge_already_emesso, 
-            dipendenti.note,
-            dipendenti.id
+            dipendenti.note
         FROM 
             dipendenti
         JOIN 
@@ -711,14 +710,27 @@ def genera_report():
         ON 
             dipendenti.ditta_id = ditte.id
         ORDER BY
-            dipendenti.cognome ASC
+            ditte.nome ASC
         """)
 
         return fredbconn.fetch_generator(cursor)
     
     custom_data = []
 
-    
+    for dipendente in fetch_dipendenti():
+
+        if ( (not dipendente[0]) or dipendente[1] ):
+            continue
+
+        custom_data.append(
+            (
+                dipendente[2], 
+                dipendente[3],
+                dipendente[4],
+                dipendente[5],
+                dipendente[6]
+            )
+        )
 
     todays_local_date = datetime.now().strftime("%d-%m-%Y")
 
