@@ -727,7 +727,7 @@ def genera_report():
                 dipendente[2], 
                 dipendente[3],
                 dipendente[4],
-                dipendente[5],
+                "Sì" if dipendente[5] else "No",
                 dipendente[6]
             )
         )
