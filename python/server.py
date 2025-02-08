@@ -689,13 +689,36 @@ def logout():
 
 
 @app.route('/genera-report')
+@fredauth.authorized("user")
 def genera_report():
 
-    custom_data = [
-        ["Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso", "Supercalifragilistichespiralidoso"],
-        ["Company B", "Jane", "Smith", "67890", "Another note"],
-        # You can add as many rows as needed.
-    ]
+    @fredbconn.connected_to_database
+    def fetch_dipendenti(cursor):
+        cursor.execute("""
+        SELECT
+            dipendenti.autorizzato,
+            ditte.autorizzato,
+            ditte.nome AS nome_ditta,
+            dipendenti.nome AS nome_dipendente, 
+            dipendenti.cognome,  
+            dipendenti.is_badge_already_emesso, 
+            dipendenti.note,
+            dipendenti.id
+        FROM 
+            dipendenti
+        JOIN 
+            ditte
+        ON 
+            dipendenti.ditta_id = ditte.id
+        ORDER BY
+            dipendenti.cognome ASC
+        """)
+
+        return fredbconn.fetch_generator(cursor)
+    
+    custom_data = []
+
+    
 
     todays_local_date = datetime.now().strftime("%d-%m-%Y")
 

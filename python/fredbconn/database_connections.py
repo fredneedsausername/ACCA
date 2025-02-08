@@ -83,3 +83,12 @@ def connected_to_database(fn):
             conn.close()
             return ret
     return ret_func
+
+
+def fetch_generator(cursor):
+    """Yields rows one by one from a cursor."""
+    while True:
+        row = cursor.fetchone()
+        if row is None:
+            break
+        yield row
