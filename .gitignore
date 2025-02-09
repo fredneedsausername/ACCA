@@ -175,3 +175,6 @@ passwords.py
 
 # Ignore all CSV files
 *.csv
+
+# Ignore start batch script
+*.bat
