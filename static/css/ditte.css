@@ -57,7 +57,7 @@ tbody tr:hover {
     padding: 15px 30px;
     font-size: 18px;
     font-weight: bold;
-    top: 8%;
+    top: 10%;
     right: 20px;
     transform: translateY(-50%);
     padding: 10px 20px;
@@ -214,7 +214,7 @@ tbody tr:hover {
     width: 230px;
     padding: 10px;
     position: fixed;
-    top: 10.5%;
+    top: 12.5%;
     right: 200px;
     display: none;
 }
@@ -253,7 +253,7 @@ tbody tr:hover {
     margin: 0 10px;
     font-size: 18px;
     font-weight: bold;
-    top: 8%;
+    top: 10%;
     right: 193px;
     transform: translateY(-50%);
     padding: 10px 20px;
@@ -280,7 +280,7 @@ tbody tr:hover {
 
 .cerca-ditta-dropdown-button {
     position: fixed;
-    top: 8%;
+    top: 10%;
     right: 193px;
     transform: translateY(-50%);
 
@@ -310,7 +310,7 @@ tbody tr:hover {
      * The button is around 40px tall, so we add ~40px offset
      * after reversing the translateY(-50%) from the button.
      */
-    top: 10.5%; 
+    top: 12.5%; 
     right: 200px;
 
     display: none;    /* Hidden by default; toggled by JS */
