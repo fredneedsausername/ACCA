@@ -21,6 +21,11 @@ from datetime import datetime
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
 
+class NoDittaSelectedException(Exception):
+    """Exception raised when no ditta (entity) is selected."""
+    pass
+
+
 class Dipendente:
 
     def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, autorizzato: int, note: str):
@@ -36,16 +41,19 @@ class Dipendente:
         """Transforms the request form into a Dipendente object
 
         Raises:
-            BadRequest: either "nome", "cognome", "ditta_name" based on what field is missing
+            NoDittaSelectedException: no ditta was selected in the form for the creation of the dipendente.
 
         Returns:
             Dipendente: an object of type Dipendente
         """
+
+        ditta_name = request.form.get("ditta")
+        if ditta_name == '':
+            raise NoDittaSelectedException
+
         nome = request.form.get("nome")
 
         cognome = request.form.get("cognome")
-
-        ditta_name = request.form.get("ditta")
 
         is_badge_already_emesso = request.form.get("is_badge_already_emesso")
         if is_badge_already_emesso is None: is_badge_already_emesso = 0
@@ -633,16 +641,8 @@ def aggiungi_dipendenti():
     if request.method == "POST":
         try:
             dipendente = Dipendente.from_form()
-        except BadRequest as e:
-            match str(e):
-                case "nome":
-                    field_error = "nome dipendente"
-                case "cognome":
-                    field_error = "cognome dipendente"
-                case "ditta_name":
-                    field_error = "nome ditta"
-
-            flash(f"Non ha inserito il campo {field_error}", "error")
+        except NoDittaSelectedException as e:
+            flash("Selezionare una ditta", "error")
             return redirect("/aggiungi-dipendenti")
         else:
             dipendente.add_to_db()

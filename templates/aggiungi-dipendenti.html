@@ -5,6 +5,10 @@
 <link rel="stylesheet" href="{{ url_for('static', filename = 'css/aggiungi-dipendenti.css')}}">
 {% endblock %}
 
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/aggiungi-dipendenti.js') }}"></script>
+{% endblock %}
+
 {% block body %}
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -26,11 +30,18 @@
         </div>
         <div class="form-group">
             <label for="ditta">Ditta</label>
-            <select id="ditta" name="ditta">
-                {% for ditta in ditte %}
-                <option value="{{ ditta }}">{{ ditta }}</option>
-                {% endfor %}
-            </select>
+            <div class="custom-select">
+                <input type="text" id="selected-ditta" placeholder="Seleziona ditta...">
+                <div class="select-dropdown" id="ditta-dropdown">
+                    <input type="text" id="ditta-search" placeholder="Cerca ditta..." class="ditta-search">
+                    <div class="options-container">
+                        {% for ditta in ditte %}
+                        <div class="option" data-value="{{ ditta }}">{{ ditta }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <input type="hidden" name="ditta" id="ditta-value" value="">
+            </div>
         </div>
         <div class="form-group-checkbox">
             <input type="checkbox" id="badge_emesso" name="is_badge_already_emesso" value="yes">
