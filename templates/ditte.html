@@ -31,11 +31,10 @@
         <tr>
             <td>{{ ditta[1] }}</td> <!-- nome ditta -->
             <td>{{ ditta[2] or ""}}</td> <!-- piva -->
-            <td>{{ ditta[3] or ""}}</td> <!-- scadenza autorizzazione -->
-            <td><input type="checkbox" class="blue-checkbox" {% if ditta[4] == 1 %}checked{% endif %} disabled></td> <!-- accesso bloccato -->
-            <td>{{ ditta[5] or ""}}</td> <!-- referente -->
-            <td>{{ ditta[6] or ""}}</td> <!-- email referente -->
-            <td>{{ ditta[7] or ""}}</td> <!-- telefono referente -->
+            <td><input type="checkbox" class="blue-checkbox" {% if ditta[3] == 1 %}checked{% endif %} disabled></td> <!-- accesso bloccato -->
+            <td>{{ ditta[4] or ""}}</td> <!-- referente -->
+            <td>{{ ditta[5] or ""}}</td> <!-- email referente -->
+            <td>{{ ditta[6] or ""}}</td> <!-- telefono referente -->
             <td class="action-buttons">
                 <form id="form-elimina-ditta" action="/elimina-ditta" method="POST">
                     <input type="hidden" name = "id" value = {{ ditta[0] }}>

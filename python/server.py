@@ -94,7 +94,6 @@ class Ditta:
         ret = []
         ret.append(self.nome)
         ret.append(self.piva)
-        ret.append(self.scadenza_autorizzazione)
         ret.append(self.blocca_accesso)
         ret.append(self.nome_cognome_referente)
         ret.append(self.email_referente)
@@ -111,17 +110,16 @@ class Ditta:
 
         cursor.execute("""
         INSERT INTO
-        ditte(nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
+        ditte(nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
         VALUES
-        (%s, %s, %s, %s, %s, %s, %s)
+        (%s, %s, %s, %s, %s, %s)
         """, self.get_fields())
     
 
-    def __init__(self, nome: str, piva: str, scadenza_autorizzazione: str,
-                 blocca_accesso: int, nome_cognome_referente: str, email_referente: str, telefono_referente: str):
+    def __init__(self, nome: str, piva: str, blocca_accesso: int, nome_cognome_referente: str,
+                 email_referente: str, telefono_referente: str):
         self.nome = nome
         self.piva = piva
-        self.scadenza_autorizzazione = scadenza_autorizzazione
         self.blocca_accesso = blocca_accesso
         self.nome_cognome_referente = nome_cognome_referente
         self.email_referente = email_referente
@@ -138,19 +136,11 @@ class Ditta:
         piva = request.form.get("piva", "")
         if not piva:
             piva = "No"
-        
-        scadenza_autorizzazione = request.form.get("scadenza_autorizzazione", "")
-        if not scadenza_autorizzazione:
-            scadenza_autorizzazione = "No"
 
         blocca_accesso = request.form.get("blocca_accesso")
         if blocca_accesso is None: blocca_accesso = 0
         if blocca_accesso == "yes": blocca_accesso = 1
 
-        scadenza_autorizzazione = request.form.get("scadenza_autorizzazione", "")
-        if not scadenza_autorizzazione:
-            scadenza_autorizzazione = "No"
-        
         nome_cognome_referente = request.form.get("nome_cognome_referente", "")
         if not nome_cognome_referente:
             nome_cognome_referente = "No"
@@ -163,7 +153,7 @@ class Ditta:
         if not telefono_referente:
             telefono_referente = "No"
 
-        return cls(nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
+        return cls(nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
     
 
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
@@ -314,7 +304,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
+                id, nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
             FROM
                 ditte
             WHERE
@@ -335,7 +325,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
+                id, nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
             FROM
                 ditte
             ORDER BY
@@ -386,7 +376,6 @@ def aggiorna_ditta():
                 SELECT 
                     nome,
                     piva,
-                    scadenza_autorizzazione,
                     blocca_accesso,
                     nome_cognome_referente,
                     email_referente,
@@ -405,11 +394,10 @@ def aggiorna_ditta():
             ret = {
                 "nome": ditta_tuple[0],
                 "piva": ditta_tuple[1],
-                "scadenza_autorizzazione": ditta_tuple[2],
-                "blocca_accesso": ditta_tuple[3],
-                "nome_cognome_referente": ditta_tuple[4],
-                "email_referente": ditta_tuple[5],
-                "telefono_referente": ditta_tuple[6]
+                "blocca_accesso": ditta_tuple[2],
+                "nome_cognome_referente": ditta_tuple[3],
+                "email_referente": ditta_tuple[4],
+                "telefono_referente": ditta_tuple[5]
             }
 
             return ret
@@ -427,7 +415,6 @@ def aggiorna_ditta():
 
         nome = request.form.get("nome")
         piva = request.form.get("piva")
-        scadenza_autorizzazione = request.form.get("scadenza_autorizzazione")
         blocca_accesso = (1 if (request.form.get('blocca_accesso') == 'yes') else 0)
         nome_cognome_referente = request.form.get("nome_cognome_referente")
         email_referente = request.form.get("email_referente")
@@ -440,14 +427,13 @@ def aggiorna_ditta():
             UPDATE ditte
             SET nome = %s,
                 piva = %s,
-                scadenza_autorizzazione = %s,
                 blocca_accesso = %s,
                 nome_cognome_referente = %s,
                 email_referente = %s,
                 telefono_referente = %s
                 
             WHERE id = %s
-            """, (nome, piva, scadenza_autorizzazione, blocca_accesso,
+            """, (nome, piva, blocca_accesso,
                   nome_cognome_referente, email_referente, telefono_referente, ditta_id))
 
         update_db()
