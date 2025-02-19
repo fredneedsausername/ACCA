@@ -18,6 +18,7 @@
                 <th class="yellow">DITTA</th>
                 <th class="blue">NOME</th>
                 <th class="blue">COGNOME DIPENDENTE</th>
+                <th class="brown">SCAD. AUT.</th>
                 <th class="brown">BADGE EMESSO</th>
                 <th class="brown">AUTORIZZATO</th>
                 <th class="green">NOTE</th>
@@ -35,6 +36,7 @@
                 <td><input type="checkbox" class="blue-checkbox" {% if dipendente[3] == 1 %}checked{% endif %} disabled></td> <!-- autorizzato -->
                 <td><input type="checkbox" class="blue-checkbox" {% if dipendente[4] == 1 %}checked{% endif %} disabled></td> <!-- badge emesso -->
                 <td>{{ dipendente[5] }}</td> <!-- note -->
+                <td>{{ dipendente[7] }}</td> <!-- scad. autorizzazione -->
                 <td class="action-buttons">
                     <form id="form-elimina-dipendente" action="/elimina-dipendente" method="POST">
                         <button type="submit" class="btn btn-danger">Elimina</button>

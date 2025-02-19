@@ -9,7 +9,7 @@ import fredauth
 from waitress import serve
 import xlsxwriter
 import io
-from datetime import datetime
+from datetime import datetime, date
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
@@ -21,13 +21,15 @@ class NoDittaSelectedException(Exception):
 
 class Dipendente:
 
-    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, autorizzato: int, note: str):
+    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, autorizzato: int, note: str,
+                 scadenza_autorizzazione: date):
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
         self.is_badge_already_emesso = is_badge_already_emesso
         self.autorizzato = autorizzato
         self.note = note
+        self.scadenza_autorizzazione = scadenza_autorizzazione
     
     @classmethod
     def from_form(cls):
@@ -58,11 +60,15 @@ class Dipendente:
 
         note = request.form.get("note")
 
-        return cls(nome, cognome, ditta_name, is_badge_already_emesso, autorizzato, note)
-    
+        scadenza_autorizzazione = request.form.get("scadenza-autorizzazione")
+        
+        if scadenza_autorizzazione:
+            scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
+
+        return cls(nome, cognome, ditta_name, is_badge_already_emesso, autorizzato, note, scadenza_autorizzazione)   
     
     def get_fields(self):
-        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.autorizzato, self.note
+        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.autorizzato, self.note, self.scadenza_autorizzazione
     
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
@@ -82,9 +88,9 @@ class Dipendente:
             return redirect("/aggiungi-dipendenti")
 
         cursor.execute("""
-        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, autorizzato, note)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5]))
+        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, autorizzato, note, scadenza_autorizzazione)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], fields[6]))
 
 
 class Ditta:
@@ -173,7 +179,8 @@ def aggiorna_dipendente():
                     ditta_id,
                     is_badge_already_emesso,
                     autorizzato,
-                    note
+                    note,
+                    scadenza_autorizzazione
                 FROM 
                     dipendenti
                 WHERE 
@@ -191,9 +198,12 @@ def aggiorna_dipendente():
                 "selected_ditta": dipendente_tuple[2],
                 "is_badge_already_emesso": dipendente_tuple[3],
                 "autorizzato": dipendente_tuple[4],
-                "note": dipendente_tuple[5]
+                "note": dipendente_tuple[5],
+                "scadenza_autorizzazione": dipendente_tuple[6]
             }
 
+
+            #TODO if possible, fix this part by adding a generator instead of fetchall
             cursor.execute("""
                 SELECT id, nome
                 FROM ditte
@@ -248,6 +258,10 @@ def aggiorna_dipendente():
         note = request.form.get('note')
         dipendente_id = request.form.get("dipendente_id")
 
+        scadenza_autorizzazione = request.form.get("scadenza-autorizzazione")
+        if scadenza_autorizzazione:
+            scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date() 
+
         @fredbconn.connected_to_database
         def update_db(cursor):
             cursor.execute("""
@@ -257,10 +271,11 @@ def aggiorna_dipendente():
                 ditta_id = %s,
                 is_badge_already_emesso = %s,
                 autorizzato = %s,
-                note = %s
+                note = %s,
+                scadenza_autorizzazione = %s
                 
             WHERE id = %s
-            """, (nome, cognome, ditta, is_badge_already_emesso, autorizzato, note, dipendente_id))
+            """, (nome, cognome, ditta, is_badge_already_emesso, autorizzato, note, dipendente_id, scadenza_autorizzazione))
 
         update_db()
 
@@ -500,6 +515,7 @@ def show_dipendenti():
                     dipendenti.autorizzato,
                     dipendenti.note,
                     dipendenti.id
+                    dipendenti.scadenza_autorizzazione
                 FROM 
                     dipendenti
                 JOIN 
@@ -527,7 +543,8 @@ def show_dipendenti():
                     dipendenti.is_badge_already_emesso, 
                     dipendenti.autorizzato,
                     dipendenti.note,
-                    dipendenti.id
+                    dipendenti.id,
+                    dipendenti.scadenza_autorizzazione
                 FROM 
                     dipendenti
                 JOIN 
@@ -616,7 +633,7 @@ def aggiungi_dipendenti():
         ditte = fetch_ditte()
 
         return render_template("aggiungi-dipendenti.html", ditte = ditte)
-    #TODO testa ognuno di questi messaggi di errore
+    
     if request.method == "POST":
         try:
             dipendente = Dipendente.from_form()
@@ -917,5 +934,5 @@ def genera_report():
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)
