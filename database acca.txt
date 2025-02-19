@@ -1,0 +1,53 @@
+CREATE DATABASE IF NOT EXISTS ACCA
+  CHARACTER SET utf8mb4;
+
+CREATE TABLE IF NOT EXISTS utenti (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(20),
+  password VARCHAR(20),
+  is_admin TINYINT,
+  abilitato TINYINT
+);
+
+CREATE TABLE IF NOT EXISTS ditte (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(80),
+  piva VARCHAR(20),
+  blocca_accesso TINYINT,
+  nome_cognome_referente VARCHAR(60),
+  email_referente VARCHAR(30),
+  telefono_referente VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS dipendenti (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(30),
+  cognome VARCHAR(30),
+  ditta_id INT UNSIGNED,
+  is_badge_already_emesso TINYINT,
+  scadenza_autorizzazione DATE,
+  accesso_bloccato TINYINT,
+  note VARCHAR(100),
+  FOREIGN KEY (ditta_id) REFERENCES ditte(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
+CREATE INDEX indice_nome ON dipendenti (nome);
+CREATE INDEX indice_cognome ON dipendenti (cognome);
+CREATE INDEX indice_ditta ON dipendenti (ditta_id);
+
+INSERT INTO utenti (username, password, is_admin, abilitato)
+VALUES 
+    ('senzaprivilegi', 'pass1', 0, 1),
+    ('admin', 'pass2', 1, 1),
+    ('disabilitato', 'pass3', 0, 0),
+    ('admindisabilitato', 'pass4', 1, 0);
+
+INSERT INTO ditte (nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
+VALUES
+  ('Tech Solutions Ltd', '12345678901', '2024-12-31', 1, 'Mario Rossi', 'mario.rossi@tech.com', '+39 123 4567890'),
+  ('Green Energy Spa', '98765432109', '2023-10-15', 0, 'Laura Bianchi', 'laura.bianchi@green.com', '+39 987 6543210'),
+  ('Food Delight Srl', '45678912345', '2025-06-30', 1, 'Luca Verdi', 'luca.verdi@food.com', '+39 456 7891234'),
+  ('Fashion Trends', '78912345678', NULL, 0, NULL, NULL, NULL),
+  ('Auto Parts Inc', '32165498701', '2024-03-20', 1, 'Sofia Neri', 'sofia.neri@auto.com', '+39 321 6549870');

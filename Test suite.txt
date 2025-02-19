@@ -1,0 +1,12 @@
+Test suite per cambiamenti nuovi post 1.8.2
+
+DITTE:
+    - i campi vengono mostrati correttamente a schermo
+    - accesso bloccato è correttamente mostrato
+    - cambiare accesso bloccato direttamente dal menù ditte funziona sul db
+
+DIPENDENTI:
+    - Scadenza autorizzazione si mostra correttamente
+
+AGGIORNA DIPENDENTI:
+    - (da fare quando funzioneranno di nuovo i menu)
