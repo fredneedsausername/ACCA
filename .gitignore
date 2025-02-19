@@ -178,3 +178,6 @@ passwords.py
 
 # Ignore start batch script
 *.bat
+
+# TODO file
+TODO.txt

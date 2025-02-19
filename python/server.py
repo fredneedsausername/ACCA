@@ -11,13 +11,6 @@ import xlsxwriter
 import io
 from datetime import datetime
 
-#TODO aggiungi messaggio di successo quando elimini dipendente, flash non funziona causa js
-#TODO fai report
-#TODO refactor finale codice
-#TODO aggiungi funzionalità per ricercare per ditta
-#TODO aggiungi funzionalità per ricercare per cognome
-#TODO quando aggiungi un dipendente senza avere una ditta ti dice la ditta selezionata è stata rimossa
-
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
 
