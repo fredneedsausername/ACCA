@@ -22,3 +22,5 @@
 - aggiungi vincoli di dimensioni campi quando aggiungi o aggiorni
 
 - aggiungi date picker per la scadenza autorizzazione dipendente in maniera che si possa direttamente modificare da lì
+
+- Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
