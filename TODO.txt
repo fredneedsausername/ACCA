@@ -1,7 +1,3 @@
-- in dipendente adesso non si chiama più autorizzato ma accesso bloccato:
-    - stai attento alla generazione del report
-    - stai attento alla gui, sono invertiti i due adesso (pure nella test suite)
-
 - tasto veloce per badge emesso:
     - fai che, nel menù dipendenti, puoi toccare i tasti autorizzato e badge emesso
     - in alternativa crea un utente con tre tasti, uno di questi appunto il badge emesso
@@ -14,6 +10,10 @@
     - eventualmente testa dal vivo con usatore di schermo a 4k
 
 - Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
+
+- in dipendente adesso non si chiama più autorizzato ma accesso bloccato:
+    - stai attento alla generazione del report
+    - stai attento alla gui, sono invertiti i due adesso (pure nella test suite)
 
 - Completa test suite
 

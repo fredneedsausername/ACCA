@@ -1,5 +1,6 @@
 Test suite per tutte le versioni, in continuo aggiornamento per testare che i cambiamenti nuovi non abbiano rotto qualcosa
 Legenda:
+
 ✅ passato
 ❌ fallito
 ❓ non verificabile
