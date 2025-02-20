@@ -6,6 +6,7 @@ Initialization:
 """
 
 import pymysql
+import traceback
 from dbutils.pooled_db import PooledDB
 from functools import wraps
 from time import sleep
@@ -78,6 +79,7 @@ def connected_to_database(fn):
                 ret = fn(cursor, *args, **kwargs)
                 conn.commit()
         except Exception as e:
+            traceback.print_exc()
             ret = f"Error: {e}"
         finally:
             conn.close()

@@ -20,7 +20,7 @@
                 <th class="blue">COGNOME DIPENDENTE</th>
                 <th class="brown">SCAD. AUT.</th>
                 <th class="brown">BADGE EMESSO</th>
-                <th class="brown">AUTORIZZATO</th>
+                <th class="brown">ACC. BLOCCATO</th>
                 <th class="green">NOTE</th>
                 <th>AZIONI</th>
             </tr>
@@ -33,7 +33,7 @@
                 <td>{{ dipendente[0] }}</td> <!-- nome ditta -->
                 <td>{{ dipendente[1] }}</td> <!-- nome dipendente -->
                 <td>{{ dipendente[2] }}</td> <!-- cognome -->
-                <td><input type="checkbox" class="blue-checkbox" {% if dipendente[3] == 1 %}checked{% endif %} disabled></td> <!-- autorizzato -->
+                <td><input type="checkbox" class="blue-checkbox" {% if dipendente[3] == 1 %}checked{% endif %} disabled></td> <!-- acc. bloccato -->
                 <td><input type="checkbox" class="blue-checkbox" {% if dipendente[4] == 1 %}checked{% endif %} disabled></td> <!-- badge emesso -->
                 <td>{{ dipendente[5] }}</td> <!-- note -->
                 <td>{{ dipendente[7] }}</td> <!-- scad. autorizzazione -->

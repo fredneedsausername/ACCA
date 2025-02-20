@@ -1,12 +1,13 @@
 - in dipendente adesso non si chiama più autorizzato ma accesso bloccato:
     - stai attento alla generazione del report
-    - cerca tutte le istanze di autorizzato per sostituirle con accesso bloccato
     - stai attento alla gui, sono invertiti i due adesso (pure nella test suite)
 
 - tasto veloce per badge emesso:
     - fai che, nel menù dipendenti, puoi toccare i tasti autorizzato e badge emesso
     - in alternativa crea un utente con tre tasti, uno di questi appunto il badge emesso
     - l'obiettivo è rendere la vita semplice all'operatore che ci deve lavorare e aggiungere agilmente i badge emessi
+
+- date picker di scadenza autorizzazione va stylato
 
 - spostare sopra i tasti cerca per ditta ecc. Perché monitor a 4k (usa teamviewer per testare):
     - passa da un attributo css "top" percentuale a uno in pixel
@@ -18,4 +19,6 @@
 
 - aggiungere bottone annulla accanto a selezionatore di date per scadenza autorizzazione cliente
 
-- aggiungi vincoli di dimensioni campi quando aggiungi o aggiorni<
+- aggiungi vincoli di dimensioni campi quando aggiungi o aggiorni
+
+- aggiungi date picker per la scadenza autorizzazione dipendente in maniera che si possa direttamente modificare da lì

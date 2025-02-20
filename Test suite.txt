@@ -1,12 +1,29 @@
-Test suite per cambiamenti nuovi post 1.8.2
+Test suite per tutte le versioni, in continuo aggiornamento per testare che i cambiamenti nuovi non abbiano rotto qualcosa
+Legenda:
+✅ passato
+❌ fallito
+❓ non verificabile
 
-DITTE:
-    - i campi vengono mostrati correttamente a schermo
-    - accesso bloccato è correttamente mostrato
-    - cambiare accesso bloccato direttamente dal menù ditte funziona sul db
 
-DIPENDENTI:
-    - Scadenza autorizzazione si mostra correttamente
+1) DITTE:
+    1.1) i campi vengono mostrati correttamente a schermo
+    1.2) accesso bloccato è correttamente mostrato
+    1.3) le checkbox si possono cambiare anche dal menù ditte
+    1.4) corretto inserimento della ditta
+    1.5) corretta modifica della ditta
+    1.6) corretta eliminazione della ditta e in cascata dei suoi dipendenti
 
-AGGIORNA DIPENDENTI:
-    - (da fare quando funzioneranno di nuovo i menu)
+2) DIPENDENTI:
+    2.1) Scadenza autorizzazione si mostra correttamente
+    2.2) Corretto inserimento del dipendente
+    2.3) Corretto aggiornamento del dipendente
+    2.4) Le checkbox si possono cambiare anche dal menù dipendenti
+    2.5) Si può modificare correttamente la data dal date picker dei dipendenti
+    2.6) Corretta eliminazione del dipendente
+
+3) INTERFACCIA GRAFICA:
+    3.1) Controllare che i campi con checkbox nella gui non siano invertiti
+
+4) REPORT:
+    4.1) dal report sono esclusi correttamente i dipendenti e le ditte escluse
+

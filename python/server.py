@@ -21,13 +21,13 @@ class NoDittaSelectedException(Exception):
 
 class Dipendente:
 
-    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, autorizzato: int, note: str,
+    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, accesso_bloccato: int, note: str,
                  scadenza_autorizzazione: date):
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
         self.is_badge_already_emesso = is_badge_already_emesso
-        self.autorizzato = autorizzato
+        self.accesso_bloccato = accesso_bloccato
         self.note = note
         self.scadenza_autorizzazione = scadenza_autorizzazione
     
@@ -54,9 +54,9 @@ class Dipendente:
         if is_badge_already_emesso is None: is_badge_already_emesso = 0
         if is_badge_already_emesso == "yes": is_badge_already_emesso = 1
 
-        autorizzato = request.form.get("autorizzato")
-        if autorizzato is None: autorizzato = 0
-        if autorizzato == "yes": autorizzato = 1
+        accesso_bloccato = request.form.get("accesso-bloccato")
+        if accesso_bloccato is None: accesso_bloccato = 0
+        if accesso_bloccato == "yes": accesso_bloccato = 1
 
         note = request.form.get("note")
 
@@ -65,15 +65,18 @@ class Dipendente:
         if scadenza_autorizzazione:
             scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
 
-        return cls(nome, cognome, ditta_name, is_badge_already_emesso, autorizzato, note, scadenza_autorizzazione)   
+        return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione)   
     
     def get_fields(self):
-        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.autorizzato, self.note, self.scadenza_autorizzazione
+        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.accesso_bloccato, self.note, self.scadenza_autorizzazione
     
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
 
         fields = self.get_fields()
+
+        # This to fix bug: no "" allowed in sql syntax
+        scadenza_autorizzazione = fields[6] or None
 
         cursor.execute("""
         SELECT id
@@ -87,11 +90,12 @@ class Dipendente:
             flash("La ditta selezionata è stata rimossa", "error")
             return redirect("/aggiungi-dipendenti")
 
-        cursor.execute("""
-        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, autorizzato, note, scadenza_autorizzazione)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], fields[6]))
+        ditta_id = ditta_id[0]
 
+        cursor.execute("""
+        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], scadenza_autorizzazione))
 
 class Ditta:
 
@@ -178,7 +182,7 @@ def aggiorna_dipendente():
                     cognome,
                     ditta_id,
                     is_badge_already_emesso,
-                    autorizzato,
+                    accesso_bloccato,
                     note,
                     scadenza_autorizzazione
                 FROM 
@@ -197,7 +201,7 @@ def aggiorna_dipendente():
                 "cognome": dipendente_tuple[1],
                 "selected_ditta": dipendente_tuple[2],
                 "is_badge_already_emesso": dipendente_tuple[3],
-                "autorizzato": dipendente_tuple[4],
+                "accesso_bloccato": dipendente_tuple[4],
                 "note": dipendente_tuple[5],
                 "scadenza_autorizzazione": dipendente_tuple[6]
             }
@@ -254,7 +258,7 @@ def aggiorna_dipendente():
         cognome = request.form.get('cognome')
         ditta = request.form.get('ditta')
         is_badge_already_emesso = (1 if (request.form.get('is_badge_already_emesso') == 'yes') else 0)
-        autorizzato = (1 if (request.form.get('autorizzato') == 'yes') else 0)
+        accesso_bloccato = (1 if (request.form.get('accesso_bloccato') == 'yes') else 0)
         note = request.form.get('note')
         dipendente_id = request.form.get("dipendente_id")
 
@@ -270,12 +274,12 @@ def aggiorna_dipendente():
                 cognome = %s,
                 ditta_id = %s,
                 is_badge_already_emesso = %s,
-                autorizzato = %s,
+                accesso_bloccato = %s,
                 note = %s,
                 scadenza_autorizzazione = %s
                 
             WHERE id = %s
-            """, (nome, cognome, ditta, is_badge_already_emesso, autorizzato, note, dipendente_id, scadenza_autorizzazione))
+            """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, note, dipendente_id, scadenza_autorizzazione))
 
         update_db()
 
@@ -512,9 +516,9 @@ def show_dipendenti():
                     dipendenti.nome AS nome_dipendente, 
                     dipendenti.cognome,  
                     dipendenti.is_badge_already_emesso, 
-                    dipendenti.autorizzato,
+                    dipendenti.accesso_bloccato,
                     dipendenti.note,
-                    dipendenti.id
+                    dipendenti.id,
                     dipendenti.scadenza_autorizzazione
                 FROM 
                     dipendenti
@@ -541,10 +545,9 @@ def show_dipendenti():
                     dipendenti.nome AS nome_dipendente, 
                     dipendenti.cognome,  
                     dipendenti.is_badge_already_emesso, 
-                    dipendenti.autorizzato,
+                    dipendenti.accesso_bloccato,
                     dipendenti.note,
-                    dipendenti.id,
-                    dipendenti.scadenza_autorizzazione
+                    dipendenti.id
                 FROM 
                     dipendenti
                 JOIN 
@@ -560,32 +563,6 @@ def show_dipendenti():
                 return cursor.fetchall()
 
             fetch_dipendenti_data = func
-
-        # else:
-        #     @fredbconn.connected_to_database
-        #     def func(cursor):
-        #         cursor.execute("""
-        #         SELECT 
-        #             ditte.nome AS nome_ditta,
-        #             dipendenti.nome AS nome_dipendente, 
-        #             dipendenti.cognome,  
-        #             dipendenti.is_badge_already_emesso, 
-        #             dipendenti.autorizzato,
-        #             dipendenti.note,
-        #             dipendenti.id
-        #         FROM 
-        #             dipendenti
-        #         JOIN 
-        #             ditte
-        #         ON 
-        #             dipendenti.ditta_id = ditte.id
-        #         ORDER BY
-        #             dipendenti.cognome ASC
-        #         """)
-
-        #         return cursor.fetchall()
-            
-        #    fetch_dipendenti_data = func
         
         fetched = None
         
@@ -692,7 +669,7 @@ def genera_report():
     def fetch_dipendenti(cursor):
         cursor.execute("""
         SELECT
-            dipendenti.autorizzato,
+            dipendenti.accesso_bloccato,
             ditte.blocca_accesso,
             ditte.nome,
             dipendenti.nome,
