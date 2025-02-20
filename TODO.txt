@@ -1,3 +1,5 @@
+- Aggiusta la gui, che è completamente corrotta e rende impossibile aggiungere altre features e testare quelle già esistenti
+
 - tasto veloce per badge emesso:
     - fai che, nel menù dipendenti, puoi toccare i tasti autorizzato e badge emesso
     - in alternativa crea un utente con tre tasti, uno di questi appunto il badge emesso
