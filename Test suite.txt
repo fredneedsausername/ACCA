@@ -27,6 +27,7 @@ Legenda:
 
 3) INTERFACCIA GRAFICA:
     3.1) Controllare che i campi con checkbox nella gui non siano invertiti
+    3.2) Spammmando un bottone checkbox, in seguito il valore mostrato a schermo corrisponde con il valore nel db usando il mysql client
 
 4) REPORT:
     4.1) dal report sono esclusi correttamente i dipendenti e le ditte escluse
@@ -35,6 +36,10 @@ Legenda:
 TEST LOG:
 
 Test completo di :
+
+✅ passato
+❌ fallito
+❓ non verificabile
 
 - - - -
 Test completo di f1cc865:

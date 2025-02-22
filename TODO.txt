@@ -1,8 +1,12 @@
-- Aggiusta la gui, che è completamente corrotta e rende impossibile aggiungere altre features e testare quelle già esistenti
-
 - fai che, nel menù dipendenti, ci sia un utente con permesso speciale per toccare il tasto badge emesso
+    - faccio che tutti i bottoni checkbox sono cliccabili, ma per cliccare badge emesso ti dà errore se non sei Malfatti, anzi mostra a schermo
+    "Solo Malfatti può modificare quel valore" e manda indietro al request referrer
+    - il bottone si aggiorna e si vede qual è il valore più recente che ha assunto
+
 
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
+
+- rendi mutithreaded la web application
 
 - scadenza su dipendente e non ditte
 
@@ -12,16 +16,16 @@
 
 - aggiungi bottone badge sospeso
 
-- rendi badge emesso verde invece che blu
-
 - spostare sopra i tasti cerca per ditta ecc. Perché monitor a 4k (usa teamviewer per testare):
     - passa da un attributo css "top" percentuale a uno in pixel
-
-- Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
 
 - in dipendente adesso non si chiama più autorizzato ma accesso bloccato:
     - stai attento alla generazione del report
     - stai attento alla gui, sono invertiti i due adesso (pure nella test suite)
+
+- fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore
+
+- rendi badge emesso verde invece che blu
 
 - Completa test suite
 
@@ -35,6 +39,8 @@
 
 - fixa il port dei dati dell'excel per matchare il nuovo db
 
-- fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore
-
 - rendi esportabile il database
+
+- metti il fredbconn aggiornato nel progetto agenda
+
+- Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
