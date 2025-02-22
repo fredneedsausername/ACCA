@@ -1,15 +1,21 @@
 - Aggiusta la gui, che è completamente corrotta e rende impossibile aggiungere altre features e testare quelle già esistenti
 
-- tasto veloce per badge emesso:
-    - fai che, nel menù dipendenti, puoi toccare i tasti autorizzato e badge emesso
-    - in alternativa crea un utente con tre tasti, uno di questi appunto il badge emesso
-    - l'obiettivo è rendere la vita semplice all'operatore che ci deve lavorare e aggiungere agilmente i badge emessi
+- fai che, nel menù dipendenti, ci sia un utente con permesso speciale per toccare il tasto badge emesso
 
-- date picker di scadenza autorizzazione va stylato
+- date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
+
+- scadenza su dipendente e non ditte
+
+- rimuovi i checkbox dal momento che rendi gli altri cliccabili
+
+- se sono già stati inseriti un dipendente (nome cognome ditta uguali e case insensitive) o una ditta case insensitive e space insensitive allora non re-inserirli
+
+- aggiungi bottone badge sospeso
+
+- rendi badge emesso verde invece che blu
 
 - spostare sopra i tasti cerca per ditta ecc. Perché monitor a 4k (usa teamviewer per testare):
     - passa da un attributo css "top" percentuale a uno in pixel
-    - eventualmente testa dal vivo con usatore di schermo a 4k
 
 - Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
 
@@ -26,3 +32,9 @@
 - aggiungi date picker per la scadenza autorizzazione dipendente in maniera che si possa direttamente modificare da lì
 
 - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
+
+- fixa il port dei dati dell'excel per matchare il nuovo db
+
+- fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore
+
+- rendi esportabile il database

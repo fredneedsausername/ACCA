@@ -39,6 +39,10 @@ Test completo di :
 - - - -
 Test completo di f1cc865:
 
+✅ passato
+❌ fallito
+❓ non verificabile
+
 1) DITTE:
     1.1) i campi vengono mostrati correttamente a schermo ✅
     1.2) accesso bloccato è correttamente mostrato ✅
