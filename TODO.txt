@@ -1,8 +1,13 @@
 - fai che, nel menù dipendenti, ci sia un utente con permesso speciale per toccare il tasto badge emesso
     - faccio che tutti i bottoni checkbox sono cliccabili, ma per cliccare badge emesso ti dà errore se non sei Malfatti, anzi mostra a schermo
-    "Solo Malfatti può modificare quel valore" e manda indietro al request referrer
+        "Solo Malfatti può modificare quel valore" e manda indietro al request referrer
     - il bottone si aggiorna e si vede qual è il valore più recente che ha assunto
+    - fallo per i dipendenti
+    - fallo per le ditte
 
+- non riesco ad aggiornare i dipendenti
+
+- accesso bloccato è disattivato ma me lo mostra come attivo
 
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
 
@@ -44,3 +49,5 @@
 - metti il fredbconn aggiornato nel progetto agenda
 
 - Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
+
+- cambia da app.run a serve

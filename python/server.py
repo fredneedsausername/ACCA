@@ -1,6 +1,6 @@
 # Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.
 
-from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session, send_file
 import passwords
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequest
@@ -913,8 +913,115 @@ def genera_report():
 @app.route('/checkbox-pressed', methods=["POST"])
 @fredauth.authorized("admin")
 def checkbox_pressed():
+
+
+    Fetch Latest State Before Toggling
+
+    Before sending a toggle request, fetch the latest state.
+    If the state has changed since the user last loaded the page, prompt them:
+    "The state has changed since you last viewed it. Do you still want to toggle it?"
+    This prevents users from blindly toggling based on outdated data.
+    - - - - - - - - - - - -
+    Instead of just fetching the latest state before toggling, send the version (or timestamp) of the state along with the toggle request.
+    The backend should then only apply the toggle if the version matches.
+    - - - - - - - -
+    Before sending the toggle request, fetch the latest state and version.
+    Store the version and include it in the toggle request.
+    This provides the user with an up-to-date state before they toggle.
+
+
     # The function takes the info from the button and toggles the corresponding value in the db.
+
+    data = None
+
+    try:
+        # Get JSON data from the request
+        data = request.get_json()
+
+        # Check if data exists
+        # Per proteggersi da attacchi informatici
+        if not data:
+            return jsonify({"error": "No JSON data received"}), 400
+          
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     
+    data_type = data.get("type")
+    data_id = data.get("id")
+    data_clicked = data.get("clicked")
+
+    if not data_type:
+        return jsonify({"error": "Missing required field: 'type'"}), 400
+    if not data_id:
+        return jsonify({"error": "Missing required field: 'id'"}), 400
+    if not data_clicked:
+        return jsonify({"error": "Missing required field: 'clicked'"}), 400
+    
+    match data_type:
+        
+        case "dipendente":
+
+            match data_clicked:
+
+                case "accesso":
+
+                    @fredbconn.connected_to_database
+                    def toggle_dipendente_accesso(cursor, id):
+
+                        cursor.execute("""
+                        SELECT accesso_bloccato
+                        FROM dipendenti
+                        WHERE id = %s
+                        """, (id,))
+
+                        result = cursor.fetchone()
+
+                        if not result:
+                            flash("Il dipendente che voleva modificare è stato eliminato", "error")
+                            return redirect(request.referrer or "/dipendenti")
+                        
+                        accesso_to_be_set = int(not result[0])
+
+                        cursor.execute("""
+                        UPDATE dipendenti
+                        SET accesso_bloccato = %s                
+                        WHERE id = %s
+                        """, (accesso_to_be_set, id))
+
+                        return jsonify({"success": "Everything ok"}), 200
+                    
+                    return toggle_dipendente_accesso(data_id)
+                        
+                case "badge":
+                    @fredbconn.connected_to_database
+                    def toggle_dipendente_badge_emesso(cursor, id):
+
+                        cursor.execute("""
+                        SELECT is_badge_already_emesso
+                        FROM dipendenti
+                        WHERE id = %s
+                        """, (id,))
+
+                        result = cursor.fetchone()
+
+                        if not result:
+                            flash("Il dipendente che voleva modificare è stato eliminato", "error")
+                            return redirect(request.referrer or "/dipendenti")
+                        
+                        badge_emesso_to_be_set = int(not result[0])
+
+                        cursor.execute("""
+                        UPDATE dipendenti
+                        SET is_badge_already_emesso = %s                
+                        WHERE id = %s
+                        """, (badge_emesso_to_be_set, id))
+
+                        return jsonify({"success": "Everything ok"}), 200
+                    
+                    return toggle_dipendente_badge_emesso(data_id)
+
+
+
 
 
 if __name__ == "__main__":

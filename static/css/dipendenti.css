@@ -91,38 +91,13 @@ tbody tr:hover {
     text-align: center;
 }
 
-/* Compact blue checkboxes */
-.blue-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 16px; /* Smaller width */
-    height: 16px; /* Smaller height */
-    border: 2px solid #ccc;
-    border-radius: 3px; /* Slightly smaller border radius */
-    cursor: not-allowed; /* Disable cursor interaction */
-    position: relative;
-    margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
-    vertical-align: middle; /* Align with text */
-  }
-  
-  /* Style the checkbox when checked */
-  .blue-checkbox:checked {
-    background-color: #007bff; /* Blue background */
-    border-color: #007bff; /* Blue border */
-  }
-  
-  /* Add a checkmark using a pseudo-element */
-  .blue-checkbox:checked::after {
-    content: "✔"; /* Checkmark symbol */
-    font-size: 12px; /* Smaller checkmark */
-    color: white; /* White checkmark */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+.checkbox-button {
+    all: unset; /* Remove all default button styles */
+    font-size: 40px; /* Make the emoji bigger */
+    cursor: pointer;
+    transition: transform 0.1s;
+    user-select: none; /* Prevents text selection */
+}
 
 .btn {
     padding: 8px 16px;

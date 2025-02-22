@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dropdown.classList.toggle("show");
     });
 
-    // Handle search submission
+    // Hand le search submission
     function handleSearch() {
         const surname = searchInput.value.trim();
         if (surname) {
@@ -96,4 +96,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+function handleCheckboxClick(button, dipendente_id, clicked) {
+    fetch("/checkbox-pressed", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include", // Sends cookies with request
+        body: JSON.stringify({
+            type: "dipendente",
+            id: dipendente_id,
+            clicked: clicked
+        })
+    })
+    .catch(error => {
+        console.error("Error:", error);
+    });
 
+    if (button.innerHTML.trim() === "✅") {
+        button.innerHTML = "❌";
+    } else {
+        button.innerHTML = "✅";
+    }
+}
