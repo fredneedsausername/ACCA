@@ -28,7 +28,7 @@ def authorized(auth_type):
                     # Will never return None because of previous check
                     if fetch_is_admin()[0] == 0:
                         flash("Il suo account non dispone delle autorizzazioni necessarie per questa operazione", "error")
-                        return redirect(request.referrer)
+                        return redirect(request.referrer or "/")
 
                 if(auth_type == "user"):
                     @fredbconn.connected_to_database
