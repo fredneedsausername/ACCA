@@ -1,6 +1,6 @@
 # Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details
 from functools import wraps
-from flask import flash, redirect, session, render_template, request
+from flask import flash, redirect, session, render_template, request, url_for
 import fredbconn
 
 def authorized(auth_type):
@@ -28,7 +28,7 @@ def authorized(auth_type):
                     # Will never return None because of previous check
                     if fetch_is_admin()[0] == 0:
                         flash("Il suo account non dispone delle autorizzazioni necessarie per questa operazione", "error")
-                        return redirect(request.referrer or "/")
+                        return redirect(request.referrer or url_for("/")) 
 
                 if(auth_type == "user"):
                     @fredbconn.connected_to_database

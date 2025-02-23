@@ -109,6 +109,19 @@ function handleCheckboxClick(button, dipendente_id, clicked) {
             clicked: clicked
         })
     })
+    .then(response => {
+        if (response.redirected) {  
+            // ✅ Force a normal browser redirect (mimics Flask redirect)
+            window.location.href = response.url; 
+        } else {
+            return response.text();  // ✅ Handle cases where no redirect happens
+        }
+    })
+    .then(html => {
+        if (html) {
+            document.body.innerHTML = html;  // ✅ Update page content (fallback)
+        }
+    })
     .catch(error => {
         console.error("Error:", error);
     });

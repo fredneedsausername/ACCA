@@ -994,7 +994,7 @@ def checkbox_pressed():
 
                         if not result:
                             flash("Il dipendente che voleva modificare è stato eliminato", "error")
-                            return redirect(request.referrer or "/dipendenti")
+                            return redirect(request.referrer or url_for("/dipendenti"))
                         
                         badge_emesso_to_be_set = int(not result[0])
 
@@ -1007,10 +1007,6 @@ def checkbox_pressed():
                         return jsonify({"success": "Everything ok"}), 200
                     
                     return toggle_dipendente_badge_emesso(data_id)
-
-
-
-
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)

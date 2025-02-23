@@ -5,6 +5,14 @@
     - fallo per i dipendenti
     - fallo per le ditte
 
+- Se non sei un admin o non sei Malfatti ti dice che il bottone non può essere premuto
+
+- Fai sì che quando clicchi un bottone checkbox e non hai l'autorizzazione ti fa vedere un messaggio flash
+
+- Fai sì che quando sei autorizzato e clicchi un bottone non ti mandi in una pagina strana
+
+- aggiusta dipendent.js la funzione che gestisce il toggle dei checkbox, che non dovrebbe funzionare
+
 per /checkbox_pressed:
 
     Fetch Latest State Before Toggling:
@@ -50,6 +58,8 @@ per /checkbox_pressed:
 
 - rendi badge emesso verde invece che blu
 
+- fai che cerca per ditta si chiude se si clicca fuori
+
 - Completa test suite
 
 - aggiungere bottone annulla accanto a selezionatore di date per scadenza autorizzazione cliente
@@ -69,3 +79,5 @@ per /checkbox_pressed:
 - Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
 
 - cambia da app.run a serve
+
+- Fai che tutti i bottoni checkbox siano cliccabili
