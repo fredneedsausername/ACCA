@@ -925,21 +925,26 @@ def checkbox_pressed():
         # Check if data exists
         # Per proteggersi da attacchi informatici
         if not data:
-            return jsonify({"error": "Non sono stati ricevuti dati JSON"}), 400
+            flash("Non sono stati ricevuti dati JSON", "error")
+            return redirect(request.referrer or url_for("/"))
           
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        flash(str(e), "error")
+        return redirect(request.referrer or url_for("/"))
     
     data_type = data.get("type")
     data_id = data.get("id")
     data_clicked = data.get("clicked")
 
     if not data_type:
-        return jsonify({"error": "Campo richiesto mancante: 'type'"}), 400
+        flash("Campo richiesto mancante: 'type'", "error")
+        return redirect(request.referrer or url_for("/"))
     if not data_id:
-        return jsonify({"error": "Campo richiesto mancante: 'id'"}), 400
+        flash("Campo richiesto mancante: 'id'", "error")
+        return redirect(request.referrer or url_for("/"))
     if not data_clicked:
-        return jsonify({"error": "Campo richiesto mancante: 'clicked'"}), 400
+        flash("Campo richiesto mancante: 'clicked'", "error")
+        return redirect(request.referrer or url_for("/"))
     
     match data_type:
         
@@ -961,7 +966,8 @@ def checkbox_pressed():
                         result = cursor.fetchone()
 
                         if not result:
-                            return jsonify({"error": "Il dipendente che voleva modificare è stato eliminato"}), 400
+                            flash("Il dipendente che voleva modificare è stato eliminato", "error")
+                            return redirect(request.referrer or url_for("/"))
                         
                         accesso_to_be_set = int(not result[0])
 
@@ -978,7 +984,8 @@ def checkbox_pressed():
                 case "badge":
                     
                     if session['user'] !=  "Malfatti":
-                        return jsonify({"error": "Non Malfatti"}), 403
+                        flash("Solo Malfatti può modificare quel campo", "error")
+                        return redirect(request.referrer or url_for("/"))
                     
                     @fredbconn.connected_to_database
                     def toggle_dipendente_badge_emesso(cursor, id):
@@ -993,7 +1000,7 @@ def checkbox_pressed():
 
                         if not result:
                             flash("Il dipendente che voleva modificare è stato eliminato", "error")
-                            return redirect(request.referrer or url_for("/dipendenti"))
+                            return redirect(request.referrer or url_for("/"))
                         
                         badge_emesso_to_be_set = int(not result[0])
 

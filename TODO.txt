@@ -5,12 +5,9 @@
     - fallo per i dipendenti
     - fallo per le ditte
 
-- Se non sei un admin o non sei Malfatti ti dice che il bottone non può essere premuto
-    - Già sei riuscito a fetchare dal server se sei autorizzato, basta aggiornare con javascript invece che mandare un flash message
-
 - Fai sì che quando sei autorizzato e clicchi un bottone non ti mandi in una pagina strana
 
-- aggiusta dipendent.js la funzione che gestisce il toggle dei checkbox, che non dovrebbe funzionare
+- aggiungi crash log
 
 - testa toggle contemporaneo dei checkbox
 

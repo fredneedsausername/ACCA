@@ -110,16 +110,14 @@ function handleCheckboxClick(button, dipendente_id, clicked) {
         })
     })
     .then(response => {
-        if (response.redirected) {  
-            // ✅ Force a normal browser redirect (mimics Flask redirect)
-            window.location.href = response.url; 
-        } else {
-            return response.text();  // ✅ Handle cases where no redirect happens
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("text/html")) {
+            return response.text(); // Only process HTML responses
         }
-    })
-    .then(html => {
-        if (html) {
-            document.body.innerHTML = html;  // ✅ Update page content (fallback)
+        return null; // Ignore non-HTML responses
+    }).then(data => {
+        if (typeof data === "string") {
+            document.body.innerHTML = data; // Display HTML response
         }
     })
     .catch(error => {
