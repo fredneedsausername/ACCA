@@ -925,7 +925,7 @@ def checkbox_pressed():
         # Check if data exists
         # Per proteggersi da attacchi informatici
         if not data:
-            return jsonify({"error": "No JSON data received"}), 400
+            return jsonify({"error": "Non sono stati ricevuti dati JSON"}), 400
           
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -935,11 +935,11 @@ def checkbox_pressed():
     data_clicked = data.get("clicked")
 
     if not data_type:
-        return jsonify({"error": "Missing required field: 'type'"}), 400
+        return jsonify({"error": "Campo richiesto mancante: 'type'"}), 400
     if not data_id:
-        return jsonify({"error": "Missing required field: 'id'"}), 400
+        return jsonify({"error": "Campo richiesto mancante: 'id'"}), 400
     if not data_clicked:
-        return jsonify({"error": "Missing required field: 'clicked'"}), 400
+        return jsonify({"error": "Campo richiesto mancante: 'clicked'"}), 400
     
     match data_type:
         
@@ -961,8 +961,7 @@ def checkbox_pressed():
                         result = cursor.fetchone()
 
                         if not result:
-                            flash("Il dipendente che voleva modificare è stato eliminato", "error")
-                            return redirect(request.referrer or "/dipendenti")
+                            return jsonify({"error": "Il dipendente che voleva modificare è stato eliminato"}), 400
                         
                         accesso_to_be_set = int(not result[0])
 
@@ -972,14 +971,14 @@ def checkbox_pressed():
                         WHERE id = %s
                         """, (accesso_to_be_set, id))
 
-                        return jsonify({"success": "Everything ok"}), 200
+                        return jsonify({"success": "Tutto ok"}), 200
                     
                     return toggle_dipendente_accesso(data_id)
                         
                 case "badge":
                     
                     if session['user'] !=  "Malfatti":
-                        return jsonify({"error": "Not Malfatti"}), 403
+                        return jsonify({"error": "Non Malfatti"}), 403
                     
                     @fredbconn.connected_to_database
                     def toggle_dipendente_badge_emesso(cursor, id):
@@ -1004,7 +1003,7 @@ def checkbox_pressed():
                         WHERE id = %s
                         """, (badge_emesso_to_be_set, id))
 
-                        return jsonify({"success": "Everything ok"}), 200
+                        return jsonify({"success": "Tutto ok"}), 200
                     
                     return toggle_dipendente_badge_emesso(data_id)
 
