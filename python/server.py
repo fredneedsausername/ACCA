@@ -10,6 +10,10 @@ from waitress import serve
 import xlsxwriter
 import io
 from datetime import datetime, date
+import os
+import sys
+import logging
+import traceback
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
@@ -1016,5 +1020,55 @@ def checkbox_pressed():
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)
+
+    class CrashLogger:
+        def __init__(self, log_dir=None, log_filename=None):
+            # On Windows, use "../crash-logs" as the default log directory.
+            if log_dir is None:
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                log_dir = os.path.join(base_dir, "..", "crash-logs")
+            
+            # Ensure the log directory is an absolute path and exists.
+            self.log_dir = os.path.abspath(log_dir)
+            os.makedirs(self.log_dir, exist_ok=True)
+            
+            # Generate a log filename if not provided.
+            if log_filename is None:
+                timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                log_filename = f"error_{timestamp}.log"
+            
+            self.log_file = os.path.join(self.log_dir, log_filename)
+            
+            # Configure logging
+            logging.basicConfig(
+                filename=self.log_file,
+                level=logging.ERROR,
+                format="%(asctime)s - %(levelname)s - %(message)s",
+            )
+            
+            # Set the global exception hook to log unhandled exceptions.
+            sys.excepthook = self.log_exception
+
+        def log_exception(self, exc_type, exc_value, exc_traceback):
+            """
+            Logs uncaught exceptions with the full traceback.
+            """
+            if issubclass(exc_type, KeyboardInterrupt):
+                sys.__excepthook__(exc_type, exc_value, exc_traceback)
+                return
+            
+            error_message = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+            logging.error("Unhandled Exception:\n" + error_message)
+
+        def log_custom_error(self, message):
+            """
+            Allows manual logging of error messages.
+            """
+            logging.error(message)
+
+    crash_logger = CrashLogger()
+    crash_logger.log_custom_error("ERROR")
+
+    a = 1 / 0
     # serve(app, host='0.0.0.0', port=16000)
     app.run(host="127.0.0.1", port="5000", debug=True)

@@ -7,7 +7,9 @@
 
 - Fai sì che quando sei autorizzato e clicchi un bottone non ti mandi in una pagina strana
 
-- aggiungi crash log
+- aggiungi crash lo
+
+- aggiungi checkbox anche in ditte
 
 - testa toggle contemporaneo dei checkbox
 
@@ -33,8 +35,6 @@ per /checkbox_pressed:
 
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
 
-- rendi mutithreaded la web application
-
 - scadenza su dipendente e non ditte
 
 - rimuovi i checkbox dall'update dal momento che rendi gli altri cliccabili
@@ -53,8 +53,6 @@ per /checkbox_pressed:
     - stai attento alla gui, sono invertiti i due adesso (pure nella test suite)
 
 - fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore
-
-- rendi badge emesso verde invece che blu
 
 - fai che cerca per ditta si chiude se si clicca fuori
 
@@ -79,3 +77,9 @@ per /checkbox_pressed:
 - cambia da app.run a serve
 
 - Fai che tutti i bottoni checkbox siano cliccabili
+
+- rimuovi:
+    - import xlsxwriter
+    - import io
+
+    se rimuovi la generazione del report, visto che sono import necessari solo a quello
