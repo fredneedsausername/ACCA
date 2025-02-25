@@ -1,6 +1,8 @@
 CREATE DATABASE IF NOT EXISTS ACCA
   CHARACTER SET utf8mb4;
 
+use ACCA;
+
 CREATE TABLE IF NOT EXISTS utenti (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(20),
@@ -15,7 +17,7 @@ CREATE TABLE IF NOT EXISTS ditte (
   piva VARCHAR(20),
   blocca_accesso TINYINT,
   nome_cognome_referente VARCHAR(60),
-  email_referente VARCHAR(30),
+  email_referente VARCHAR(50),
   telefono_referente VARCHAR(20)
 );
 
@@ -37,12 +39,16 @@ CREATE INDEX indice_nome ON dipendenti (nome);
 CREATE INDEX indice_cognome ON dipendenti (cognome);
 CREATE INDEX indice_ditta ON dipendenti (ditta_id);
 
+create user user_potente@localhost identified by [REDATTO];
+GRANT ALL PRIVILEGES ON ACCA.* TO 'user_potente'@'localhost';
+
 INSERT INTO utenti (username, password, is_admin, abilitato)
 VALUES 
     ('senzaprivilegi', 'pass1', 0, 1),
     ('admin', 'pass2', 1, 1),
     ('disabilitato', 'pass3', 0, 0),
-    ('admindisabilitato', 'pass4', 1, 0);
+    ('admindisabilitato', 'pass4', 1, 0),
+    ("Malfatti", "pass5", 1, 1);
 
 INSERT INTO ditte (nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
 VALUES
