@@ -123,6 +123,7 @@ function handleCheckboxClick(buttonElement, entityId, fieldName) {
     // Show loading state
     const originalContent = buttonElement.innerHTML;
     buttonElement.innerHTML = ' ⟳ ';
+    buttonElement.classList.add('rotating');
     buttonElement.disabled = true;
     
     // Send the request to the server
@@ -163,7 +164,8 @@ function handleCheckboxClick(buttonElement, entityId, fieldName) {
         alert('Si è verificato un errore durante l\'aggiornamento. Riprova più tardi.');
     })
     .finally(() => {
-        // Re-enable the button
+        // Re-enable the button and remove rotation
         buttonElement.disabled = false;
+        buttonElement.classList.remove('rotating');
     });
 }

@@ -5,17 +5,9 @@
     - fallo per i dipendenti
     - fallo per le ditte
 
-- Fai sì che quando sei autorizzato e clicchi un bottone non ti mandi in una pagina strana
-
-- aggiungi crash lo
+- aggiungi bottone badge sospeso
 
 - aggiungi checkbox anche in ditte
-
-- testa toggle contemporaneo dei checkbox
-
-per /checkbox_pressed:
-
-    foglio appunti di analista speciale
 
 - non riesco ad aggiornare i dipendenti
 
@@ -28,8 +20,6 @@ per /checkbox_pressed:
 - rimuovi i checkbox dall'update dal momento che rendi gli altri cliccabili
 
 - se sono già stati inseriti un dipendente (nome cognome ditta uguali e case insensitive) o una ditta case insensitive e space insensitive allora non re-inserirli
-
-- aggiungi bottone badge sospeso
 
 - spostare sopra i tasti cerca per ditta ecc. Perché monitor a 4k (usa teamviewer per testare):
     - passa da un attributo css "top" percentuale a uno in pixel

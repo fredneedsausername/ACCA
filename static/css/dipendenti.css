@@ -315,30 +315,22 @@ tbody tr:hover {
     height: 20px;
 }
 
-/* Visual indicators instead of emojis */
-.status-active {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background-color: #4CAF50;
-    border-radius: 50%;
-    vertical-align: middle;
+/* Button styles */
+.checkbox-button {
+    min-width: 40px;
+    min-height: 30px;
+    cursor: pointer;
+    background: none;
+    border: none;
 }
 
-.status-inactive {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    background-color: #F44336;
-    border-radius: 50%;
-    vertical-align: middle;
+.checkbox-button:disabled {
+    cursor: wait;
 }
 
-/* Loading indicator animation */
-.loading-indicator {
-    display: inline-block;
+/* Rotation animation for loading indicator */
+.rotating {
     animation: spin 1s linear infinite;
-    font-size: 16px;
 }
 
 @keyframes spin {
