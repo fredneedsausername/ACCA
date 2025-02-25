@@ -15,19 +15,7 @@
 
 per /checkbox_pressed:
 
-    Fetch Latest State Before Toggling:
-
-        Before sending a toggle request, fetch the latest state.
-        If the state has changed since the user last loaded the page, prompt them:
-        "The state has changed since you last viewed it. Do you still want to toggle it?"
-        This prevents users from blindly toggling based on outdated data.
-        - - - - - - - - - - - -
-        Instead of just fetching the latest state before toggling, send the version (or timestamp) of the state along with the toggle request.
-        The backend should then only apply the toggle if the version matches.
-        - - - - - - - -
-        Before sending the toggle request, fetch the latest state and version.
-        Store the version and include it in the toggle request.
-        This provides the user with an up-to-date state before they toggle.    
+    foglio appunti di analista speciale
 
 - non riesco ad aggiornare i dipendenti
 

@@ -917,9 +917,10 @@ def genera_report():
 @app.route('/checkbox-pressed', methods=["POST"])
 @fredauth.authorized("admin")
 def checkbox_pressed():
-
-    # The function takes the info from the button and toggles the corresponding value in the db.
-
+    """
+    Endpoint to handle checkbox state changes for different entity types.
+    Takes JSON data containing entity type, ID, and the new state value.
+    """
     data = None
 
     try:
@@ -936,31 +937,42 @@ def checkbox_pressed():
         flash(str(e), "error")
         return redirect(request.referrer or url_for("/"))
     
+    # Extract required fields
     data_type = data.get("type")
     data_id = data.get("id")
-    data_clicked = data.get("clicked")
+    
+    # Check if 'clicked' exists in the data (not just if it has a value)
+    if "clicked" not in data:
+        flash("Campo richiesto mancante: 'clicked'", "error")
+        return redirect(request.referrer or url_for("/"))
+    
+    # Convert the clicked value to integer (0 or 1)
+    try:
+        # Parse as integer, ensuring it's either 0 or 1
+        data_clicked_value = int(data.get("clicked"))
+        if data_clicked_value not in [0, 1]:
+            raise ValueError("Il valore 'clicked' deve essere 0 o 1")
+    except ValueError as e:
+        flash(str(e), "error")
+        return redirect(request.referrer or url_for("/"))
 
+    # Validate other required fields
     if not data_type:
         flash("Campo richiesto mancante: 'type'", "error")
         return redirect(request.referrer or url_for("/"))
     if not data_id:
         flash("Campo richiesto mancante: 'id'", "error")
         return redirect(request.referrer or url_for("/"))
-    if not data_clicked:
-        flash("Campo richiesto mancante: 'clicked'", "error")
-        return redirect(request.referrer or url_for("/"))
     
+    # Process different entity types
     match data_type:
-        
         case "dipendente":
-
-            match data_clicked:
-
+            # Process different field updates for employee type
+            match data.get("field"):
                 case "accesso":
-
                     @fredbconn.connected_to_database
-                    def toggle_dipendente_accesso(cursor, id):
-
+                    def set_dipendente_accesso(cursor, id, new_value):
+                        # Verify the employee exists
                         cursor.execute("""
                         SELECT accesso_bloccato
                         FROM dipendenti
@@ -973,27 +985,29 @@ def checkbox_pressed():
                             flash("Il dipendente che voleva modificare è stato eliminato", "error")
                             return redirect(request.referrer or url_for("/"))
                         
-                        accesso_to_be_set = int(not result[0])
-
+                        # Set the value directly from the request
                         cursor.execute("""
                         UPDATE dipendenti
                         SET accesso_bloccato = %s                
                         WHERE id = %s
-                        """, (accesso_to_be_set, id))
+                        """, (new_value, id))
 
-                        return jsonify({"success": "Tutto ok"}), 200
+                        return jsonify({
+                            "success": "Accesso aggiornato con successo",
+                            "newState": new_value
+                        }), 200
                     
-                    return toggle_dipendente_accesso(data_id)
+                    return set_dipendente_accesso(data_id, data_clicked_value)
                         
                 case "badge":
-                    
-                    if session['user'] !=  "Malfatti":
+                    # Only Malfatti can modify badge status
+                    if session['user'] != "Malfatti":
                         flash("Solo Malfatti può modificare quel campo", "error")
                         return redirect(request.referrer or url_for("/"))
                     
                     @fredbconn.connected_to_database
-                    def toggle_dipendente_badge_emesso(cursor, id):
-
+                    def set_dipendente_badge_emesso(cursor, id, new_value):
+                        # Verify the employee exists
                         cursor.execute("""
                         SELECT is_badge_already_emesso
                         FROM dipendenti
@@ -1006,17 +1020,27 @@ def checkbox_pressed():
                             flash("Il dipendente che voleva modificare è stato eliminato", "error")
                             return redirect(request.referrer or url_for("/"))
                         
-                        badge_emesso_to_be_set = int(not result[0])
-
+                        # Set the value directly from the request
                         cursor.execute("""
                         UPDATE dipendenti
                         SET is_badge_already_emesso = %s                
                         WHERE id = %s
-                        """, (badge_emesso_to_be_set, id))
+                        """, (new_value, id))
 
-                        return jsonify({"success": "Tutto ok"}), 200
+                        return jsonify({
+                            "success": "Stato del badge aggiornato con successo",
+                            "newState": new_value
+                        }), 200
                     
-                    return toggle_dipendente_badge_emesso(data_id)
+                    return set_dipendente_badge_emesso(data_id, data_clicked_value)
+                
+                case _:
+                    flash("Campo non riconosciuto", "error")
+                    return redirect(request.referrer or url_for("/"))
+        
+        case _:
+            flash("Tipo di entità non riconosciuto", "error")
+            return redirect(request.referrer or url_for("/"))
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)

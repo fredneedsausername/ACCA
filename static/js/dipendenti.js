@@ -96,37 +96,74 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function handleCheckboxClick(button, dipendente_id, clicked) {
-    fetch("/checkbox-pressed", {
-        method: "POST",
+/**
+ * Handle button click for toggling state and send updates to the server
+ * 
+ * @param {HTMLElement} buttonElement - The button element that was clicked
+ * @param {string} entityId - The ID of the entity to update
+ * @param {string} fieldName - The field to update (e.g., "accesso", "badge")
+ */
+function handleCheckboxClick(buttonElement, entityId, fieldName) {
+    // Entity type is always "dipendente" in this context
+    const entityType = "dipendente";
+    
+    // Determine the current state by checking if the button contains a checkmark
+    // We'll invert this to get the new state to set
+    const currentStateHasCheckmark = buttonElement.innerHTML.includes('✅');
+    const newState = currentStateHasCheckmark ? 0 : 1;
+    
+    // Create the request data
+    const requestData = {
+        type: entityType,
+        id: entityId,
+        field: fieldName,
+        clicked: newState
+    };
+    
+    // Show loading state
+    const originalContent = buttonElement.innerHTML;
+    buttonElement.innerHTML = ' ⟳ ';
+    buttonElement.disabled = true;
+    
+    // Send the request to the server
+    fetch('/checkbox-pressed', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
-        credentials: "include", // Sends cookies with request
-        body: JSON.stringify({
-            type: "dipendente",
-            id: dipendente_id,
-            clicked: clicked
-        })
+        body: JSON.stringify(requestData),
+        credentials: 'same-origin'
     })
     .then(response => {
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("text/html")) {
-            return response.text(); // Only process HTML responses
+        if (!response.ok) {
+            throw new Error('Errore nella risposta del server');
         }
-        return null; // Ignore non-HTML responses
-    }).then(data => {
-        if (typeof data === "string") {
-            document.body.innerHTML = data; // Display HTML response
+        return response.json();
+    })
+    .then(data => {
+        // Success handling
+        console.log('Aggiornamento completato:', data.success);
+        
+        // Update the UI based on the new state
+        // Keep using emojis for visual display while using 0/1 internally
+        if (newState === 1) {
+            buttonElement.innerHTML = ' ✅ ';
+        } else {
+            buttonElement.innerHTML = ' ❌ ';
         }
     })
     .catch(error => {
-        console.error("Error:", error);
+        console.error('Errore durante l\'aggiornamento:', error);
+        
+        // On error, revert to original content
+        buttonElement.innerHTML = originalContent;
+        
+        // Show error message to user
+        alert('Si è verificato un errore durante l\'aggiornamento. Riprova più tardi.');
+    })
+    .finally(() => {
+        // Re-enable the button
+        buttonElement.disabled = false;
     });
-
-    if (button.innerHTML.trim() === "✅") {
-        button.innerHTML = "❌";
-    } else {
-        button.innerHTML = "✅";
-    }
 }

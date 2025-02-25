@@ -314,3 +314,34 @@ tbody tr:hover {
     font-size: 16px;
     height: 20px;
 }
+
+/* Visual indicators instead of emojis */
+.status-active {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #4CAF50;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+.status-inactive {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-color: #F44336;
+    border-radius: 50%;
+    vertical-align: middle;
+}
+
+/* Loading indicator animation */
+.loading-indicator {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    font-size: 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
