@@ -7,6 +7,8 @@
 
 - aggiungi bottone badge sospeso
 
+- aggiungi bottone sospeso nel menù creazione dipendente che non sia null
+
 - aggiungi checkbox anche in ditte
 
 - non riesco ad aggiornare i dipendenti
@@ -16,6 +18,8 @@
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
 
 - scadenza su dipendente e non ditte
+
+- rimuovi le checkbox da aggiorna dato che non servono più
 
 - rimuovi i checkbox dall'update dal momento che rendi gli altri cliccabili
 

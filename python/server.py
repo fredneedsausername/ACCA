@@ -499,7 +499,6 @@ def elimina_ditta():
     flash("Ditta eliminata con successo", "success")
     return redirect("/ditte")
 
-
 @app.route("/dipendenti")
 @fredauth.authorized("user")
 def show_dipendenti():
@@ -523,7 +522,8 @@ def show_dipendenti():
                     dipendenti.accesso_bloccato,
                     dipendenti.note,
                     dipendenti.id,
-                    dipendenti.scadenza_autorizzazione
+                    dipendenti.scadenza_autorizzazione,
+                    dipendenti.badge_sospeso
                 FROM 
                     dipendenti
                 JOIN 
@@ -551,7 +551,9 @@ def show_dipendenti():
                     dipendenti.is_badge_already_emesso, 
                     dipendenti.accesso_bloccato,
                     dipendenti.note,
-                    dipendenti.id
+                    dipendenti.id,
+                    dipendenti.scadenza_autorizzazione,
+                    dipendenti.badge_sospeso
                 FROM 
                     dipendenti
                 JOIN 
@@ -921,19 +923,20 @@ def checkbox_pressed():
     Endpoint to handle checkbox state changes for different entity types.
     Takes JSON data containing entity type, ID, and the new state value.
     """
-    data = None
-
     try:
         # Get JSON data from the request
         data = request.get_json()
 
         # Check if data exists
-        # Per proteggersi da attacchi informatici
         if not data:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({"error": "Non sono stati ricevuti dati JSON"}), 400
             flash("Non sono stati ricevuti dati JSON", "error")
             return redirect(request.referrer or url_for("/"))
           
     except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({"error": str(e)}), 400
         flash(str(e), "error")
         return redirect(request.referrer or url_for("/"))
     
@@ -941,27 +944,29 @@ def checkbox_pressed():
     data_type = data.get("type")
     data_id = data.get("id")
     
-    # Check if 'clicked' exists in the data (not just if it has a value)
+    # Check if 'clicked' exists in the data
     if "clicked" not in data:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({"error": "Campo richiesto mancante: 'clicked'"}), 400
         flash("Campo richiesto mancante: 'clicked'", "error")
         return redirect(request.referrer or url_for("/"))
     
     # Convert the clicked value to integer (0 or 1)
     try:
-        # Parse as integer, ensuring it's either 0 or 1
         data_clicked_value = int(data.get("clicked"))
         if data_clicked_value not in [0, 1]:
             raise ValueError("Il valore 'clicked' deve essere 0 o 1")
     except ValueError as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({"error": str(e)}), 400
         flash(str(e), "error")
         return redirect(request.referrer or url_for("/"))
 
     # Validate other required fields
-    if not data_type:
-        flash("Campo richiesto mancante: 'type'", "error")
-        return redirect(request.referrer or url_for("/"))
-    if not data_id:
-        flash("Campo richiesto mancante: 'id'", "error")
+    if not data_type or not data_id:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({"error": "Campi richiesti mancanti"}), 400
+        flash("Campi richiesti mancanti", "error")
         return redirect(request.referrer or url_for("/"))
     
     # Process different entity types
@@ -972,26 +977,15 @@ def checkbox_pressed():
                 case "accesso":
                     @fredbconn.connected_to_database
                     def set_dipendente_accesso(cursor, id, new_value):
-                        # Verify the employee exists
-                        cursor.execute("""
-                        SELECT accesso_bloccato
-                        FROM dipendenti
-                        WHERE id = %s
-                        """, (id,))
-
+                        cursor.execute("SELECT accesso_bloccato FROM dipendenti WHERE id = %s", (id,))
                         result = cursor.fetchone()
-
                         if not result:
+                            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                                return jsonify({"error": "Dipendente non trovato"}), 404
                             flash("Il dipendente che voleva modificare è stato eliminato", "error")
                             return redirect(request.referrer or url_for("/"))
                         
-                        # Set the value directly from the request
-                        cursor.execute("""
-                        UPDATE dipendenti
-                        SET accesso_bloccato = %s                
-                        WHERE id = %s
-                        """, (new_value, id))
-
+                        cursor.execute("UPDATE dipendenti SET accesso_bloccato = %s WHERE id = %s", (new_value, id))
                         return jsonify({
                             "success": "Accesso aggiornato con successo",
                             "newState": new_value
@@ -1002,31 +996,25 @@ def checkbox_pressed():
                 case "badge":
                     # Only Malfatti can modify badge status
                     if session['user'] != "Malfatti":
+                        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                            return jsonify({
+                                "error": "Solo Malfatti può modificare questo campo",
+                                "newState": None
+                            }), 403
                         flash("Solo Malfatti può modificare quel campo", "error")
                         return redirect(request.referrer or url_for("/"))
                     
                     @fredbconn.connected_to_database
                     def set_dipendente_badge_emesso(cursor, id, new_value):
-                        # Verify the employee exists
-                        cursor.execute("""
-                        SELECT is_badge_already_emesso
-                        FROM dipendenti
-                        WHERE id = %s
-                        """, (id,))
-
+                        cursor.execute("SELECT is_badge_already_emesso FROM dipendenti WHERE id = %s", (id,))
                         result = cursor.fetchone()
-
                         if not result:
+                            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                                return jsonify({"error": "Dipendente non trovato"}), 404
                             flash("Il dipendente che voleva modificare è stato eliminato", "error")
                             return redirect(request.referrer or url_for("/"))
                         
-                        # Set the value directly from the request
-                        cursor.execute("""
-                        UPDATE dipendenti
-                        SET is_badge_already_emesso = %s                
-                        WHERE id = %s
-                        """, (new_value, id))
-
+                        cursor.execute("UPDATE dipendenti SET is_badge_already_emesso = %s WHERE id = %s", (new_value, id))
                         return jsonify({
                             "success": "Stato del badge aggiornato con successo",
                             "newState": new_value
@@ -1034,11 +1022,34 @@ def checkbox_pressed():
                     
                     return set_dipendente_badge_emesso(data_id, data_clicked_value)
                 
+                case "badge_sospeso":
+                    @fredbconn.connected_to_database
+                    def set_dipendente_badge_sospeso(cursor, id, new_value):
+                        cursor.execute("SELECT badge_sospeso FROM dipendenti WHERE id = %s", (id,))
+                        result = cursor.fetchone()
+                        if not result:
+                            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                                return jsonify({"error": "Dipendente non trovato"}), 404
+                            flash("Il dipendente che voleva modificare è stato eliminato", "error")
+                            return redirect(request.referrer or url_for("/"))
+                        
+                        cursor.execute("UPDATE dipendenti SET badge_sospeso = %s WHERE id = %s", (new_value, id))
+                        return jsonify({
+                            "success": "Stato di sospensione del badge aggiornato con successo",
+                            "newState": new_value
+                        }), 200
+                    
+                    return set_dipendente_badge_sospeso(data_id, data_clicked_value)
+                
                 case _:
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return jsonify({"error": "Campo non riconosciuto"}), 400
                     flash("Campo non riconosciuto", "error")
                     return redirect(request.referrer or url_for("/"))
         
         case _:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return jsonify({"error": "Tipo di entità non riconosciuto"}), 400
             flash("Tipo di entità non riconosciuto", "error")
             return redirect(request.referrer or url_for("/"))
 

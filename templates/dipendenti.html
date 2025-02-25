@@ -21,6 +21,7 @@
                 <th class="brown">SCAD. AUT.</th>
                 <th class="brown">BADGE EMESSO</th>
                 <th class="brown">ACC. BLOCCATO</th>
+                <th class="brown">BADGE SOSPESO</th>
                 <th class="green">NOTE</th>
                 <th>AZIONI</th>
             </tr>
@@ -39,12 +40,18 @@
                         {% if dipendente[3] == 1 %} ✅ {% else %} ❌ {% endif %}
                     </button>
                 </td> <!-- badge emesso -->
-                
+                                
                 <td>
                     <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ dipendente[6] }}, 'accesso')">
                         {% if dipendente[4] == 1 %} ✅ {% else %} ❌ {% endif %}
                     </button>
-                </td>
+                </td> <!-- accesso -->
+                
+                <td>
+                    <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ dipendente[6] }}, 'badge_sospeso')">
+                        {% if dipendente[8] == 1 %} ✅ {% else %} ❌ {% endif %}
+                    </button>
+                </td> <!-- badge sospeso -->
                 <td>{{ dipendente[5] }}</td> <!-- note -->
                 <td class="action-buttons">
                     <form id="form-elimina-dipendente" action="/elimina-dipendente" method="POST">

@@ -137,17 +137,20 @@ function handleCheckboxClick(buttonElement, entityId, fieldName) {
         credentials: 'same-origin'
     })
     .then(response => {
-        if (!response.ok) {
-            throw new Error('Errore nella risposta del server');
-        }
-        return response.json();
+        // First get the JSON regardless of success/error status
+        return response.json().then(data => {
+            if (!response.ok) {
+                // If request failed, create an error with the server's message
+                throw new Error(data.error || 'Errore nella risposta del server');
+            }
+            return data;
+        });
     })
     .then(data => {
         // Success handling
         console.log('Aggiornamento completato:', data.success);
         
         // Update the UI based on the new state
-        // Keep using emojis for visual display while using 0/1 internally
         if (newState === 1) {
             buttonElement.innerHTML = ' ✅ ';
         } else {
@@ -161,7 +164,7 @@ function handleCheckboxClick(buttonElement, entityId, fieldName) {
         buttonElement.innerHTML = originalContent;
         
         // Show error message to user
-        alert('Si è verificato un errore durante l\'aggiornamento. Riprova più tardi.');
+        alert(error.message);
     })
     .finally(() => {
         // Re-enable the button and remove rotation
