@@ -30,7 +30,11 @@
         <tr>
             <td>{{ ditta[1] }}</td> <!-- nome ditta -->
             <td>{{ ditta[2] or ""}}</td> <!-- piva -->
-            <td><input type="checkbox" class="blue-checkbox" {% if ditta[3] == 1 %}checked{% endif %} disabled></td> <!-- accesso bloccato -->
+            <td>
+                <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ ditta[0] }}, 'blocca_accesso')">
+                    {% if ditta[3] == 1 %} ✅ {% else %} ❌ {% endif %}
+                </button>
+            </td> <!-- accesso bloccato -->
             <td>{{ ditta[4] or ""}}</td> <!-- referente -->
             <td>{{ ditta[5] or ""}}</td> <!-- email referente -->
             <td>{{ ditta[6] or ""}}</td> <!-- telefono referente -->

@@ -1051,6 +1051,34 @@ def checkbox_pressed():
                         return jsonify({"error": "Campo non riconosciuto"}), 400
                     flash("Campo non riconosciuto", "error")
                     return redirect(request.referrer or url_for("/"))
+                
+        case "ditta":
+            # Process different field updates for ditta type
+            match data.get("field"):
+                case "blocca_accesso":
+                    @fredbconn.connected_to_database
+                    def set_ditta_blocca_accesso(cursor, id, new_value):
+                        cursor.execute("SELECT blocca_accesso FROM ditte WHERE id = %s", (id,))
+                        result = cursor.fetchone()
+                        if not result:
+                            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                                return jsonify({"error": "Ditta non trovata"}), 404
+                            flash("La ditta che voleva modificare è stata eliminata", "error")
+                            return redirect(request.referrer or url_for("/"))
+                        
+                        cursor.execute("UPDATE ditte SET blocca_accesso = %s WHERE id = %s", (new_value, id))
+                        return jsonify({
+                            "success": "Stato di accesso aggiornato con successo",
+                            "newState": new_value
+                        }), 200
+                    
+                    return set_ditta_blocca_accesso(data_id, data_clicked_value)
+                    
+                case _:
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return jsonify({"error": "Campo non riconosciuto"}), 400
+                    flash("Campo non riconosciuto", "error")
+                    return redirect(request.referrer or url_for("/"))
         
         case _:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

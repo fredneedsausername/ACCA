@@ -356,3 +356,30 @@ tbody tr:hover {
     outline: 2px solid #007bff; /* Or any color/style you prefer */
     outline-offset: 2px;
   }
+
+  /* Button styles */
+.checkbox-button {
+    all: unset; /* Remove all default button styles */
+    font-size: 40px; /* Make the emoji bigger */
+    cursor: pointer;
+    transition: transform 0.1s;
+    user-select: none; /* Prevents text selection */
+    min-width: 40px;
+    min-height: 30px;
+    background: none;
+    border: none;
+}
+
+.checkbox-button:disabled {
+    cursor: wait;
+}
+
+/* Rotation animation for loading indicator */
+.rotating {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
