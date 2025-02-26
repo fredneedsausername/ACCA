@@ -1,12 +1,14 @@
+- Fai il deploy sul server per mostrarlo sabato
+
+- testare nuovo aggiungi ditte e aggiungi dipendenti
+
 - non riesco ad aggiornare i dipendenti
 
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
 
-- scadenza su dipendente e non ditte
+- gestisci tutta la questione della scadenza
 
-- rimuovi le checkbox da aggiorna dato che non servono più
-
-- rimuovi i checkbox dall'update dal momento che rendi gli altri cliccabili
+- rimuovi le checkbox da aggiorna dipendente e ditta dato che non servono più
 
 - se sono già stati inseriti un dipendente (nome cognome ditta uguali e case insensitive) o una ditta case insensitive e space insensitive allora non re-inserirli
 

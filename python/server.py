@@ -473,13 +473,32 @@ def aggiorna_ditta():
 @app.route("/aggiungi-ditte", methods=["GET", "POST"])
 @fredauth.authorized("admin")
 def aggiungi_ditte():
-
     if request.method == "GET":
         return render_template("aggiungi-ditte.html")
     
     if request.method == "POST":
+        # Extract the company name from the form
+        nome_ditta = request.form.get("nome")
+        
+        # Check if a company with this name already exists 
+        # (case-insensitive and space-insensitive)
+        @fredbconn.connected_to_database
+        def check_duplicate_ditta(cursor):
+            cursor.execute("""
+            SELECT id FROM ditte 
+            WHERE REPLACE(LOWER(nome), ' ', '') = REPLACE(LOWER(%s), ' ', '')
+            """, (nome_ditta,))
+            return cursor.fetchone()
+        
+        # Call the function and check the result
+        duplicate_found = check_duplicate_ditta()
+        
+        if duplicate_found:
+            flash("Ditta già esistente", "error")
+            return redirect("/aggiungi-ditte")
+            
+        # If no duplicate, proceed with company creation
         ditta = Ditta.from_form()
-
         ditta.add_to_db()
         flash("Ditta aggiunta con successo", "success")
         return redirect("/aggiungi-ditte")
@@ -598,9 +617,7 @@ def show_dipendenti():
 @app.route("/aggiungi-dipendenti", methods=["GET", "POST"])
 @fredauth.authorized("admin")
 def aggiungi_dipendenti():
-    
     if request.method == "GET":
-
         @fredbconn.connected_to_database
         def fetch_ditte(cursor):
             cursor.execute("""
@@ -619,18 +636,62 @@ def aggiungi_dipendenti():
             return ret
         
         ditte = fetch_ditte()
-
-        return render_template("aggiungi-dipendenti.html", ditte = ditte)
+        return render_template("aggiungi-dipendenti.html", ditte=ditte)
     
     if request.method == "POST":
         try:
+            # Extract relevant form data
+            nome = request.form.get("nome")
+            cognome = request.form.get("cognome")
+            ditta_name = request.form.get("ditta")
+            
+            if ditta_name == '':
+                raise NoDittaSelectedException
+            
+            # First get the ditta_id    
+            @fredbconn.connected_to_database
+            def get_ditta_id(cursor):
+                cursor.execute("""
+                SELECT id
+                FROM ditte
+                WHERE nome = %s
+                """, (ditta_name,))
+                result = cursor.fetchone()
+                return result[0] if result else None
+                
+            ditta_id = get_ditta_id()
+            
+            if not ditta_id:
+                flash("Ditta non trovata", "error")
+                return redirect("/aggiungi-dipendenti")
+                
+            # Check for duplicate employee in the same company (case-insensitive)
+            @fredbconn.connected_to_database
+            def check_duplicate_dipendente(cursor):
+                cursor.execute("""
+                SELECT id 
+                FROM dipendenti 
+                WHERE LOWER(nome) = LOWER(%s) 
+                AND LOWER(cognome) = LOWER(%s)
+                AND ditta_id = %s
+                """, (nome, cognome, ditta_id))
+                return cursor.fetchone()
+            
+            # Call the function to check for duplicates
+            duplicate_found = check_duplicate_dipendente()
+            
+            if duplicate_found:
+                flash("Dipendente già esistente nella ditta", "error")
+                return redirect("/aggiungi-dipendenti")
+                
+            # If no duplicate, proceed with employee creation
             dipendente = Dipendente.from_form()
-        except NoDittaSelectedException as e:
-            flash("Selezionare una ditta", "error")
-            return redirect("/aggiungi-dipendenti")
-        else:
             dipendente.add_to_db()
             flash("Dipendente aggiunto con successo", "success")
+            return redirect("/aggiungi-dipendenti")
+                
+        except NoDittaSelectedException:
+            flash("Selezionare una ditta", "error")
             return redirect("/aggiungi-dipendenti")
 
 
