@@ -1,7 +1,3 @@
-- aggiungi dipendente quando clicco sul selezionatore di ditte mi fa prima vedere una serie di opzioni che non voglio vedere.
-
-- aggiungi checkbox anche in ditte
-
 - non riesco ad aggiornare i dipendenti
 
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
