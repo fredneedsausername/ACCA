@@ -25,8 +25,8 @@ class NoDittaSelectedException(Exception):
 
 class Dipendente:
 
-    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, accesso_bloccato: int, note: str,
-                 scadenza_autorizzazione: date):
+    def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, 
+             accesso_bloccato: int, note: str, scadenza_autorizzazione: date, badge_sospeso: int):
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
@@ -34,7 +34,8 @@ class Dipendente:
         self.accesso_bloccato = accesso_bloccato
         self.note = note
         self.scadenza_autorizzazione = scadenza_autorizzazione
-    
+        self.badge_sospeso = badge_sospeso
+        
     @classmethod
     def from_form(cls):
         """Transforms the request form into a Dipendente object
@@ -62,6 +63,10 @@ class Dipendente:
         if accesso_bloccato is None: accesso_bloccato = 0
         if accesso_bloccato == "yes": accesso_bloccato = 1
 
+        badge_sospeso = request.form.get("badge-sospeso")
+        if badge_sospeso is None: badge_sospeso = 0
+        if badge_sospeso == "yes": badge_sospeso = 1
+
         note = request.form.get("note")
 
         scadenza_autorizzazione = request.form.get("scadenza-autorizzazione")
@@ -69,11 +74,11 @@ class Dipendente:
         if scadenza_autorizzazione:
             scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
 
-        return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione)   
+        return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso)   
     
     def get_fields(self):
-        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.accesso_bloccato, self.note, self.scadenza_autorizzazione
-    
+        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.accesso_bloccato, self.note, self.scadenza_autorizzazione, self.badge_sospeso
+
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
 
@@ -97,9 +102,9 @@ class Dipendente:
         ditta_id = ditta_id[0]
 
         cursor.execute("""
-        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], scadenza_autorizzazione))
+        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], scadenza_autorizzazione, fields[7]))
 
 class Ditta:
 

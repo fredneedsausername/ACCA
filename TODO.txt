@@ -1,21 +1,12 @@
-- fai che, nel menù dipendenti, ci sia un utente con permesso speciale per toccare il tasto badge emesso
-    - faccio che tutti i bottoni checkbox sono cliccabili, ma per cliccare badge emesso ti dà errore se non sei Malfatti, anzi mostra a schermo
-        "Solo Malfatti può modificare quel valore" e manda indietro al request referrer
-    - il bottone si aggiorna e si vede qual è il valore più recente che ha assunto
-    - fallo per i dipendenti
-    - fallo per le ditte
-
-- aggiungi bottone badge sospeso
-
-- aggiungi bottone sospeso nel menù creazione dipendente che non sia null
+- aggiungi dipendente quando clicco sul selezionatore di ditte mi fa prima vedere una serie di opzioni che non voglio vedere.
 
 - aggiungi checkbox anche in ditte
 
 - non riesco ad aggiornare i dipendenti
 
-- accesso bloccato è disattivato ma me lo mostra come attivo
-
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
+
+- quando elimini dipendente non ti rimanda alla pagina precedente ma alla pagina dipendenti. Controlla se fa così anche per le ditte
 
 - scadenza su dipendente e non ditte
 
@@ -65,3 +56,7 @@
     - import io
 
     se rimuovi la generazione del report, visto che sono import necessari solo a quello
+
+- rimuovi le classi dal server così puoi dire di non aver utilizzato neanche una classe
+
+- cambia nome da aggiorna ditta/dipendente a modifica
