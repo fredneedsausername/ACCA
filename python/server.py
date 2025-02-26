@@ -311,7 +311,7 @@ def elimina_dipendente():
     eliminate_dipendente()
 
     flash("Dipendente eliminato con successo", "success")
-    return redirect("/dipendenti")
+    return redirect(request.referrer or "/dipendenti")
 
 @app.route("/")
 @fredauth.authorized("user")

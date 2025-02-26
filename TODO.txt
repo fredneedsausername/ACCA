@@ -2,8 +2,6 @@
 
 - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
 
-- quando elimini dipendente non ti rimanda alla pagina precedente ma alla pagina dipendenti. Controlla se fa così anche per le ditte
-
 - scadenza su dipendente e non ditte
 
 - rimuovi le checkbox da aggiorna dato che non servono più
