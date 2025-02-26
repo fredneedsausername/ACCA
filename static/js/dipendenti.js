@@ -101,14 +101,20 @@ document.addEventListener("DOMContentLoaded", function () {
  * 
  * @param {HTMLElement} buttonElement - The button element that was clicked
  * @param {string} entityId - The ID of the entity to update
- * @param {string} fieldName - The field to update (e.g., "accesso", "badge")
+ * @param {string} fieldName - The field to update (e.g., "accesso", "badge", "blocca_accesso")
  */
 function handleCheckboxClick(buttonElement, entityId, fieldName) {
-    // Entity type is always "dipendente" in this context
-    const entityType = "dipendente";
+    // Determine the entity type based on the field name or current page context
+    let entityType;
+    
+    // If we're on the dipendenti page or using dipendente-specific fields
+    if (fieldName === "accesso" || fieldName === "badge" || fieldName === "badge_sospeso") {
+        entityType = "dipendente";
+    } else {
+        entityType = "ditta";
+    }
     
     // Determine the current state by checking if the button contains a checkmark
-    // We'll invert this to get the new state to set
     const currentStateHasCheckmark = buttonElement.innerHTML.includes('✅');
     const newState = currentStateHasCheckmark ? 0 : 1;
     
@@ -137,13 +143,29 @@ function handleCheckboxClick(buttonElement, entityId, fieldName) {
         credentials: 'same-origin'
     })
     .then(response => {
-        // First get the JSON regardless of success/error status
-        return response.json().then(data => {
-            if (!response.ok) {
-                // If request failed, create an error with the server's message
-                throw new Error(data.error || 'Errore nella risposta del server');
+        const contentType = response.headers.get('content-type');
+        
+        // If it's JSON, process normally
+        if (contentType && contentType.includes('application/json')) {
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.error || 'Errore nella risposta del server');
+                }
+                return data;
+            });
+        } 
+        
+        // If it's HTML, check for specific error patterns
+        return response.text().then(html => {
+            if (html.includes("Il suo account non dispone delle autorizzazioni necessarie")) {
+                throw new Error('Non hai i permessi necessari per questa operazione');
+            } else if (html.includes("Il suo account è stato disabilitato")) {
+                throw new Error('Account disabilitato. Contatta l\'amministratore');
+            } else if (html.includes("Sessione scaduta") || html.includes("login")) {
+                throw new Error('Sessione scaduta. Effettua nuovamente il login');
+            } else {
+                throw new Error('Operazione non riuscita. Ricarica la pagina e riprova');
             }
-            return data;
         });
     })
     .then(data => {
