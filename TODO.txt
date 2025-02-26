@@ -1,58 +1,51 @@
-- Fai il deploy sul server per mostrarlo sabato
+1° PRIORITA' (Richieste direttamente):
 
-- testare nuovo aggiungi ditte e aggiungi dipendenti
 
-- non riesco ad aggiornare i dipendenti
+    - Fai il deploy sul server per mostrarlo sabato
 
-- date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
+    - non riesco ad aggiornare i dipendenti se aggiorno anche la scadenza autorizzazione
 
-- gestisci tutta la questione della scadenza
+    - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
 
-- rimuovi le checkbox da aggiorna dipendente e ditta dato che non servono più
+    - gestisci tutta la questione della scadenza
 
-- se sono già stati inseriti un dipendente (nome cognome ditta uguali e case insensitive) o una ditta case insensitive e space insensitive allora non re-inserirli
+    - spostare sopra i tasti cerca per ditta ecc. Perché monitor a 4k (usa teamviewer per testare):
+        - passa da un attributo css "top" percentuale a uno in pixel
 
-- spostare sopra i tasti cerca per ditta ecc. Perché monitor a 4k (usa teamviewer per testare):
-    - passa da un attributo css "top" percentuale a uno in pixel
+2° PRIORITA' (Feature e fix necessari):
 
-- fai sì che /checkbox-pressed non ricarichi l'intera pagina se non si dispone delle autorizzazioni admin
+    - cambia da app.run a serve
 
-- in dipendente adesso non si chiama più autorizzato ma accesso bloccato:
-    - stai attento alla generazione del report
-    - stai attento alla gui, sono invertiti i due adesso (pure nella test suite)
+    - aggiungi vincoli di dimensioni campi frontend e backend quando aggiungi o aggiorni
 
-- fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore
+    - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici
 
-- fai che cerca per ditta si chiude se si clicca fuori
+    - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
 
-- Completa test suite
+3° PRIORITA' (ottimizzazione, refactoring, e abbellimento):
 
-- aggiungere bottone annulla accanto a selezionatore di date per scadenza autorizzazione cliente
+    - fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore invece che dire dipendente aggiornato con successo
 
-- aggiungi vincoli di dimensioni campi quando aggiungi o aggiorni
+    - in dipendente adesso non si chiama più autorizzato ma accesso bloccato, stai attento alla generazione del report
 
-- aggiungi date picker per la scadenza autorizzazione dipendente in maniera che si possa direttamente modificare da lì
+    - Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
 
-- Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
+    - aggiungere bottone annulla accanto a selezionatore di date per scadenza autorizzazione cliente
 
-- fixa il port dei dati dell'excel per matchare il nuovo db
+    - rimuovi le checkbox da aggiorna dipendente e ditta dato che non servono più
 
-- rendi esportabile il database
+    - fai che cerca per ditta si chiude se si clicca fuori
 
-- metti il fredbconn aggiornato nel progetto agenda
+    - Fai che tutti i bottoni checkbox siano cliccabili
 
-- Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
+    - rendi obsoleto il menù aggiorna ditta e aggiorna dipendente, rendendo tutto modificabile direttamente dal menù dipendenti e menù ditte come per le checkbox
 
-- cambia da app.run a serve
+    - rimuovi:
+        - import xlsxwriter
+        - import io
 
-- Fai che tutti i bottoni checkbox siano cliccabili
+        se rimuovi la generazione del report, visto che sono import necessari solo a quello
 
-- rimuovi:
-    - import xlsxwriter
-    - import io
+    - rimuovi le classi dal server così puoi dire di non aver utilizzato neanche una classe
 
-    se rimuovi la generazione del report, visto che sono import necessari solo a quello
-
-- rimuovi le classi dal server così puoi dire di non aver utilizzato neanche una classe
-
-- cambia nome da aggiorna ditta/dipendente a modifica
+    - cambia nome da aggiorna ditta/dipendente a modifica
