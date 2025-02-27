@@ -173,7 +173,7 @@ class Ditta:
             telefono_referente = ""
 
         return cls(nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
-    
+
 
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
 @fredauth.authorized("admin")
@@ -193,7 +193,8 @@ def aggiorna_dipendente():
                     is_badge_already_emesso,
                     accesso_bloccato,
                     note,
-                    scadenza_autorizzazione
+                    scadenza_autorizzazione,
+                    badge_sospeso
                 FROM 
                     dipendenti
                 WHERE 
@@ -212,11 +213,11 @@ def aggiorna_dipendente():
                 "is_badge_already_emesso": dipendente_tuple[3],
                 "accesso_bloccato": dipendente_tuple[4],
                 "note": dipendente_tuple[5],
-                "scadenza_autorizzazione": dipendente_tuple[6]
+                "scadenza_autorizzazione": dipendente_tuple[6],
+                "badge_sospeso": dipendente_tuple[7]
             }
 
 
-            #TODO if possible, fix this part by adding a generator instead of fetchall
             cursor.execute("""
                 SELECT id, nome
                 FROM ditte
@@ -252,7 +253,7 @@ def aggiorna_dipendente():
                 ditte
             WHERE
                 ditte.id = %s
-            """, (fetched["selected_ditta"]))
+            """, (fetched["selected_ditta"],))
 
             return cursor.fetchone()
 
@@ -267,7 +268,8 @@ def aggiorna_dipendente():
         cognome = request.form.get('cognome')
         ditta = request.form.get('ditta')
         is_badge_already_emesso = (1 if (request.form.get('is_badge_already_emesso') == 'yes') else 0)
-        accesso_bloccato = (1 if (request.form.get('accesso_bloccato') == 'yes') else 0)
+        accesso_bloccato = (1 if (request.form.get('accesso-bloccato') == 'yes') else 0)
+        badge_sospeso = (1 if (request.form.get('badge-sospeso') == 'yes') else 0)
         note = request.form.get('note')
         dipendente_id = request.form.get("dipendente_id")
 
@@ -285,15 +287,16 @@ def aggiorna_dipendente():
                 is_badge_already_emesso = %s,
                 accesso_bloccato = %s,
                 note = %s,
-                scadenza_autorizzazione = %s
-                
+                scadenza_autorizzazione = %s,
+                badge_sospeso = %s
             WHERE id = %s
-            """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, note, dipendente_id, scadenza_autorizzazione))
+            """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, dipendente_id))
 
         update_db()
 
         flash("Dipendente aggiornato con successo", "success")
         return redirect("/dipendenti")
+
 
 @app.route('/elimina-dipendente', methods=['POST'])
 @fredauth.authorized("admin")

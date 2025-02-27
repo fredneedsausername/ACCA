@@ -1,6 +1,5 @@
 1° PRIORITA' (Richieste direttamente):
 
-
     - Fai il deploy sul server per mostrarlo sabato
 
     - non riesco ad aggiornare i dipendenti se aggiorno anche la scadenza autorizzazione
@@ -13,6 +12,8 @@
         - passa da un attributo css "top" percentuale a uno in pixel
 
 2° PRIORITA' (Feature e fix necessari):
+
+    - migliora i readme di questa e delle tue altre repo
 
     - cambia da app.run a serve
 
