@@ -1,4 +1,9 @@
 # Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details
+"""
+Manually preprocess csv file so that it doesn't have empty lines or lines like ";;;;;;;;;;;;"
+Remove each and every header row, so that it only has data rows
+This script takes the lines available and migrates what data was provided to the db
+"""
 from python import fredbconn
 from python import passwords
 import csv

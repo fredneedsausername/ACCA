@@ -2,7 +2,9 @@
 
     - Fai il deploy sul server per mostrarlo sabato
 
-    - cambia da app.run a serve
+    - aggiorna script per la migrazione dati da excel
+
+    - nascondi report da ui
 
 2° PRIORITA' (Feature e fix necessari):
 
