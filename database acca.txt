@@ -16,15 +16,15 @@ CREATE TABLE IF NOT EXISTS ditte (
   nome VARCHAR(80),
   piva VARCHAR(20),
   blocca_accesso TINYINT,
-  nome_cognome_referente VARCHAR(60),
+  nome_cognome_referente VARCHAR(100),
   email_referente VARCHAR(50),
   telefono_referente VARCHAR(20)
 );
 
 CREATE TABLE IF NOT EXISTS dipendenti (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(30),
-  cognome VARCHAR(30),
+  nome VARCHAR(50),
+  cognome VARCHAR(50),
   ditta_id INT UNSIGNED,
   is_badge_already_emesso TINYINT,
   scadenza_autorizzazione DATE,

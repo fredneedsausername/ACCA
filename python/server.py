@@ -1154,23 +1154,37 @@ if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)
 
     class CrashLogger:
-        def __init__(self, log_dir=None, log_filename=None):
-            # On Windows, use "../crash-logs" as the default log directory.
+        def __init__(self, log_dir=None):
+            # Set default log directory if none provided
             if log_dir is None:
                 base_dir = os.path.dirname(os.path.abspath(__file__))
                 log_dir = os.path.join(base_dir, "..", "crash-logs")
             
-            # Ensure the log directory is an absolute path and exists.
+            # Store the log directory path but don't create it yet
             self.log_dir = os.path.abspath(log_dir)
+            
+            # Set the global exception hook to log unhandled exceptions
+            sys.excepthook = self.log_exception
+            
+            # Flag to track if logging has been initialized
+            self._logging_initialized = False
+
+        def _initialize_logging(self):
+            """
+            Initialize logging only when an exception occurs by creating the log directory
+            and setting up the log file with the current timestamp.
+            """
+            if self._logging_initialized:
+                return
+                
+            # Create log directory if it doesn't exist
             os.makedirs(self.log_dir, exist_ok=True)
-            
-            # Generate a log filename if not provided.
-            if log_filename is None:
-                timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-                log_filename = f"error_{timestamp}.log"
-            
+                
+            # Generate a log filename with current timestamp
+            timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+            log_filename = f"error_{timestamp}.log"
             self.log_file = os.path.join(self.log_dir, log_filename)
-            
+                
             # Configure logging
             logging.basicConfig(
                 filename=self.log_file,
@@ -1178,28 +1192,33 @@ if __name__ == "__main__":
                 format="%(asctime)s - %(levelname)s - %(message)s",
             )
             
-            # Set the global exception hook to log unhandled exceptions.
-            sys.excepthook = self.log_exception
+            self._logging_initialized = True
 
         def log_exception(self, exc_type, exc_value, exc_traceback):
             """
             Logs uncaught exceptions with the full traceback.
+            Only creates the log file when an exception actually occurs.
             """
             if issubclass(exc_type, KeyboardInterrupt):
                 sys.__excepthook__(exc_type, exc_value, exc_traceback)
                 return
             
+            # Initialize logging if this is the first error
+            self._initialize_logging()
+            
             error_message = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
             logging.error("Unhandled Exception:\n" + error_message)
-
-        def log_custom_error(self, message):
-            """
-            Allows manual logging of error messages.
-            """
-            logging.error(message)
+            
+            # Call the original exception hook to maintain standard behavior
+            sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
     crash_logger = CrashLogger()
-    crash_logger.log_custom_error("ERROR")
-    
+
+
+    import time
+    time.sleep(10)
+    dep = 1/0
+
+
     serve(app, host='0.0.0.0', port=16000)
     # app.run(host="127.0.0.1", port="5000", debug=True)

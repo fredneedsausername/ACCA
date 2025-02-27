@@ -1,10 +1,14 @@
 1° PRIORITA' (Richieste direttamente):
 
     - Fai il deploy sul server per mostrarlo sabato
+        - Ricrea database
+        - Popola database
 
     - aggiorna script per la migrazione dati da excel
 
     - nascondi report da ui
+
+    - aggiungi modo per rimuovere data scadenza da aggiorna dipendente
 
 2° PRIORITA' (Feature e fix necessari):
 
@@ -15,6 +19,8 @@
     - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici
 
     - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
+
+    - aggiungi modo per rimuovere data scadenza da crea dipendente per quando se ne è selezionata una ma ci si è sbagliati
 
 3° PRIORITA' (ottimizzazione, refactoring, e abbellimento):
 
