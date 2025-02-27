@@ -41,6 +41,26 @@
     box-sizing: border-box; /* Ensures padding doesn't add extra width */
 }
 
+.form-group input[type="date"] {
+    width: 150px;  /* Ensures full width like other input fields */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #87CEFA;
+    border-radius: 4px;
+    outline-color: #4169E1;
+    box-sizing: border-box; /* Ensures padding doesn't add extra width */
+}
+
+.form-group input[type="date"] {
+    cursor: pointer;
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    color: #4169E1;
+    opacity: 1;
+    cursor: pointer;
+}
+
 .form-group-checkbox {
     display: flex;
     align-items: center;

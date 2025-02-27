@@ -13,6 +13,8 @@
 
 2° PRIORITA' (Feature e fix necessari):
 
+    - Testa il date selector in crea e aggiorna dipendente su firefox (non WebKit/Blink browser)
+
     - migliora i readme di questa e delle tue altre repo
 
     - cambia da app.run a serve
