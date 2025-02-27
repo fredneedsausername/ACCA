@@ -57,7 +57,7 @@ tbody tr:hover {
     padding: 15px 30px;
     font-size: 18px;
     font-weight: bold;
-    top: 10%;
+    top: 91px;
     right: 20px;
     transform: translateY(-50%);
     padding: 10px 20px;
@@ -214,7 +214,7 @@ tbody tr:hover {
     width: 230px;
     padding: 10px;
     position: fixed;
-    top: 12.5%;
+    top: 114px;
     right: 200px;
     display: none;
 }
@@ -253,7 +253,7 @@ tbody tr:hover {
     margin: 0 10px;
     font-size: 18px;
     font-weight: bold;
-    top: 10%;
+    top: 91px;
     right: 193px;
     transform: translateY(-50%);
     padding: 10px 20px;
@@ -280,21 +280,17 @@ tbody tr:hover {
 
 .cerca-ditta-dropdown-button {
     position: fixed;
-    top: 10%;
+    top: 91px;
     right: 193px;
     transform: translateY(-50%);
-
     padding: 10px 20px;
     margin: 0 10px;
-    
     font-size: 18px;
     font-weight: bold;
-    
     background-color: #007bff;
     color: #fff;
     border: none;
     border-radius: 5px;
-    
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
@@ -305,24 +301,16 @@ tbody tr:hover {
 
   .cerca-ditta-dropdown-menu {
     position: fixed;
-    /*
-     * Move it just below the button:
-     * The button is around 40px tall, so we add ~40px offset
-     * after reversing the translateY(-50%) from the button.
-     */
-    top: 12.5%; 
+    top: 114px;
     right: 200px;
-
     display: none;    /* Hidden by default; toggled by JS */
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 6px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
     /* Show up to 5 items before scrolling */
     max-height: 200px;
     overflow-y: auto;
-    
     z-index: 1000;
     width: 190px;
   }

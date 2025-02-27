@@ -2,30 +2,21 @@
 
     - Fai il deploy sul server per mostrarlo sabato
 
-    - non riesco ad aggiornare i dipendenti se aggiorno anche la scadenza autorizzazione
-
-    - date picker di scadenza autorizzazione in aggiungi e aggiorna va reso funzionale e va stylato
-
-    - gestisci tutta la questione della scadenza
-
-    - spostare sopra i tasti cerca per ditta ecc. Perché monitor a 4k (usa teamviewer per testare):
-        - passa da un attributo css "top" percentuale a uno in pixel
+    - cambia da app.run a serve
 
 2° PRIORITA' (Feature e fix necessari):
 
-    - Testa il date selector in crea e aggiorna dipendente su firefox (non WebKit/Blink browser)
-
-    - migliora i readme di questa e delle tue altre repo
-
-    - cambia da app.run a serve
-
     - aggiungi vincoli di dimensioni campi frontend e backend quando aggiungi o aggiorni
+
+    - migliora i readme di questa e delle tue altre repo    
 
     - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici
 
     - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
 
 3° PRIORITA' (ottimizzazione, refactoring, e abbellimento):
+
+    - Testa il date selector in crea e aggiorna dipendente su firefox (non WebKit/Blink browser)
 
     - fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore invece che dire dipendente aggiornato con successo
 

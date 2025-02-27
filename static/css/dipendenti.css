@@ -56,7 +56,7 @@ tbody tr:hover {
     margin: 0 10px;
     font-size: 18px;
     font-weight: bold;
-    top: 10%;
+    top: 91px;
     right: 20px;
     transform: translateY(-50%);
     padding: 10px 20px;
@@ -137,91 +137,77 @@ tbody tr:hover {
     align-items: center;
 }
 
-  .cerca-ditta-dropdown-button {
+.cerca-ditta-dropdown-button {
     position: fixed;
-    top: 10%;
+    top: 91px;
     right: 250px;
     transform: translateY(-50%);
-
     padding: 10px 20px;
     margin: 0 10px;
-    
     font-size: 18px;
     font-weight: bold;
-    
     background-color: #007bff;
     color: #fff;
     border: none;
     border-radius: 5px;
-    
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
+}
 
-  .cerca-ditta-dropdown-button:hover {
+.cerca-ditta-dropdown-button:hover {
     background-color: #0056b3;
-  }
+}
 
-  .cerca-ditta-dropdown-menu {
+.cerca-ditta-dropdown-menu {
     position: fixed;
-    /*
-     * Move it just below the button:
-     * The button is around 40px tall, so we add ~40px offset
-     * after reversing the translateY(-50%) from the button.
-     */
-    top: 12.5%; 
+    top: 114px;
     right: 260px;
-
     display: none;    /* Hidden by default; toggled by JS */
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 6px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-
     /* Show up to 5 items before scrolling */
     max-height: 200px;
     overflow-y: auto;
-    
     z-index: 1000;
     width: 195px;
-  }
+}
 
-  /* When "show" class is present, display the dropdown */
-  .cerca-ditta-dropdown-menu.show {
+/* When "show" class is present, display the dropdown */
+.cerca-ditta-dropdown-menu.show {
     display: block;
-  }
+}
 
-  /* Menu items */
-  .cerca-ditta-dropdown-menu button {
+/* Menu items */
+.cerca-ditta-dropdown-menu button {
     display: block;
     width: 100%;                /* Make the button take up the entire width */
     text-align: left;           /* Left-align the text, similar to link style */
-    
     font-size: 16px;
     color: #333;
     background: none;           /* Remove default button background */
     border: none;               /* Remove default button border */
     padding: 10px 16px;
-    
     cursor: pointer;
-  }
-  
-  .cerca-ditta-dropdown-menu button:hover {
+}
+
+.cerca-ditta-dropdown-menu button:hover {
     background-color: #f0f0f0;  /* Same hover effect as your links */
-  }
-  
-  /* Optional: give a little focus style too */
-  .cerca-ditta-dropdown-menu button:focus {
+}
+
+/* Optional: give a little focus style too */
+.cerca-ditta-dropdown-menu button:focus {
     outline: 2px solid #007bff; /* Or any color/style you prefer */
     outline-offset: 2px;
-  }
+}
 
 .fixed-button-class {
     position: fixed;
     margin: 0 10px;
     font-size: 18px;
     font-weight: bold;
-    top: 10%;
+    top: 91px;
     right: 457px;
     transform: translateY(-50%);
     padding: 10px 20px;
@@ -272,7 +258,7 @@ tbody tr:hover {
     width: 220px;
     padding: 10px;
     position: fixed;
-    top: 12.5%;
+    top: 114px;
     right: 465px;
     display: none;
 }
