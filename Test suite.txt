@@ -27,7 +27,6 @@ Legenda:
 
 3) INTERFACCIA GRAFICA:
     3.1) Controllare che i campi con checkbox nella gui non siano invertiti
-    3.2) Spammmando un bottone checkbox, in seguito il valore mostrato a schermo corrisponde con il valore nel db usando il mysql client
 
 4) REPORT:
     4.1) dal report sono esclusi correttamente i dipendenti e le ditte escluse
@@ -40,6 +39,31 @@ Test completo di :
 ✅ passato
 ❌ fallito
 ❓ non verificabile
+
+1) DITTE:
+    1.1) i campi vengono mostrati correttamente a schermo ✅
+    1.2) accesso bloccato è correttamente mostrato ✅
+    1.3) le checkbox si possono cambiare anche dal menù ditte ✅
+    1.4) corretto inserimento della ditta ✅
+    1.5) corretta modifica della ditta ✅
+    1.6) corretta eliminazione della ditta e in cascata dei suoi dipendenti ✅
+
+2) DIPENDENTI:
+    2.1) Scadenza autorizzazione si mostra correttamente ✅
+    2.2) Corretto inserimento del dipendente ✅
+    2.3) Corretto aggiornamento del dipendente ✅
+    2.4) Le checkbox si possono cambiare anche dal menù dipendenti ✅
+    2.5) Si può modificare correttamente la data dal date picker dei dipendenti ✅
+    2.6) Corretta eliminazione del dipendente ✅
+    2.7) I campi vengono mostrati correttamente nel menù della modifica del dipendente ✅
+    2.8) Si mostra correttamente la data scadenza autorizzazione nel menù dipendenti ✅
+    2.9) Si mostra correttamente il menù dipendenti ✅
+
+3) INTERFACCIA GRAFICA:
+    3.1) Controllare che i campi con checkbox nella gui non siano invertiti ✅
+
+4) REPORT:
+    4.1) dal report sono esclusi correttamente i dipendenti e le ditte escluse ❓(feature temporaneamente disabilitata)
 
 - - - -
 Test completo di f1cc865:

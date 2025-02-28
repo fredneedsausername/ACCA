@@ -1,5 +1,7 @@
 1° PRIORITA' (Richieste direttamente):
 
+    - aggiungi modo per rimuovere data scadenza da crea dipendente per quando se ne è selezionata una ma ci si è sbagliati
+
     - Fai il deploy sul server per mostrarlo sabato
         - Elimina database da ambiente di development locale
         - Elima database da server deploy
@@ -11,17 +13,17 @@
 
 2° PRIORITA' (Feature e fix necessari):
 
+    - abbellisci la data scadenza dipendente invece che 2024-01-19 fai 19 gen 2024
+
     - crea libreria per crash log, e aggiornala pure sul tuo sito
 
     - aggiungi vincoli di dimensioni campi frontend e backend quando aggiungi o aggiorni
 
     - migliora i readme di questa e delle tue altre repo    
 
-    - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici
+    - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici. Ricorda di esportare anche l'id dei dipendenti, dato che lo usano internamente
 
     - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
-
-    - aggiungi modo per rimuovere data scadenza da crea dipendente per quando se ne è selezionata una ma ci si è sbagliati
 
 3° PRIORITA' (ottimizzazione, refactoring, e abbellimento):
 
