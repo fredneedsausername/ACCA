@@ -1,7 +1,5 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - aggiungi modo per rimuovere data scadenza da aggiorna dipendente
-
     - Fai il deploy sul server per mostrarlo sabato
         - Elimina database da ambiente di development locale
         - Elima database da server deploy
