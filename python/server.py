@@ -267,11 +267,30 @@ def aggiorna_dipendente():
         nome = request.form.get('nome')
         cognome = request.form.get('cognome')
         ditta = request.form.get('ditta')
-        is_badge_already_emesso = (1 if (request.form.get('is_badge_already_emesso') == 'yes') else 0)
-        accesso_bloccato = (1 if (request.form.get('accesso-bloccato') == 'yes') else 0)
-        badge_sospeso = (1 if (request.form.get('badge-sospeso') == 'yes') else 0)
         note = request.form.get('note')
         dipendente_id = request.form.get("dipendente_id")
+        
+        # Get existing values for the fields we're no longer updating through the form
+        @fredbconn.connected_to_database
+        def get_existing_values(cursor):
+            cursor.execute("""
+            SELECT is_badge_already_emesso, accesso_bloccato, badge_sospeso
+            FROM dipendenti
+            WHERE id = %s
+            """, (dipendente_id,))
+            return cursor.fetchone()
+        
+        existing_values = get_existing_values()
+        
+        # Check if employee still exists
+        if existing_values is None:
+            flash("Il dipendente che stavi modificando è stato eliminato", "error")
+            return redirect("/dipendenti")
+        
+        # Now safely access the values
+        is_badge_already_emesso = existing_values[0] 
+        accesso_bloccato = existing_values[1]
+        badge_sospeso = existing_values[2]
 
         # Initialize scadenza_autorizzazione as None (will be NULL in database)
         scadenza_autorizzazione = None
@@ -450,15 +469,32 @@ def aggiorna_ditta():
         return render_template("aggiorna-ditta.html", **fetched)
 
     if request.method == "POST":
-
-
         nome = request.form.get("nome")
         piva = request.form.get("piva")
-        blocca_accesso = (1 if (request.form.get('blocca_accesso') == 'yes') else 0)
         nome_cognome_referente = request.form.get("nome_cognome_referente")
         email_referente = request.form.get("email_referente")
         telefono_referente = request.form.get("telefono_referente")
         ditta_id = request.form.get("ditta_id")
+
+        # Get existing value for blocca_accesso
+        @fredbconn.connected_to_database
+        def get_existing_values(cursor):
+            cursor.execute("""
+            SELECT blocca_accesso
+            FROM ditte
+            WHERE id = %s
+            """, (ditta_id,))
+            return cursor.fetchone()
+        
+        existing_values = get_existing_values()
+        
+        # Check if company still exists
+        if existing_values is None:
+            flash("La ditta che stavi modificando è stata eliminata", "error")
+            return redirect("/ditte")
+        
+        # Now safely access the value
+        blocca_accesso = existing_values[0]
 
         @fredbconn.connected_to_database
         def update_db(cursor):
@@ -473,7 +509,7 @@ def aggiorna_ditta():
                 
             WHERE id = %s
             """, (nome, piva, blocca_accesso,
-                  nome_cognome_referente, email_referente, telefono_referente, ditta_id))
+                nome_cognome_referente, email_referente, telefono_referente, ditta_id))
 
         update_db()
 
@@ -1072,13 +1108,13 @@ def checkbox_pressed():
                         
                 case "badge":
                     # Only Malfatti can modify badge status
-                    if session['user'] != "Malfatti":
+                    if (session['user'] != "Malfatti") or (session['user'] != "Inserire Altro utente qui"):
                         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                             return jsonify({
-                                "error": "Solo Malfatti può modificare questo campo",
+                                "error": "Non hai i permessi per modificare questo campo",
                                 "newState": None
                             }), 403
-                        flash("Solo Malfatti può modificare quel campo", "error")
+                        flash("Non hai i permessi per modificare questo campo", "error")
                         return redirect(request.referrer or url_for("/"))
                     
                     @fredbconn.connected_to_database
@@ -1157,6 +1193,7 @@ def checkbox_pressed():
                 return jsonify({"error": "Tipo di entità non riconosciuto"}), 400
             flash("Tipo di entità non riconosciuto", "error")
             return redirect(request.referrer or url_for("/"))
+
 
 if __name__ == "__main__":
     fredbconn.initialize_database(*passwords.database_config)

@@ -1,19 +1,8 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - aggiungi modo per rimuovere data scadenza da crea dipendente per quando se ne è selezionata una ma ci si è sbagliati
-
-    - Fai il deploy sul server per mostrarlo sabato
-        - Elimina database da ambiente di development locale
-        - Elima database da server deploy
-        - Ricrea database su ambiente di development locale
-        - Ricrea database su server deploy
-        - Popola database con script di migrazione dati su server deploy
-        - fai ultimo push del codice da ambiente di development locale
-        - fai ultimo pull da server deploy
-
 2° PRIORITA' (Feature e fix necessari):
 
-    - abbellisci la data scadenza dipendente invece che 2024-01-19 fai 19 gen 2024
+    - Migliora la architettura in modo che ci sia una autorizzazione in grado di premere badge emesso e una che no
 
     - crea libreria per crash log, e aggiornala pure sul tuo sito
 
@@ -23,9 +12,9 @@
 
     - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici. Ricorda di esportare anche l'id dei dipendenti, dato che lo usano internamente
 
-    - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
-
 3° PRIORITA' (ottimizzazione, refactoring, e abbellimento):
+
+    - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
 
     - Annulla modifiche in dipendente e ditta ti rimandano alm menù dipendenti o ditte al quale eri prima, invece di /dipendenti e /ditte generici
 
@@ -34,6 +23,8 @@
     - fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore invece che dire dipendente aggiornato con successo
 
     - in dipendente adesso non si chiama più autorizzato ma accesso bloccato, stai attento alla generazione del report
+
+    - abbellisci la data scadenza dipendente invece che 2024-01-19 fai 19 gen 2024
 
     - Si è rotto il report, aggiustalo se non si aggiusta già aggiustando le altre cose
 

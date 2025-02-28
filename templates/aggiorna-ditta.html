@@ -36,11 +36,6 @@
             <label for="telefono_referente">Telefono Referente</label>
             <input type="text" id="telefono_referente" name="telefono_referente" value="{{ telefono_referente or ''}}">
         </div>
-        <div class="form-group-checkbox">
-            <input type="checkbox" id="blocca_accesso" name="blocca_accesso" value="yes"
-            {% if blocca_accesso %}checked{% endif %}>
-            <label for="blocca_accesso">Blocca Accesso</label>
-        </div>
         <input type="hidden" name="ditta_id" value="{{ ditta_id }}">
 
         <div class="button-container">

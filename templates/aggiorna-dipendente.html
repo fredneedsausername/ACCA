@@ -51,21 +51,6 @@
                 <input type="hidden" name="ditta" id="ditta-value" value="{{ selected_ditta }}">
             </div>
         </div>
-        <div class="form-group-checkbox">
-            <input type="checkbox" id="badge_emesso" name="is_badge_already_emesso" value="yes"
-                {% if is_badge_already_emesso %}checked{% endif %}>
-            <label for="badge_emesso">Badge Emesso</label>
-        </div>
-        <div class="form-group-checkbox">
-            <input type="checkbox" id="accesso-bloccato" name="accesso-bloccato" value="yes"
-                {% if accesso_bloccato %}checked{% endif %}>
-            <label for="accesso-bloccato">Accesso bloccato</label>
-        </div>
-        <div class="form-group-checkbox">
-            <input type="checkbox" id="badge-sospeso" name="badge-sospeso" value="yes"
-                {% if badge_sospeso %}checked{% endif %}>
-            <label for="badge-sospeso">Badge Sospeso</label>
-        </div>
         <div class="form-group">
             <label for="note">Note</label>
             <input type="text" id="note" name="note" value="{{ note }}">
