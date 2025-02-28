@@ -159,3 +159,33 @@ body {
 .option:hover {
     background-color: #f0f8ff;
 }
+
+.date-container {
+    margin-bottom: 15px;
+}
+
+.date-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cancel-date-button {
+    padding: 10px; /* Match date input padding */
+    background-color: white; /* White background */
+    color: #f76a6a; /* Red text color */
+    border: 1px solid #f76a6a; /* Red border */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px; /* Match date input font size */
+    white-space: nowrap;
+    height: 42px; /* Match the height of the date picker */
+    box-sizing: border-box; /* Ensure padding doesn't affect overall size */
+    transition: opacity 0.5s ease; /* Smooth opacity transition for fading */
+}
+
+.cancel-date-button:hover {
+    background-color: #fff8f8; /* Very light red background on hover */
+    color: #e74c3c; /* Darker red text on hover */
+    border-color: #e74c3c; /* Darker red border on hover */
+}

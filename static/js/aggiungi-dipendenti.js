@@ -32,4 +32,27 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdown.style.display = 'none';
         }
     });
+
+    // Date cancellation functionality
+    const cancelDateBtn = document.getElementById('cancella-scadenza');
+    const dateInput = document.getElementById('scadenza-autorizzazione');
+    const clearDateFlag = document.getElementById('clear-date-flag');
+
+    // Handle cancellation button click
+    cancelDateBtn.addEventListener('click', function() {
+        dateInput.value = '';
+        clearDateFlag.value = "1";
+        cancelDateBtn.style.opacity = '0';
+    });
+
+    // Show/hide the button based on date input value
+    dateInput.addEventListener('input', function() {
+        if (dateInput.value) {
+            cancelDateBtn.style.opacity = '1';
+            clearDateFlag.value = "0";
+        } else {
+            cancelDateBtn.style.opacity = '0';
+            clearDateFlag.value = "1";
+        }
+    });
 });
