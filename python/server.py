@@ -273,9 +273,17 @@ def aggiorna_dipendente():
         note = request.form.get('note')
         dipendente_id = request.form.get("dipendente_id")
 
-        scadenza_autorizzazione = request.form.get("scadenza-autorizzazione")
-        if scadenza_autorizzazione:
-            scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date() 
+        # Initialize scadenza_autorizzazione as None (will be NULL in database)
+        scadenza_autorizzazione = None
+            
+        # Check if clear_date_flag is set to 1
+        clear_date_flag = request.form.get("clear_date_flag") == "1"
+            
+        # Only process the date if we're not clearing it
+        if not clear_date_flag:
+            date_value = request.form.get("scadenza-autorizzazione")
+            if date_value:
+                scadenza_autorizzazione = datetime.strptime(date_value, "%Y-%m-%d").date()
 
         @fredbconn.connected_to_database
         def update_db(cursor):
@@ -1214,5 +1222,5 @@ if __name__ == "__main__":
 
     crash_logger = CrashLogger()
 
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)

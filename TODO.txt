@@ -27,6 +27,8 @@
 
 3° PRIORITA' (ottimizzazione, refactoring, e abbellimento):
 
+    - Annulla modifiche in dipendente e ditta ti rimandano alm menù dipendenti o ditte al quale eri prima, invece di /dipendenti e /ditte generici
+
     - Testa il date selector in crea e aggiorna dipendente su firefox (non WebKit/Blink browser)
 
     - fai che se si prova ad aggiornare un dipendente che è stato eliminato ti dà errore invece che dire dipendente aggiornato con successo
