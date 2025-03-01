@@ -39,14 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const clearDateFlag = document.getElementById('clear-date-flag');
     const cancelForm = document.querySelector('.annulla-button');
 
-    // Initialize the button visibility based on date input
-    if (dateInput.value) {
-        cancelDateBtn.style.opacity = '1'; // Fully visible when date exists
-    } else {
-        cancelDateBtn.style.opacity = '0'; // Hidden when no date
-        clearDateFlag.value = "1"; // Still set the flag value for server
-    }
-
     // Handle cancellation button click
     cancelDateBtn.addEventListener('click', function() {
         dateInput.value = '';

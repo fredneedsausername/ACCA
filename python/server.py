@@ -261,7 +261,9 @@ def aggiorna_dipendente():
 
         fetched["selected_ditta_name"] = fetched_selected_ditta_name[0]
 
-        return render_template("aggiorna-dipendente.html", **fetched)
+        is_there_already_a_date = int(bool(fetched.get("scadenza_autorizzazione")))
+
+        return render_template("aggiorna-dipendente.html", **fetched, is_there_already_a_date = is_there_already_a_date)
 
     if request.method == "POST":
         nome = request.form.get('nome')
@@ -755,13 +757,9 @@ def login():
             return cursor.fetchone()
         
         fetched = fetch_info()
-
-        if not fetched:
-            flash("L'utente non è registrato", "error")
-            return redirect("/login")
         
-        if not password == fetched[0]:
-            flash("La password è sbagliata", "error")
+        if not fetched or not password == fetched[0]:
+            flash("Utente o password sbagliati", "error")
             return redirect("/login")
 
         if not fetched[1] == 1:
@@ -1108,7 +1106,7 @@ def checkbox_pressed():
                         
                 case "badge":
                     # Only Malfatti can modify badge status
-                    if (session['user'] != "Malfatti") and (session['user'] != "Inserire Altro utente qui"):
+                    if (session['user'] != "Malfatti") and (session['user'] != "Pippo"):
                         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                             return jsonify({
                                 "error": "Non hai i permessi per modificare questo campo",

@@ -32,7 +32,12 @@
             <label for="scadenza-autorizzazione">Scad. Aut.</label>
             <div class="date-input-container">
                 <input type="date" id="scadenza-autorizzazione" name="scadenza-autorizzazione" value="{{ scadenza_autorizzazione }}">
-                <button type="button" id="cancella-scadenza" class="cancel-date-button">Cancella scadenza</button>
+                <button type="button" 
+                        id="cancella-scadenza" 
+                        class="cancel-date-button" 
+                        style="opacity: {{ is_there_already_a_date }};">
+                    Cancella scadenza
+                </button>
                 <input type="hidden" id="clear-date-flag" name="clear_date_flag" value="0">
             </div>
         </div>
