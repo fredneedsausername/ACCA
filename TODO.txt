@@ -1,5 +1,15 @@
 1° PRIORITA' (Richieste direttamente):
 
+    - No accesso bloccato su ditte
+
+    - No accesso bloccato su dipendenti
+
+    - Data aggiornata al posto di accesso bloccato su dipendente
+
+    - Report includendo tutti con cognome, ditta, badge emesso e badge sospeso
+
+    - Alza bottoni dipendenti e ditte
+
 2° PRIORITA' (Feature e fix necessari):
 
     - Migliora la architettura in modo che ci sia una autorizzazione in grado di premere badge emesso e una che no
