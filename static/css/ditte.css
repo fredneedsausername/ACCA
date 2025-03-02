@@ -371,3 +371,31 @@ tbody tr:hover {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Media query for screens larger than 1920x1080 */
+@media screen and (min-width: 1921px) {
+    /* Main fixed button adjustment */
+    #fixed-button {
+        top: 61px; /* Original 91px - 30px */
+    }
+    
+    /* Search by nome dropdown menu adjustment */
+    .search-by-nome-dropdown-menu {
+        top: 84px; /* Original 114px - 30px */
+    }
+    
+    /* Fixed button class adjustment */
+    .fixed-button-class {
+        top: 61px; /* Original 91px - 30px */
+    }
+    
+    /* Cerca ditta dropdown button adjustment */
+    .cerca-ditta-dropdown-button {
+        top: 61px; /* Original 91px - 30px */
+    }
+    
+    /* Dropdown menu position adjustment to match the button */
+    .cerca-ditta-dropdown-menu {
+        top: 84px; /* Original 114px - 30px */
+    }
+}

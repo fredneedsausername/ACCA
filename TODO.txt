@@ -1,7 +1,5 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - aggiorna lo script per migrare i dati
-
     - Alza bottoni dipendenti e ditte
 
 2° PRIORITA' (Feature e fix necessari):
