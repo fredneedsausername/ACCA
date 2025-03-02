@@ -1,12 +1,6 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - No accesso bloccato su ditte
-
-    - No accesso bloccato su dipendenti
-
-    - Data aggiornata al posto di accesso bloccato su dipendente
-
-    - Report includendo tutti con cognome, ditta, badge emesso e badge sospeso
+    - aggiorna lo script per migrare i dati
 
     - Alza bottoni dipendenti e ditte
 
@@ -18,11 +12,11 @@
 
     - aggiungi vincoli di dimensioni campi frontend e backend quando aggiungi o aggiorni
 
-    - migliora i readme di questa e delle tue altre repo    
-
     - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici. Ricorda di esportare anche l'id dei dipendenti, dato che lo usano internamente
 
 3° PRIORITA' (ottimizzazione, refactoring, e abbellimento):
+
+    - blocca accesso è diventato data aggiornata, aggiorna anche il db e il codice
 
     - Quando si dimentica di selezionare una ditta, non resetta tutti i campi ma li preserva
 
