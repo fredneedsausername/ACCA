@@ -48,8 +48,7 @@ VALUES
     ('admin', 'pass2', 1, 1),
     ('disabilitato', 'pass3', 0, 0),
     ('admindisabilitato', 'pass4', 1, 0),
-    ("Malfatti", "pass5", 1, 1),
-    ("Pippo", "pass6", 1, 1);
+    ("Malfatti", "pass5", 1, 1)
 
 INSERT INTO ditte (nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
 VALUES

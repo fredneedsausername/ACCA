@@ -1,13 +1,13 @@
 # Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details
 """
 No manual preprocessing is needed, just feed the algorithm the raw csv data given by the company.
-This script takes the lines available and migrates the provided data to the db, assuming all dipendenti in the csv were already given a badge.
+This script takes the lines available and migrates the provided data to the db.
 """
 
 from python import fredbconn
 from python import passwords
 import csv
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 
 def main():
     data_file_path = 'data.csv'
@@ -20,8 +20,10 @@ def main():
             reader = csv.reader(infile, delimiter=';')
             writer = csv.writer(outfile, delimiter=';')
 
-            next(reader)  # Skip header line
-            next(reader)  # Skip header line
+            # Skip the first two header lines
+            next(reader)  # Skip header line 1
+            next(reader)  # Skip header line 2
+            
             for row in reader:
                 # Skip empty rows or rows with only separators/whitespace
                 if not any(field.strip() for field in row):
@@ -29,16 +31,24 @@ def main():
 
                 # Extract relevant fields
                 ditta = row[0].strip('*').strip().strip('*')
-                nome = row[1].strip()
-                cognome = row[2].strip()
-                note = row[3].strip() if len(row) > 3 and row[3].strip() else None
-
-                # Write the processed row directly to the output file
+                nome = row[1].strip() if len(row) > 1 and row[1].strip() else ''
+                cognome = row[2].strip() if len(row) > 2 and row[2].strip() else ''
+                note = row[3].strip() if len(row) > 3 and row[3].strip() else ''
+                
+                # New fields in the updated CSV
+                scadenza = row[4].strip() if len(row) > 4 and row[4].strip() else ''
+                badge_emesso = 'X' if len(row) > 5 and row[5].strip() == 'X' else ''
+                badge_valido = 'X' if len(row) > 6 and row[6].strip() == 'X' else ''
+                
+                # Write the processed row to the output file
                 writer.writerow([
                     ditta,
                     nome,
                     cognome,
-                    note if note else ''
+                    note,
+                    scadenza,
+                    badge_emesso,
+                    badge_valido
                 ])
     
     def add_pre_processed_data_to_db():
@@ -53,15 +63,12 @@ def main():
             @fredbconn.connected_to_database
             def aggiungi_ditta_to_db(cursor, ditta: str):
                 cursor.execute("""
-                INSERT INTO ditte (nome, blocca_accesso)
-                VALUES (%s, %s)
-                """, (ditta, 0))
+                INSERT INTO ditte (nome)
+                VALUES (%s)
+                """, (ditta,))
             
             for ditta in ditte:
                 aggiungi_ditta_to_db(ditta)
-
-        # No default expiration date
-        default_expiration = None
 
         with open(temp_file_path, 'r', encoding='utf-8') as infile:
             reader = csv.reader(infile, delimiter=';')
@@ -71,6 +78,23 @@ def main():
                 nome = row[1]
                 cognome = row[2]
                 note = row[3]
+                scadenza_str = row[4]
+                badge_emesso = row[5]
+                badge_valido = row[6]
+                
+                # Convert scadenza_str to a proper date if it exists
+                scadenza_autorizzazione = None
+                if scadenza_str:
+                    try:
+                        # Parse date in format DD/MM/YYYY
+                        scadenza_autorizzazione = datetime.strptime(scadenza_str, "%d/%m/%Y").date()
+                    except ValueError:
+                        # If parsing fails, try alternate format
+                        try:
+                            scadenza_autorizzazione = datetime.strptime(scadenza_str, "%d-%m-%Y").date()
+                        except ValueError:
+                            # If both fail, set to None
+                            scadenza_autorizzazione = None
 
                 @fredbconn.connected_to_database
                 def associa_nome_ditta_a_id(cursor, ditta):
@@ -80,13 +104,20 @@ def main():
                     WHERE nome = %s
                     """, (ditta,))
 
-                    return cursor.fetchone()
+                    result = cursor.fetchone()
+                    return result[0] if result else None  # Extract the ID from the tuple
                 
                 id_ditta = associa_nome_ditta_a_id(ditta)
 
                 @fredbconn.connected_to_database
                 def add_dipendente_to_db(cursor):
-                    # Updated SQL to match the new database schema
+                    # Map CSV fields to database fields directly
+                    # - badge_valido in CSV maps to badge_sospeso in DB (direct mapping)
+                    # - accesso_bloccato in DB is set to 1 by default as per requirement
+                    
+                    is_badge_emesso = 1 if badge_emesso == 'X' else 0
+                    badge_sospeso = 1 if badge_valido == 'X' else 0  # Direct mapping as requested
+                    
                     cursor.execute("""
                     INSERT INTO dipendenti (
                         nome, 
@@ -103,10 +134,10 @@ def main():
                         nome, 
                         cognome, 
                         id_ditta, 
-                        1,              # is_badge_already_emesso (default: yes)
-                        default_expiration,  # scadenza_autorizzazione (default: 1 year from now)
-                        0,              # accesso_bloccato (default: no)
-                        0,              # badge_sospeso (default: no)
+                        is_badge_emesso,
+                        scadenza_autorizzazione,
+                        1,              # accesso_bloccato (default: yes as per requirement)
+                        badge_sospeso,  # Inverted from badge_valido
                         note
                     ))
 
