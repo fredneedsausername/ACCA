@@ -8,11 +8,10 @@ Legenda:
 
 1) DITTE:
     1.1) i campi vengono mostrati correttamente a schermo
-    1.2) accesso bloccato è correttamente mostrato
-    1.3) le checkbox si possono cambiare anche dal menù ditte
-    1.4) corretto inserimento della ditta
-    1.5) corretta modifica della ditta
-    1.6) corretta eliminazione della ditta e in cascata dei suoi dipendenti
+    1.2) corretto inserimento della ditta
+    1.3) corretto inserimento del dipendente nella ditta creata
+    1.4) corretta modifica della ditta
+    1.5) corretta eliminazione della ditta e in cascata dei suoi dipendenti
 
 2) DIPENDENTI:
     2.1) Scadenza autorizzazione si mostra correttamente
@@ -34,12 +33,20 @@ Legenda:
 - - - - - - - - - - - - - - - - - - - - - -
 TEST LOG:
 
-Test completo di :
+Test parziale di 14cbd29:
 
 ✅ passato
 ❌ fallito
 ❓ non verificabile
 
+1) DITTE:
+    1.1) i campi vengono mostrati correttamente a schermo ✅
+    1.2) corretto inserimento della ditta ❌
+    1.3) corretto inserimento del dipendente nella ditta creata ❓
+    1.4) corretta modifica della ditta ❌
+    1.5) corretta eliminazione della ditta e in cascata dei suoi dipendenti ✅
+
+- - - -
 1) DITTE:
     1.1) i campi vengono mostrati correttamente a schermo ✅
     1.2) accesso bloccato è correttamente mostrato ✅
