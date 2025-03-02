@@ -33,6 +33,20 @@ Legenda:
 - - - - - - - - - - - - - - - - - - - - - -
 TEST LOG:
 
+Test parziale di 435c331:
+
+✅ passato
+❌ fallito
+❓ non verificabile
+
+1) DITTE:
+    1.1) i campi vengono mostrati correttamente a schermo ✅
+    1.2) corretto inserimento della ditta ✅
+    1.3) corretto inserimento del dipendente nella ditta creata ✅
+    1.4) corretta modifica della ditta ✅
+    1.5) corretta eliminazione della ditta e in cascata dei suoi dipendenti ✅
+
+- - - -
 Test parziale di 14cbd29:
 
 ✅ passato
