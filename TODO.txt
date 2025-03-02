@@ -1,7 +1,5 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - Alza bottoni dipendenti e ditte
-
 2° PRIORITA' (Feature e fix necessari):
 
     - Migliora la architettura in modo che ci sia una autorizzazione in grado di premere badge emesso e una che no
