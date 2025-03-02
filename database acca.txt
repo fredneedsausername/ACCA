@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS ditte (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(80),
   piva VARCHAR(20),
-  blocca_accesso TINYINT,
   nome_cognome_referente VARCHAR(100),
   email_referente VARCHAR(50),
   telefono_referente VARCHAR(20)

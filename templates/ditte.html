@@ -17,7 +17,6 @@
         <tr>
             <th class="yellow">NOME</th>
             <th class="blue">PARTITA IVA</th>
-            <th class="orange">ACCESSO BLOCCATO</th>
             <th class="green">REFERENTE</th>
             <th class="green">EMAIL REF.</th>
             <th class="green">TEL. REF.</th>
@@ -30,14 +29,9 @@
         <tr>
             <td>{{ ditta[1] }}</td> <!-- nome ditta -->
             <td>{{ ditta[2] or ""}}</td> <!-- piva -->
-            <td>
-                <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ ditta[0] }}, 'blocca_accesso')">
-                    {% if ditta[3] == 1 %} ✅ {% else %} ❌ {% endif %}
-                </button>
-            </td> <!-- accesso bloccato -->
-            <td>{{ ditta[4] or ""}}</td> <!-- referente -->
-            <td>{{ ditta[5] or ""}}</td> <!-- email referente -->
-            <td>{{ ditta[6] or ""}}</td> <!-- telefono referente -->
+            <td>{{ ditta[3] or ""}}</td> <!-- referente -->
+            <td>{{ ditta[4] or ""}}</td> <!-- email referente -->
+            <td>{{ ditta[5] or ""}}</td> <!-- telefono referente -->
             <td class="action-buttons">
                 <form id="form-elimina-ditta" action="/elimina-ditta" method="POST">
                     <input type="hidden" name = "id" value = {{ ditta[0] }}>

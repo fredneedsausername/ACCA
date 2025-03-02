@@ -113,7 +113,6 @@ class Ditta:
         ret = []
         ret.append(self.nome)
         ret.append(self.piva)
-        ret.append(self.blocca_accesso)
         ret.append(self.nome_cognome_referente)
         ret.append(self.email_referente)
         ret.append(self.telefono_referente)
@@ -129,17 +128,16 @@ class Ditta:
 
         cursor.execute("""
         INSERT INTO
-        ditte(nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
+        ditte(nome, piva, nome_cognome_referente, email_referente, telefono_referente)
         VALUES
         (%s, %s, %s, %s, %s, %s)
         """, self.get_fields())
     
 
-    def __init__(self, nome: str, piva: str, blocca_accesso: int, nome_cognome_referente: str,
+    def __init__(self, nome: str, piva: str, nome_cognome_referente: str,
                  email_referente: str, telefono_referente: str):
         self.nome = nome
         self.piva = piva
-        self.blocca_accesso = blocca_accesso
         self.nome_cognome_referente = nome_cognome_referente
         self.email_referente = email_referente
         self.telefono_referente = telefono_referente
@@ -156,10 +154,6 @@ class Ditta:
         if not piva:
             piva = ""
 
-        blocca_accesso = request.form.get("blocca_accesso")
-        if blocca_accesso is None: blocca_accesso = 0
-        if blocca_accesso == "yes": blocca_accesso = 1
-
         nome_cognome_referente = request.form.get("nome_cognome_referente", "")
         if not nome_cognome_referente:
             nome_cognome_referente = ""
@@ -172,7 +166,7 @@ class Ditta:
         if not telefono_referente:
             telefono_referente = ""
 
-        return cls(nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
+        return cls(nome, piva, nome_cognome_referente, email_referente, telefono_referente)
 
 
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
@@ -364,7 +358,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
+                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente
             FROM
                 ditte
             WHERE
@@ -385,7 +379,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente
+                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente
             FROM
                 ditte
             ORDER BY
@@ -436,7 +430,6 @@ def aggiorna_ditta():
                 SELECT 
                     nome,
                     piva,
-                    blocca_accesso,
                     nome_cognome_referente,
                     email_referente,
                     telefono_referente
@@ -454,10 +447,9 @@ def aggiorna_ditta():
             ret = {
                 "nome": ditta_tuple[0],
                 "piva": ditta_tuple[1],
-                "blocca_accesso": ditta_tuple[2],
-                "nome_cognome_referente": ditta_tuple[3],
-                "email_referente": ditta_tuple[4],
-                "telefono_referente": ditta_tuple[5]
+                "nome_cognome_referente": ditta_tuple[2],
+                "email_referente": ditta_tuple[3],
+                "telefono_referente": ditta_tuple[4]
             }
 
             return ret
@@ -478,40 +470,18 @@ def aggiorna_ditta():
         telefono_referente = request.form.get("telefono_referente")
         ditta_id = request.form.get("ditta_id")
 
-        # Get existing value for blocca_accesso
-        @fredbconn.connected_to_database
-        def get_existing_values(cursor):
-            cursor.execute("""
-            SELECT blocca_accesso
-            FROM ditte
-            WHERE id = %s
-            """, (ditta_id,))
-            return cursor.fetchone()
-        
-        existing_values = get_existing_values()
-        
-        # Check if company still exists
-        if existing_values is None:
-            flash("La ditta che stavi modificando è stata eliminata", "error")
-            return redirect("/ditte")
-        
-        # Now safely access the value
-        blocca_accesso = existing_values[0]
-
         @fredbconn.connected_to_database
         def update_db(cursor):
             cursor.execute("""
             UPDATE ditte
             SET nome = %s,
                 piva = %s,
-                blocca_accesso = %s,
                 nome_cognome_referente = %s,
                 email_referente = %s,
                 telefono_referente = %s
                 
             WHERE id = %s
-            """, (nome, piva, blocca_accesso,
-                nome_cognome_referente, email_referente, telefono_referente, ditta_id))
+            """, (nome, piva, nome_cognome_referente, email_referente, telefono_referente, ditta_id))
 
         update_db()
 
@@ -1106,7 +1076,7 @@ def checkbox_pressed():
                         
                 case "badge":
                     # Only Malfatti can modify badge status
-                    if (session['user'] != "Malfatti") and (session['user'] != "Pippo"):
+                    if (session['user'] != "Malfatti") and (session['user'] != "Altro utente qui"):
                         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                             return jsonify({
                                 "error": "Non hai i permessi per modificare questo campo",
@@ -1152,34 +1122,6 @@ def checkbox_pressed():
                     
                     return set_dipendente_badge_sospeso(data_id, data_clicked_value)
                 
-                case _:
-                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                        return jsonify({"error": "Campo non riconosciuto"}), 400
-                    flash("Campo non riconosciuto", "error")
-                    return redirect(request.referrer or url_for("/"))
-                
-        case "ditta":
-            # Process different field updates for ditta type
-            match data.get("field"):
-                case "blocca_accesso":
-                    @fredbconn.connected_to_database
-                    def set_ditta_blocca_accesso(cursor, id, new_value):
-                        cursor.execute("SELECT blocca_accesso FROM ditte WHERE id = %s", (id,))
-                        result = cursor.fetchone()
-                        if not result:
-                            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                                return jsonify({"error": "Ditta non trovata"}), 404
-                            flash("La ditta che voleva modificare è stata eliminata", "error")
-                            return redirect(request.referrer or url_for("/"))
-                        
-                        cursor.execute("UPDATE ditte SET blocca_accesso = %s WHERE id = %s", (new_value, id))
-                        return jsonify({
-                            "success": "Stato di accesso aggiornato con successo",
-                            "newState": new_value
-                        }), 200
-                    
-                    return set_ditta_blocca_accesso(data_id, data_clicked_value)
-                    
                 case _:
                     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                         return jsonify({"error": "Campo non riconosciuto"}), 400
@@ -1257,5 +1199,5 @@ if __name__ == "__main__":
 
     crash_logger = CrashLogger()
 
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)
