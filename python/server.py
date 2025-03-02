@@ -130,7 +130,7 @@ class Ditta:
         INSERT INTO
         ditte(nome, piva, nome_cognome_referente, email_referente, telefono_referente)
         VALUES
-        (%s, %s, %s, %s, %s, %s)
+        (%s, %s, %s, %s, %s)
         """, self.get_fields())
     
 
