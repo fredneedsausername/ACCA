@@ -15,6 +15,7 @@
 <table>
     <thead>
         <tr>
+            <th class="pink">ID</th>
             <th class="yellow">NOME</th>
             <th class="blue">PARTITA IVA</th>
             <th class="green">REFERENTE</th>
@@ -27,6 +28,7 @@
         {% if ditte %}
         {% for ditta in ditte %}
         <tr>
+            <td>{{ ditta[0] or "" }}</td>
             <td>{{ ditta[1] }}</td> <!-- nome ditta -->
             <td>{{ ditta[2] or ""}}</td> <!-- piva -->
             <td>{{ ditta[3] or ""}}</td> <!-- referente -->
