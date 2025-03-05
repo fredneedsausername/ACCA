@@ -55,17 +55,9 @@ class Dipendente:
 
         cognome = request.form.get("cognome")
 
-        is_badge_already_emesso = request.form.get("is_badge_already_emesso")
-        if is_badge_already_emesso is None: is_badge_already_emesso = 0
-        if is_badge_already_emesso == "yes": is_badge_already_emesso = 1
-
-        accesso_bloccato = request.form.get("accesso-bloccato")
-        if accesso_bloccato is None: accesso_bloccato = 0
-        if accesso_bloccato == "yes": accesso_bloccato = 1
-
-        badge_sospeso = request.form.get("badge-sospeso")
-        if badge_sospeso is None: badge_sospeso = 0
-        if badge_sospeso == "yes": badge_sospeso = 1
+        is_badge_already_emesso = 0
+        accesso_bloccato = 0
+        badge_sospeso = 0
 
         note = request.form.get("note")
 
@@ -324,6 +316,11 @@ def aggiorna_dipendente():
 @app.route('/elimina-dipendente', methods=['POST'])
 @fredauth.authorized("admin")
 def elimina_dipendente():
+
+    if session["user"] == "Franco":
+        flash("Non hai i permessi per eliminare dipendenti", "error")
+        return redirect(request.referrer or "/dipendenti")
+
     dipendente_id = request.form.get('id')
 
     @fredbconn.connected_to_database
@@ -526,6 +523,10 @@ def aggiungi_ditte():
 @app.route("/elimina-ditta", methods=["POST"])
 @fredauth.authorized("admin")
 def elimina_ditta():
+
+    if session["user"] == "Franco":
+        flash("Non hai i permessi per eliminare ditte", "error")
+        return redirect(request.referrer or "/ditte")
     
     ditta_id = request.form.get("id")
 
@@ -540,7 +541,7 @@ def elimina_ditta():
     eliminate_ditta()
 
     flash("Ditta eliminata con successo", "success")
-    return redirect("/ditte")
+    return redirect(request.referrer or "/ditte")
 
 @app.route("/dipendenti")
 @fredauth.authorized("user")
@@ -1057,6 +1058,11 @@ def checkbox_pressed():
     Endpoint to handle checkbox state changes for different entity types.
     Takes JSON data containing entity type, ID, and the new state value.
     """
+
+    # Kick out Franco from changing the checkboxes
+    if session["user"] == "Franco":
+        return jsonify({"error": "Non hai i permessi per modificare questo campo"}), 403
+
     try:
         # Get JSON data from the request
         data = request.get_json()
