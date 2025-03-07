@@ -317,7 +317,7 @@ def aggiorna_dipendente():
 @fredauth.authorized("admin")
 def elimina_dipendente():
 
-    if session["user"] == "Franco":
+    if session["user"] == "Franco" or session["user"] == "Pippo2":
         flash("Non hai i permessi per eliminare dipendenti", "error")
         return redirect(request.referrer or "/dipendenti")
 
@@ -524,7 +524,7 @@ def aggiungi_ditte():
 @fredauth.authorized("admin")
 def elimina_ditta():
 
-    if session["user"] == "Franco":
+    if session["user"] == "Franco" or session["user"] == "Pippo2":
         flash("Non hai i permessi per eliminare ditte", "error")
         return redirect(request.referrer or "/ditte")
     
@@ -1059,8 +1059,8 @@ def checkbox_pressed():
     Takes JSON data containing entity type, ID, and the new state value.
     """
 
-    # Kick out Franco from changing the checkboxes
-    if session["user"] == "Franco":
+    # Kick out user from changing the checkboxes
+    if session["user"] == "Franco" or session["user"] == "Pippo2":
         return jsonify({"error": "Non hai i permessi per modificare questo campo"}), 403
 
     try:
@@ -1135,7 +1135,7 @@ def checkbox_pressed():
                         
                 case "badge":
                     # Only Malfatti can modify badge status
-                    if (session['user'] != "Malfatti") and (session['user'] != "Altro utente qui"):
+                    if (session['user'] != "Malfatti") and (session['user'] != "Pippo"):
                         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                             return jsonify({
                                 "error": "Non hai i permessi per modificare questo campo",
