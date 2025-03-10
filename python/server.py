@@ -98,16 +98,17 @@ class Dipendente:
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], scadenza_autorizzazione, fields[7]))
 
+
 class Ditta:
 
     def get_fields(self): # This function is structured weird to make it not overflow the screen
-
         ret = []
         ret.append(self.nome)
         ret.append(self.piva)
         ret.append(self.nome_cognome_referente)
         ret.append(self.email_referente)
         ret.append(self.telefono_referente)
+        ret.append(self.note)
 
         ret = tuple(ret)
 
@@ -115,29 +116,28 @@ class Ditta:
 
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
-
         fields = self.get_fields()
 
         cursor.execute("""
         INSERT INTO
-        ditte(nome, piva, nome_cognome_referente, email_referente, telefono_referente)
+        ditte(nome, piva, nome_cognome_referente, email_referente, telefono_referente, note)
         VALUES
-        (%s, %s, %s, %s, %s)
+        (%s, %s, %s, %s, %s, %s)
         """, self.get_fields())
     
 
     def __init__(self, nome: str, piva: str, nome_cognome_referente: str,
-                 email_referente: str, telefono_referente: str):
+                 email_referente: str, telefono_referente: str, note: str):
         self.nome = nome
         self.piva = piva
         self.nome_cognome_referente = nome_cognome_referente
         self.email_referente = email_referente
         self.telefono_referente = telefono_referente
+        self.note = note
     
 
     @classmethod
     def from_form(cls):
-
         nome = request.form.get("nome")
         if not nome:
             nome = ""
@@ -157,8 +157,12 @@ class Ditta:
         telefono_referente = request.form.get("telefono_referente", "")
         if not telefono_referente:
             telefono_referente = ""
+            
+        note = request.form.get("note", "")
+        if not note:
+            note = ""
 
-        return cls(nome, piva, nome_cognome_referente, email_referente, telefono_referente)
+        return cls(nome, piva, nome_cognome_referente, email_referente, telefono_referente, note)
 
 
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
@@ -355,7 +359,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente
+                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente, note
             FROM
                 ditte
             WHERE
@@ -376,7 +380,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente
+                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente, note
             FROM
                 ditte
             ORDER BY
@@ -429,7 +433,8 @@ def aggiorna_ditta():
                     piva,
                     nome_cognome_referente,
                     email_referente,
-                    telefono_referente
+                    telefono_referente,
+                    note
                 FROM
                     ditte
                 WHERE 
@@ -446,7 +451,8 @@ def aggiorna_ditta():
                 "piva": ditta_tuple[1],
                 "nome_cognome_referente": ditta_tuple[2],
                 "email_referente": ditta_tuple[3],
-                "telefono_referente": ditta_tuple[4]
+                "telefono_referente": ditta_tuple[4],
+                "note": ditta_tuple[5]
             }
 
             return ret
@@ -465,6 +471,7 @@ def aggiorna_ditta():
         nome_cognome_referente = request.form.get("nome_cognome_referente")
         email_referente = request.form.get("email_referente")
         telefono_referente = request.form.get("telefono_referente")
+        note = request.form.get("note")
         ditta_id = request.form.get("ditta_id")
 
         @fredbconn.connected_to_database
@@ -475,10 +482,10 @@ def aggiorna_ditta():
                 piva = %s,
                 nome_cognome_referente = %s,
                 email_referente = %s,
-                telefono_referente = %s
-                
+                telefono_referente = %s,
+                note = %s
             WHERE id = %s
-            """, (nome, piva, nome_cognome_referente, email_referente, telefono_referente, ditta_id))
+            """, (nome, piva, nome_cognome_referente, email_referente, telefono_referente, note, ditta_id))
 
         update_db()
 

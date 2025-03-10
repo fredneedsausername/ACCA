@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS ditte (
   piva VARCHAR(20),
   nome_cognome_referente VARCHAR(100),
   email_referente VARCHAR(50),
-  telefono_referente VARCHAR(20)
+  telefono_referente VARCHAR(20),
+  note VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS dipendenti (

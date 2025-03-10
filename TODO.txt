@@ -16,8 +16,6 @@
 
     - Migliora la architettura in modo che ci sia una autorizzazione in grado di premere badge emesso e una che no
 
-    - crea libreria per crash log, e aggiornala pure sul tuo sito
-
     - aggiungi vincoli di dimensioni campi frontend e backend quando aggiungi o aggiorni
 
     - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici. Ricorda di esportare anche l'id dei dipendenti, dato che lo usano internamente
