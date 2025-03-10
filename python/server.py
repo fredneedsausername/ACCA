@@ -974,7 +974,7 @@ def genera_report():
     worksheet.write(header_row, 1, "NOME", nome_header_format)
     worksheet.write(header_row, 2, "COGNOME", nome_header_format)
     worksheet.write(header_row, 3, "NOTE", note_header_format)
-    worksheet.write(header_row, 4, "VALIDITÁ\nDOCUMENTI", note_header_format)
+    worksheet.write(header_row, 4, "SCADENZA\nDOCUMENTI", note_header_format)
     worksheet.write(header_row, 5, "BADGE\nEMESSO", badge_emesso_header_format)
     worksheet.write(header_row, 6, "BADGE\nVALIDO", badge_valido_header_format)
 
