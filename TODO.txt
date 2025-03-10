@@ -1,5 +1,17 @@
 1° PRIORITA' (Richieste direttamente):
 
+    - Quando inserisci la ditta, controlla non solo che il nome non sia ripetuto, ma che non lo sia anche la partita iva (usando trim())
+
+    - Manda una email auto-generata ai referenti delle ditte il 20 dicembre e il 15 gennaio, chiedendogli di mandare i documenti aggiornati, visto che scadono per tutti il 31 gennaio. Fai double check e controlla che le date siano giuste prima di implementare.
+
+    - Campo note anche sulle ditte
+
+    - Validità documenti, in dipendenti, diventa scadenza documenti in tutti i menù in cui appare
+
+    - Aggiungere flag "ditta individuale" su ditte. Se il flag è attivo, la email auto-generata il 20 dicembre e 15 gennaio sarà diversa
+
+    - Eventuale interazione con api del software dei badge
+
 2° PRIORITA' (Feature e fix necessari):
 
     - Migliora la architettura in modo che ci sia una autorizzazione in grado di premere badge emesso e una che no
