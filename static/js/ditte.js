@@ -93,6 +93,8 @@ function handleCheckboxClick(buttonElement, entityId, fieldName) {
     // If we're on the dipendenti page or using dipendente-specific fields
     if (fieldName === "accesso" || fieldName === "badge" || fieldName === "badge_sospeso") {
         entityType = "dipendente";
+    } else if (fieldName === "ditta_individuale") {
+        entityType = "ditta";
     } else {
         entityType = "ditta";
     }

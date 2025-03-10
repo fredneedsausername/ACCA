@@ -345,7 +345,6 @@ def elimina_dipendente():
 def index():
     return render_template("index.html", username = session['user']) # username = session['user'] usato in jinja
 
-
 @app.route("/ditte")
 @fredauth.authorized("user")
 def ditte():
@@ -359,7 +358,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente, note
+                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente, note, is_ditta_individuale
             FROM
                 ditte
             WHERE
@@ -380,7 +379,7 @@ def ditte():
         def func(cursor):
             cursor.execute("""
             SELECT
-                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente, note
+                id, nome, piva, nome_cognome_referente, email_referente, telefono_referente, note, is_ditta_individuale
             FROM
                 ditte
             ORDER BY
@@ -416,7 +415,6 @@ def ditte():
     ditte_names = fetch_ditte_names()
 
     return render_template("ditte.html", ditte = fetched_ditte_info, ditte_names = ditte_names)
-
 
 @app.route("/aggiorna-ditta", methods = ["GET", "POST"])
 @fredauth.authorized("admin")
@@ -1193,7 +1191,34 @@ def checkbox_pressed():
                         return jsonify({"error": "Campo non riconosciuto"}), 400
                     flash("Campo non riconosciuto", "error")
                     return redirect(request.referrer or url_for("/"))
-        
+    
+        case "ditta":
+            match data.get("field"):
+                case "ditta_individuale":
+                    @fredbconn.connected_to_database
+                    def set_ditta_individuale(cursor, id, new_value):
+                        cursor.execute("SELECT is_ditta_individuale FROM ditte WHERE id = %s", (id,))
+                        result = cursor.fetchone()
+                        if not result:
+                            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                                return jsonify({"error": "Ditta non trovata"}), 404
+                            flash("La ditta che voleva modificare è stata eliminata", "error")
+                            return redirect(request.referrer or url_for("/"))
+                        
+                        cursor.execute("UPDATE ditte SET is_ditta_individuale = %s WHERE id = %s", (new_value, id))
+                        return jsonify({
+                            "success": "Stato ditta individuale aggiornato con successo",
+                            "newState": new_value
+                        }), 200
+                    
+                    return set_ditta_individuale(data_id, data_clicked_value)
+                
+                case _:
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return jsonify({"error": "Campo non riconosciuto"}), 400
+                    flash("Campo non riconosciuto", "error")
+                    return redirect(request.referrer or url_for("/"))
+
         case _:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return jsonify({"error": "Tipo di entità non riconosciuto"}), 400

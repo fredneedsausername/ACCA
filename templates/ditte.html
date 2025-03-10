@@ -22,6 +22,7 @@
             <th class="green">EMAIL REF.</th>
             <th class="green">TEL. REF.</th>
             <th class="orange">NOTE</th>
+            <th class="brown">INDIVIDUALE</th>
             <th>AZIONI</th>
         </tr>
     </thead>
@@ -36,6 +37,11 @@
             <td>{{ ditta[4] or ""}}</td> <!-- email referente -->
             <td>{{ ditta[5] or ""}}</td> <!-- telefono referente -->
             <td>{{ ditta[6] or ""}}</td> <!-- note -->
+            <td>
+                <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ ditta[0] }}, 'ditta_individuale')">
+                    {% if ditta[7] == 1 %} ✅ {% else %} ❌ {% endif %}
+                </button>
+            </td> <!-- ditta individuale -->
             <td class="action-buttons">
                 <form id="form-elimina-ditta" action="/elimina-ditta" method="POST">
                     <input type="hidden" name = "id" value = {{ ditta[0] }}>

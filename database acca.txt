@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS ditte (
   nome_cognome_referente VARCHAR(100),
   email_referente VARCHAR(50),
   telefono_referente VARCHAR(20),
-  note VARCHAR(100)
+  note VARCHAR(100),
+  is_ditta_individuale TINYINT DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS dipendenti (
