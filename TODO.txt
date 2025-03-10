@@ -4,8 +4,6 @@
 
     - Manda una email auto-generata ai referenti delle ditte il 20 dicembre e il 15 gennaio, chiedendogli di mandare i documenti aggiornati, visto che scadono per tutti il 31 gennaio. Fai double check e controlla che le date siano giuste prima di implementare. Se il flag ditta individuale è attivo, la email auto-generata il 20 dicembre e 15 gennaio sarà diversa
 
-    - Validità documenti, in dipendenti, diventa scadenza documenti in tutti i menù in cui appare
-
     - Eventuale interazione con api del software dei badge
 
 2° PRIORITA' (Feature e fix necessari):

@@ -490,7 +490,6 @@ def aggiorna_ditta():
         flash("Ditta aggiornata con successo", "success")
         return redirect("/ditte")
 
-
 @app.route("/aggiungi-ditte", methods=["GET", "POST"])
 @fredauth.authorized("admin")
 def aggiungi_ditte():
@@ -501,14 +500,26 @@ def aggiungi_ditte():
         # Extract the company name from the form
         nome_ditta = request.form.get("nome")
         
-        # Check if a company with this name already exists 
-        # (case-insensitive and space-insensitive)
+        # Extract and trim the partita IVA as requested
+        piva = request.form.get("piva", "").strip()
+        
+        # Check if a company with this name or partita IVA already exists 
         @fredbconn.connected_to_database
         def check_duplicate_ditta(cursor):
-            cursor.execute("""
-            SELECT id FROM ditte 
-            WHERE REPLACE(LOWER(nome), ' ', '') = REPLACE(LOWER(%s), ' ', '')
-            """, (nome_ditta,))
+            if piva:
+                # Check both name and partita IVA if provided
+                cursor.execute("""
+                SELECT id FROM ditte 
+                WHERE REPLACE(LOWER(nome), ' ', '') = REPLACE(LOWER(%s), ' ', '')
+                OR TRIM(piva) = %s
+                """, (nome_ditta, piva))
+            else:
+                # Check only name if partita IVA not provided
+                cursor.execute("""
+                SELECT id FROM ditte 
+                WHERE REPLACE(LOWER(nome), ' ', '') = REPLACE(LOWER(%s), ' ', '')
+                """, (nome_ditta,))
+                
             return cursor.fetchone()
         
         # Call the function and check the result
@@ -523,7 +534,6 @@ def aggiungi_ditte():
         ditta.add_to_db()
         flash("Ditta aggiunta con successo", "success")
         return redirect("/aggiungi-ditte")
-
 
 @app.route("/elimina-ditta", methods=["POST"])
 @fredauth.authorized("admin")
