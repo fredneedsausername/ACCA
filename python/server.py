@@ -1149,8 +1149,8 @@ def checkbox_pressed():
                     return set_dipendente_accesso(data_id, data_clicked_value)
                         
                 case "badge":
-                    # Only Malfatti can modify badge status
-                    if (session['user'] != "Malfatti") and (session['user'] != "Pippo"):
+                    # Only Malfatti and Erica can modify badge status
+                    if (session['user'] != "Malfatti") and (session['user'] != "Erica"):
                         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                             return jsonify({
                                 "error": "Non hai i permessi per modificare questo campo",
