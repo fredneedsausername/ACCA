@@ -22,6 +22,7 @@
                 <th class="brown">BADGE EMESSO</th>
                 <th class="brown">DATA AGGIORNATA</th>
                 <th class="brown">BADGE VALIDO</th>
+                <th class="brown">BADGE ANNULLATO</th>
                 <th class="green">NOTE</th>
                 <th>AZIONI</th>
             </tr>
@@ -52,6 +53,13 @@
                         {% if dipendente[8] == 1 %} ✅ {% else %} ❌ {% endif %}
                     </button>
                 </td> <!-- badge sospeso -->
+        
+                <td>
+                    <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ dipendente[6] }}, 'badge_annullato')">
+                        {% if dipendente[9] == 1 %} ✅ {% else %} ❌ {% endif %}
+                    </button>
+                </td> <!-- badge annullato -->
+                
                 <td>{{ dipendente[5] or ""}}</td> <!-- note -->
                 <td class="action-buttons">
                     <form id="form-elimina-dipendente" action="/elimina-dipendente" method="POST">

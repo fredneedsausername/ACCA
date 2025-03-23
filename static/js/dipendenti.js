@@ -101,14 +101,14 @@ document.addEventListener("DOMContentLoaded", function () {
  * 
  * @param {HTMLElement} buttonElement - The button element that was clicked
  * @param {string} entityId - The ID of the entity to update
- * @param {string} fieldName - The field to update (e.g., "accesso", "badge", "blocca_accesso")
+ * @param {string} fieldName - The field to update (e.g., "accesso", "badge", "badge_sospeso", "badge_annullato")
  */
 function handleCheckboxClick(buttonElement, entityId, fieldName) {
     // Determine the entity type based on the field name or current page context
     let entityType;
     
     // If we're on the dipendenti page or using dipendente-specific fields
-    if (fieldName === "accesso" || fieldName === "badge" || fieldName === "badge_sospeso") {
+    if (fieldName === "accesso" || fieldName === "badge" || fieldName === "badge_sospeso" || fieldName === "badge_annullato") {
         entityType = "dipendente";
     } else {
         entityType = "ditta";

@@ -22,11 +22,10 @@ class NoDittaSelectedException(Exception):
     """Exception raised when no ditta (entity) is selected."""
     pass
 
-
 class Dipendente:
 
     def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, 
-             accesso_bloccato: int, note: str, scadenza_autorizzazione: date, badge_sospeso: int):
+             accesso_bloccato: int, note: str, scadenza_autorizzazione: date, badge_sospeso: int, badge_annullato: int):
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
@@ -35,6 +34,7 @@ class Dipendente:
         self.note = note
         self.scadenza_autorizzazione = scadenza_autorizzazione
         self.badge_sospeso = badge_sospeso
+        self.badge_annullato = badge_annullato
         
     @classmethod
     def from_form(cls):
@@ -58,6 +58,7 @@ class Dipendente:
         is_badge_already_emesso = 0
         accesso_bloccato = 0
         badge_sospeso = 0
+        badge_annullato = 0
 
         note = request.form.get("note")
 
@@ -66,10 +67,10 @@ class Dipendente:
         if scadenza_autorizzazione:
             scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
 
-        return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso)   
+        return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, badge_annullato)   
     
     def get_fields(self):
-        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.accesso_bloccato, self.note, self.scadenza_autorizzazione, self.badge_sospeso
+        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.accesso_bloccato, self.note, self.scadenza_autorizzazione, self.badge_sospeso, self.badge_annullato
 
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
@@ -94,10 +95,9 @@ class Dipendente:
         ditta_id = ditta_id[0]
 
         cursor.execute("""
-        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], scadenza_autorizzazione, fields[7]))
-
+        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, badge_annullato)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], scadenza_autorizzazione, fields[7], fields[8]))
 
 class Ditta:
 
@@ -184,7 +184,8 @@ def aggiorna_dipendente():
                     accesso_bloccato,
                     note,
                     scadenza_autorizzazione,
-                    badge_sospeso
+                    badge_sospeso,
+                    badge_annullato
                 FROM 
                     dipendenti
                 WHERE 
@@ -204,7 +205,8 @@ def aggiorna_dipendente():
                 "accesso_bloccato": dipendente_tuple[4],
                 "note": dipendente_tuple[5],
                 "scadenza_autorizzazione": dipendente_tuple[6],
-                "badge_sospeso": dipendente_tuple[7]
+                "badge_sospeso": dipendente_tuple[7],
+                "badge_annullato": dipendente_tuple[8]
             }
 
 
@@ -266,7 +268,7 @@ def aggiorna_dipendente():
         @fredbconn.connected_to_database
         def get_existing_values(cursor):
             cursor.execute("""
-            SELECT is_badge_already_emesso, accesso_bloccato, badge_sospeso
+            SELECT is_badge_already_emesso, accesso_bloccato, badge_sospeso, badge_annullato
             FROM dipendenti
             WHERE id = %s
             """, (dipendente_id,))
@@ -283,6 +285,7 @@ def aggiorna_dipendente():
         is_badge_already_emesso = existing_values[0] 
         accesso_bloccato = existing_values[1]
         badge_sospeso = existing_values[2]
+        badge_annullato = existing_values[3]
 
         # Initialize scadenza_autorizzazione as None (will be NULL in database)
         scadenza_autorizzazione = None
@@ -307,15 +310,15 @@ def aggiorna_dipendente():
                 accesso_bloccato = %s,
                 note = %s,
                 scadenza_autorizzazione = %s,
-                badge_sospeso = %s
+                badge_sospeso = %s,
+                badge_annullato = %s
             WHERE id = %s
-            """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, dipendente_id))
+            """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, badge_annullato, dipendente_id))
 
         update_db()
 
         flash("Dipendente aggiornato con successo", "success")
         return redirect("/dipendenti")
-
 
 @app.route('/elimina-dipendente', methods=['POST'])
 @fredauth.authorized("admin")
@@ -582,7 +585,8 @@ def show_dipendenti():
                     dipendenti.note,
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
-                    dipendenti.badge_sospeso
+                    dipendenti.badge_sospeso,
+                    dipendenti.badge_annullato
                 FROM 
                     dipendenti
                 JOIN 
@@ -612,7 +616,8 @@ def show_dipendenti():
                     dipendenti.note,
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
-                    dipendenti.badge_sospeso
+                    dipendenti.badge_sospeso,
+                    dipendenti.badge_annullato
                 FROM 
                     dipendenti
                 JOIN 
@@ -770,7 +775,7 @@ def genera_report():
 
     @fredbconn.connected_to_database
     def fetch_dipendenti(cursor):
-        # Modified query to match actual database schema and include scadenza_autorizzazione
+        # Modified query to match actual database schema and include badge_annullato
         cursor.execute("""
         SELECT
             dipendenti.id,
@@ -780,7 +785,8 @@ def genera_report():
             dipendenti.note,
             dipendenti.scadenza_autorizzazione,
             dipendenti.is_badge_already_emesso,
-            dipendenti.badge_sospeso
+            dipendenti.badge_sospeso,
+            dipendenti.badge_annullato
         FROM 
             dipendenti
         JOIN 
@@ -807,11 +813,12 @@ def genera_report():
             scadenza_autorizzazione = dipendente[5] if len(dipendente) > 5 else None
             is_badge_emesso = dipendente[6] if len(dipendente) > 6 else 0
             is_badge_sospeso = dipendente[7] if len(dipendente) > 7 else 0
+            is_badge_annullato = dipendente[8] if len(dipendente) > 8 else 0
             
             # Convert boolean values to "X" or empty string
             badge_emesso = "X" if is_badge_emesso else ""
-            
             badge_valido = "X" if is_badge_sospeso else ""
+            badge_annullato = "X" if is_badge_annullato else ""
             
             # Format the date if exists
             validita_documenti = ""
@@ -1196,6 +1203,25 @@ def checkbox_pressed():
                     
                     return set_dipendente_badge_sospeso(data_id, data_clicked_value)
                 
+                case "badge_annullato":
+                    @fredbconn.connected_to_database
+                    def set_dipendente_badge_annullato(cursor, id, new_value):
+                        cursor.execute("SELECT badge_annullato FROM dipendenti WHERE id = %s", (id,))
+                        result = cursor.fetchone()
+                        if not result:
+                            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                                return jsonify({"error": "Dipendente non trovato"}), 404
+                            flash("Il dipendente che voleva modificare è stato eliminato", "error")
+                            return redirect(request.referrer or url_for("/"))
+                        
+                        cursor.execute("UPDATE dipendenti SET badge_annullato = %s WHERE id = %s", (new_value, id))
+                        return jsonify({
+                            "success": "Stato di annullamento del badge aggiornato con successo",
+                            "newState": new_value
+                        }), 200
+                    
+                    return set_dipendente_badge_annullato(data_id, data_clicked_value)
+                
                 case _:
                     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                         return jsonify({"error": "Campo non riconosciuto"}), 400
@@ -1300,5 +1326,5 @@ if __name__ == "__main__":
 
     crash_logger = CrashLogger()
 
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)

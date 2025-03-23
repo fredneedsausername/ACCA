@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS dipendenti (
   accesso_bloccato TINYINT,
   badge_sospeso TINYINT,
   note VARCHAR(100),
+  badge_annullato TINYINT;
+
   FOREIGN KEY (ditta_id) REFERENCES ditte(id)
     ON DELETE CASCADE
     ON UPDATE CASCADE
