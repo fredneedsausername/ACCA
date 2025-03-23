@@ -569,6 +569,7 @@ def show_dipendenti():
 
         id_ditta = request.args.get("id_ditta")
         cognome = request.args.get("cognome")
+        annullati = request.args.get("annullati")  # New parameter for filtered view
 
         fetch_dipendenti_data = None
 
@@ -633,6 +634,37 @@ def show_dipendenti():
                 return cursor.fetchall()
 
             fetch_dipendenti_data = func
+            
+        elif annullati is not None:
+            @fredbconn.connected_to_database
+            def func(cursor):
+                cursor.execute("""
+                SELECT 
+                    ditte.nome AS nome_ditta,
+                    dipendenti.nome AS nome_dipendente, 
+                    dipendenti.cognome,  
+                    dipendenti.is_badge_already_emesso, 
+                    dipendenti.accesso_bloccato,
+                    dipendenti.note,
+                    dipendenti.id,
+                    dipendenti.scadenza_autorizzazione,
+                    dipendenti.badge_sospeso,
+                    dipendenti.badge_annullato
+                FROM 
+                    dipendenti
+                JOIN 
+                    ditte
+                ON 
+                    dipendenti.ditta_id = ditte.id
+                WHERE
+                    dipendenti.badge_annullato = 1
+                ORDER BY
+                    dipendenti.cognome ASC
+                """)
+
+                return cursor.fetchall()
+
+            fetch_dipendenti_data = func
         
         fetched = None
         
@@ -652,7 +684,6 @@ def show_dipendenti():
         ditte = fetch_ditte_names()
 
         return render_template("dipendenti.html", dipendenti = fetched, ditte = ditte)
-
 
 @app.route("/aggiungi-dipendenti", methods=["GET", "POST"])
 @fredauth.authorized("admin")

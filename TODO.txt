@@ -4,8 +4,6 @@
 
     - Eventuale interazione con api del software dei badge
 
-    - gestionale flag "annullamento badge"
-
     - un modo per cercare quelli con flag "annullamento badge"
 
     - nel report dei flag solo badge valido

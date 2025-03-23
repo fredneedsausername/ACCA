@@ -319,6 +319,27 @@ tbody tr:hover {
     animation: spin 1s linear infinite;
 }
 
+.annullati-button {
+    position: fixed;
+    margin: 0 10px;
+    font-size: 18px;
+    font-weight: bold;
+    top: 91px;
+    right: 706px;
+    transform: translateY(-50%);
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.annullati-button:hover {
+    background-color: #0056b3;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -349,5 +370,9 @@ tbody tr:hover {
     /* Search by cognome dropdown menu adjustment */
     .search-by-cognome-dropdown-menu {
         top: 84px; /* Original 114px - 30px */
+    }
+
+    .annullati-button {
+        top: 61px; /* Original 91px - 30px */
     }
 }

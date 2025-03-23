@@ -55,6 +55,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    const annullatiToggle = document.getElementById("annullati-toggle");
+    
+    annullatiToggle.addEventListener("click", function() {
+        window.location.href = "/dipendenti?annullati=1";
+    });
 });
 
 document.addEventListener("DOMContentLoaded", function () {
