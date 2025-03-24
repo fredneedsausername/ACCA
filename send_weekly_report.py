@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.
 
 import os
@@ -30,16 +29,38 @@ def main():
         from python import report_generator
         from python import email_manager
         
-        # Get recipients from passwords module
-        recipients = passwords.report_recipients
-        if not recipients:
-            logger.error("No recipients configured. Please update passwords.py with report_recipients list.")
-            sys.exit(1)
-            
         # Initialize database connection
         logger.info("Initializing database connection")
         fredbconn.initialize_database(*passwords.database_config_weekly_report)
         
+        # Fetch recipients from database
+        logger.info("Fetching email recipients from database")
+        
+        @fredbconn.connected_to_database
+        def fetch_email_recipients(cursor):
+            """Fetch email recipients from the dedicated table."""
+            cursor.execute("""
+            SELECT email
+            FROM email_recipients
+            """)
+            
+            recipients = []
+            for row in cursor.fetchall():
+                email = row[0].strip()
+                if email:
+                    recipients.append(email)
+            
+            return recipients
+        
+        recipients = fetch_email_recipients()
+        
+        # Check if we have any recipients
+        if not recipients:
+            logger.error("No email recipients found in database. Report will not be sent.")
+            sys.exit(1)
+        
+        logger.info(f"Found {len(recipients)} email recipients")
+            
         # Generate the report using the shared module
         logger.info("Generating weekly report")
         report_data = report_generator.generate_report()
@@ -49,7 +70,7 @@ def main():
         email_mgr = email_manager.EmailManager(passwords.email_config, logger)
         
         # Send the email with the report
-        logger.info(f"Sending report to {', '.join(recipients)}")
+        logger.info(f"Sending report to {len(recipients)} recipients")
         success = email_mgr.send_weekly_report(recipients, report_data)
         
         if success:
