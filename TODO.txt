@@ -8,6 +8,8 @@
 
     - nel report solo i dipendenti con badge valido
 
+    - metti serve invece di app.run
+
 2° PRIORITA' (Feature e fix necessari):
 
     - assicurati che ci sia consistenza coi nomi, e che i nomi che appaiono graficamente siano gli stessi nel backend e nel database

@@ -51,19 +51,3 @@ CREATE INDEX indice_ditta ON dipendenti (ditta_id);
 
 create user user_potente@localhost identified by [REDATTO];
 GRANT ALL PRIVILEGES ON ACCA.* TO 'user_potente'@'localhost';
-
-INSERT INTO utenti (username, password, is_admin, abilitato)
-VALUES 
-    ('senzaprivilegi', 'pass1', 0, 1),
-    ('admin', 'pass2', 1, 1),
-    ('disabilitato', 'pass3', 0, 0),
-    ('admindisabilitato', 'pass4', 1, 0),
-    ("Malfatti", "pass5", 1, 1)
-
-INSERT INTO ditte (nome, piva, scadenza_autorizzazione, blocca_accesso, nome_cognome_referente, email_referente, telefono_referente)
-VALUES
-  ('Tech Solutions Ltd', '12345678901', '2024-12-31', 1, 'Mario Rossi', 'mario.rossi@tech.com', '+39 123 4567890'),
-  ('Green Energy Spa', '98765432109', '2023-10-15', 0, 'Laura Bianchi', 'laura.bianchi@green.com', '+39 987 6543210'),
-  ('Food Delight Srl', '45678912345', '2025-06-30', 1, 'Luca Verdi', 'luca.verdi@food.com', '+39 456 7891234'),
-  ('Fashion Trends', '78912345678', NULL, 0, NULL, NULL, NULL),
-  ('Auto Parts Inc', '32165498701', '2024-03-20', 1, 'Sofia Neri', 'sofia.neri@auto.com', '+39 321 6549870');

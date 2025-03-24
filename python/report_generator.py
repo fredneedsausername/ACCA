@@ -3,7 +3,7 @@
 import io
 import xlsxwriter
 from datetime import datetime
-from python import fredbconn
+import fredbconn
 
 def generate_report():
     """Generate the report as a BytesIO object containing an Excel file."""
