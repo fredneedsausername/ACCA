@@ -42,10 +42,7 @@ CREATE TABLE IF NOT EXISTS dipendenti (
 -- Create email_recipients table
 CREATE TABLE IF NOT EXISTS email_recipients (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(100) NOT NULL
-    
-    -- Ensure email addresses are unique
-    UNIQUE KEY unique_email (email)
+    email VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE INDEX indice_nome ON dipendenti (nome);
