@@ -4,11 +4,9 @@
 
     - Eventuale interazione con api del software dei badge
 
-    - un modo per cercare quelli con flag "annullamento badge"
-
     - nel report dei flag solo badge valido
 
-    - il report lo manda una volta alla settimana agli indirizzi email in passwords
+    - nel report solo i dipendenti con badge valido
 
 2° PRIORITA' (Feature e fix necessari):
 
