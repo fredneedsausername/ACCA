@@ -3,7 +3,13 @@
 import io
 import xlsxwriter
 from datetime import datetime
-import fredbconn
+
+try:
+    # First attempt direct import (works when running server.py)
+    import fredbconn
+except ImportError:
+    # Fall back to package import (works when running send_weekly_report.py)
+    from python import fredbconn
 
 def generate_report():
     """Generate the report as a BytesIO object containing an Excel file."""
