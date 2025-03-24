@@ -62,9 +62,9 @@ def main():
         
         logger.info(f"Found {len(recipients)} email recipients")
             
-        # Generate the report using the shared module
-        logger.info("Generating weekly report")
-        report_data = report_generator.generate_report()
+        # Generate the report using the weekly report function
+        logger.info("Generating weekly report (badge valido only)")
+        report_data = report_generator.generate_weekly_report()
         
         # Initialize the email manager
         logger.info("Initializing email manager")
