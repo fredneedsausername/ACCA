@@ -35,6 +35,8 @@ def generate_report():
             ditte
         ON 
             dipendenti.ditta_id = ditte.id
+        WHERE
+            dipendenti.badge_annullato = 0
         ORDER BY
             ditte.nome ASC
         """)
@@ -220,6 +222,7 @@ def generate_weekly_report():
             dipendenti.ditta_id = ditte.id
         WHERE
             dipendenti.badge_sospeso = 1  -- Only employees with badge_valido (badge_sospeso=1)
+            AND dipendenti.badge_annullato = 0  -- Exclude annullato badges
         ORDER BY
             ditte.nome ASC
         """)

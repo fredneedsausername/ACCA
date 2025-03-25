@@ -16,7 +16,7 @@ logging.basicConfig(
     filemode='w',  # 'w' mode overwrites the existing file
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
-)
+)   
 logger = logging.getLogger("WeeklyReport")
 
 def main():
