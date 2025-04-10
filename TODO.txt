@@ -1,14 +1,17 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - Manda una email auto-generata ai referenti delle ditte il 20 dicembre e il 15 gennaio, chiedendogli di mandare i documenti aggiornati, visto che scadono per tutti il 31 gennaio. Fai double check e controlla che le date siano giuste prima di implementare. Se il flag ditta individuale è attivo, la email auto-generata il 20 dicembre e 15 gennaio sarà diversa
-
     - Eventuale interazione con api del software dei badge
 
-    - nel report dei flag solo badge valido
+    - aggiungere colonna flag badge temporaneo, deve essere un flag non modificabile dalla vista normale ma da un menù di modifica. Se viene messo a true allora si può inserire il numero cartellino ma con una condizione: se viene messo a false il flag bisogna eliminare il numero cartellino del dipendente, per mantentenere la consistenza del db. Quando stampi il report, prima devi mettere tutti quelli con il badge temporaneo
 
-    - nel report solo i dipendenti con badge valido
+    - Sostituire campo note nel report con campo "qualifica". Il campo note rimane nel gestionale. In fase di inserimento/modifica dipendente appare una droplist con una serie di opzioni per inserire qualifica dipendente. Nel database 
 
-    - metti serve invece di app.run
+    - aggiungere colonna "numero cartellino" che, nella pagina di creazione e di modifica dipendente si attiva solo se è attivo il flag del badge temporaneo
+    
+    - Alla fine del Report, verrà messo un numero totale di ditte e un numero totale di dipendenti.
+
+    - scrivere uno script che gira la notte, che:
+        - setta il flag "annullamento badge" a tutti i badge temporanei la cui data di emissione è oltre i 14 giorni da quando gira lo script
 
 2° PRIORITA' (Feature e fix necessari):
 
