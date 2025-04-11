@@ -325,7 +325,7 @@ def aggiorna_dipendente():
 @fredauth.authorized("admin")
 def elimina_dipendente():
 
-    if session["user"] == "Franco" or session["user"] == "Pippo2":
+    if session["user"] == passwords.no_permessi_eliminare or session["user"] == "Pippo2":
         flash("Non hai i permessi per eliminare dipendenti", "error")
         return redirect(request.referrer or "/dipendenti")
 
@@ -543,7 +543,7 @@ def aggiungi_ditte():
 @fredauth.authorized("admin")
 def elimina_ditta():
 
-    if session["user"] == "Franco" or session["user"] == "Pippo2":
+    if session["user"] == passwords.no_permessi_eliminare or session["user"] == "Pippo2":
         flash("Non hai i permessi per eliminare ditte", "error")
         return redirect(request.referrer or "/ditte")
     
@@ -827,7 +827,7 @@ def checkbox_pressed():
     """
 
     # Kick out user from changing the checkboxes
-    if session["user"] == "Franco" or session["user"] == "Pippo2":
+    if session["user"] == passwords.no_permessi_eliminare or session["user"] == "Pippo2":
         return jsonify({"error": "Non hai i permessi per modificare questo campo"}), 403
 
     try:
@@ -901,8 +901,7 @@ def checkbox_pressed():
                     return set_dipendente_accesso(data_id, data_clicked_value)
                         
                 case "badge":
-                    # Only Malfatti and Erica can modify badge status
-                    if (session['user'] != "Malfatti") and (session['user'] != "Erica"):
+                    if (session['user'] != passwords.capo1) and (session['user'] != passwords.capo2):
                         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                             return jsonify({
                                 "error": "Non hai i permessi per modificare questo campo",
@@ -1071,5 +1070,5 @@ if __name__ == "__main__":
 
     crash_logger = CrashLogger()
 
-    serve(app, host='0.0.0.0', port=16000)
-    # app.run(host="127.0.0.1", port="5000", debug=True)
+    # serve(app, host='0.0.0.0', port=16000)
+    app.run(host="127.0.0.1", port="5000", debug=True)

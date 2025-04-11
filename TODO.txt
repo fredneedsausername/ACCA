@@ -2,16 +2,20 @@
 
     - Eventuale interazione con api del software dei badge
 
-    - aggiungere colonna flag badge temporaneo, deve essere un flag non modificabile dalla vista normale ma da un menù di modifica. Se viene messo a true allora si può inserire il numero cartellino ma con una condizione: se viene messo a false il flag bisogna eliminare il numero cartellino del dipendente, per mantentenere la consistenza del db. Quando stampi il report, prima devi mettere tutti quelli con il badge temporaneo
-
     - Sostituire campo note nel report con campo "qualifica". Il campo note rimane nel gestionale. In fase di inserimento/modifica dipendente appare una droplist con una serie di opzioni per inserire qualifica dipendente. Nel database 
 
-    - aggiungere colonna "numero cartellino" che, nella pagina di creazione e di modifica dipendente si attiva solo se è attivo il flag del badge temporaneo
+    - aggiungere colonna flag badge temporaneo, deve essere un flag non modificabile dalla vista normale ma da un menù di modifica. Se viene messo a true allora si può inserire il numero cartellino ma con una condizione: se viene messo a false il flag bisogna eliminare il numero cartellino del dipendente, per mantentenere la consistenza del db. Quando stampi il report, prima devi mettere tutti quelli con il badge temporaneo. Aggiungere colonna "numero cartellino" che, nella pagina di creazione e di modifica dipendente si attiva solo se è attivo il flag del badge temporaneo. Nel menù di creazione dipendenti, se non è ancora stata selezionata la data di scadenza, ma è stato selezionato il flag "badge temporaneo", allora viene automaticamente messa una data di scadenza di due settimane rispetto a oggi con il javascript. In ogni caso, per mandare il form, se il flag badge temporaneo è stato segnato, sarà necessario che il campo data scadenza sia presente (non nullo e valido).
     
     - Alla fine del Report, verrà messo un numero totale di ditte e un numero totale di dipendenti.
 
     - scrivere uno script che gira la notte, che:
         - setta il flag "annullamento badge" a tutti i badge temporanei la cui data di emissione è oltre i 14 giorni da quando gira lo script
+    
+    - manda una email a chi gestisce i badge dicendo quali sono le persone con i badge scaduti ogni notte tranne le domeniche, e solo se ci sono persone con badge scaduti.
+
+    - aggiornare password su server deploy per i recipienti email e ruoli PRIMA DI FARE PULL
+
+    - cambia da run a serve
 
 2° PRIORITA' (Feature e fix necessari):
 
