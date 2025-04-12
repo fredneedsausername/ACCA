@@ -23,6 +23,8 @@
                 <th class="brown">DATA AGGIORNATA</th>
                 <th class="brown">BADGE VALIDO</th>
                 <th class="brown">ANNULLAMENTO BADGE</th>
+                <th class="purple">BADGE TEMP.</th>
+                <th class="purple">NUM. BADGE</th>
                 <th class="green">NOTE</th>
                 <th>AZIONI</th>
             </tr>
@@ -60,6 +62,9 @@
                     </button>
                 </td> <!-- badge annullato -->
                 
+                <td>{% if dipendente[10] == 1 %} ✅ {% else %} ❌ {% endif %}</td>
+                <td>{{ dipendente[11] or "" }}</td>
+
                 <td>{{ dipendente[5] or ""}}</td> <!-- note -->
                 <td class="action-buttons">
                     <form id="form-elimina-dipendente" action="/elimina-dipendente" method="POST">

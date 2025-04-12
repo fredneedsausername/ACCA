@@ -26,7 +26,8 @@ class NoDittaSelectedException(Exception):
 class Dipendente:
 
     def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, 
-             accesso_bloccato: int, note: str, scadenza_autorizzazione: date, badge_sospeso: int, badge_annullato: int):
+             accesso_bloccato: int, note: str, scadenza_autorizzazione: date, badge_sospeso: int, 
+             badge_annullato: int, is_badge_temporaneo: int = None, numero_badge: str = ""):
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
@@ -36,46 +37,49 @@ class Dipendente:
         self.scadenza_autorizzazione = scadenza_autorizzazione
         self.badge_sospeso = badge_sospeso
         self.badge_annullato = badge_annullato
+        self.is_badge_temporaneo = is_badge_temporaneo
+        self.numero_badge = numero_badge
         
     @classmethod
     def from_form(cls):
-        """Transforms the request form into a Dipendente object
-
-        Raises:
-            NoDittaSelectedException: no ditta was selected in the form for the creation of the dipendente.
-
-        Returns:
-            Dipendente: an object of type Dipendente
-        """
+        """Transforms the request form into a Dipendente object"""
 
         ditta_name = request.form.get("ditta")
         if ditta_name == '':
             raise NoDittaSelectedException
 
         nome = request.form.get("nome")
-
         cognome = request.form.get("cognome")
 
         is_badge_already_emesso = 0
         accesso_bloccato = 0
         badge_sospeso = 0
         badge_annullato = 0
+        
+        # Get badge_temporaneo field and numero_badge
+        is_badge_temporaneo = 1 if request.form.get("is_badge_temporaneo") == "on" else 0
+        numero_badge = request.form.get("numero_badge", "")
+        
+        # If is_badge_temporaneo is False, ensure numero_badge is empty
+        if not is_badge_temporaneo:
+            numero_badge = ""
 
         note = request.form.get("note")
-
         scadenza_autorizzazione = request.form.get("scadenza-autorizzazione")
         
         if scadenza_autorizzazione:
             scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
 
-        return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, badge_annullato)   
+        return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, 
+                  scadenza_autorizzazione, badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge)   
     
     def get_fields(self):
-        return self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, self.accesso_bloccato, self.note, self.scadenza_autorizzazione, self.badge_sospeso, self.badge_annullato
+        return (self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, 
+                self.accesso_bloccato, self.note, self.scadenza_autorizzazione, 
+                self.badge_sospeso, self.badge_annullato, self.is_badge_temporaneo, self.numero_badge)
 
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
-
         fields = self.get_fields()
 
         # This to fix bug: no "" allowed in sql syntax
@@ -96,9 +100,12 @@ class Dipendente:
         ditta_id = ditta_id[0]
 
         cursor.execute("""
-        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, badge_annullato)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], scadenza_autorizzazione, fields[7], fields[8]))
+        INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, 
+                            note, scadenza_autorizzazione, badge_sospeso, badge_annullato,
+                            is_badge_temporaneo, numero_badge)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], 
+              scadenza_autorizzazione, fields[7], fields[8], fields[9], fields[10]))
 
 class Ditta:
 
@@ -165,7 +172,6 @@ class Ditta:
 
         return cls(nome, piva, nome_cognome_referente, email_referente, telefono_referente, note)
 
-
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
 @fredauth.authorized("admin")
 def aggiorna_dipendente():
@@ -186,7 +192,9 @@ def aggiorna_dipendente():
                     note,
                     scadenza_autorizzazione,
                     badge_sospeso,
-                    badge_annullato
+                    badge_annullato,
+                    is_badge_temporaneo,
+                    numero_badge
                 FROM 
                     dipendenti
                 WHERE 
@@ -207,9 +215,10 @@ def aggiorna_dipendente():
                 "note": dipendente_tuple[5],
                 "scadenza_autorizzazione": dipendente_tuple[6],
                 "badge_sospeso": dipendente_tuple[7],
-                "badge_annullato": dipendente_tuple[8]
+                "badge_annullato": dipendente_tuple[8],
+                "is_badge_temporaneo": dipendente_tuple[9] if dipendente_tuple[9] is not None else 0,
+                "numero_badge": dipendente_tuple[10] if dipendente_tuple[10] is not None else ""
             }
-
 
             cursor.execute("""
                 SELECT id, nome
@@ -288,6 +297,14 @@ def aggiorna_dipendente():
         badge_sospeso = existing_values[2]
         badge_annullato = existing_values[3]
 
+        # Get badge_temporaneo field and numero_badge
+        is_badge_temporaneo = 1 if request.form.get("is_badge_temporaneo") == "on" else 0
+        numero_badge = request.form.get("numero_badge", "")
+        
+        # If is_badge_temporaneo is False, ensure numero_badge is empty
+        if not is_badge_temporaneo:
+            numero_badge = ""
+
         # Initialize scadenza_autorizzazione as None (will be NULL in database)
         scadenza_autorizzazione = None
             
@@ -299,6 +316,11 @@ def aggiorna_dipendente():
             date_value = request.form.get("scadenza-autorizzazione")
             if date_value:
                 scadenza_autorizzazione = datetime.strptime(date_value, "%Y-%m-%d").date()
+            
+        # If badge_temporaneo is True, ensure a valid expiration date exists
+        if is_badge_temporaneo and not scadenza_autorizzazione:
+            flash("È necessario specificare una data di scadenza per i badge temporanei", "error")
+            return redirect(f"/aggiorna-dipendente?id={dipendente_id}")
 
         @fredbconn.connected_to_database
         def update_db(cursor):
@@ -312,9 +334,13 @@ def aggiorna_dipendente():
                 note = %s,
                 scadenza_autorizzazione = %s,
                 badge_sospeso = %s,
-                badge_annullato = %s
+                badge_annullato = %s,
+                is_badge_temporaneo = %s,
+                numero_badge = %s
             WHERE id = %s
-            """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, note, scadenza_autorizzazione, badge_sospeso, badge_annullato, dipendente_id))
+            """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, 
+                 note, scadenza_autorizzazione, badge_sospeso, badge_annullato, 
+                 is_badge_temporaneo, numero_badge, dipendente_id))
 
         update_db()
 
@@ -570,7 +596,7 @@ def show_dipendenti():
 
         id_ditta = request.args.get("id_ditta")
         cognome = request.args.get("cognome")
-        annullati = request.args.get("annullati")  # New parameter for filtered view
+        annullati = request.args.get("annullati")  # Parameter for filtered view
 
         fetch_dipendenti_data = None
 
@@ -588,7 +614,9 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato
+                    dipendenti.badge_annullato,
+                    dipendenti.is_badge_temporaneo,
+                    dipendenti.numero_badge
                 FROM 
                     dipendenti
                 JOIN 
@@ -619,7 +647,9 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato
+                    dipendenti.badge_annullato,
+                    dipendenti.is_badge_temporaneo,
+                    dipendenti.numero_badge
                 FROM 
                     dipendenti
                 JOIN 
@@ -650,7 +680,9 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato
+                    dipendenti.badge_annullato,
+                    dipendenti.is_badge_temporaneo,
+                    dipendenti.numero_badge
                 FROM 
                     dipendenti
                 JOIN 
@@ -659,6 +691,39 @@ def show_dipendenti():
                     dipendenti.ditta_id = ditte.id
                 WHERE
                     dipendenti.badge_annullato = 1
+                ORDER BY
+                    dipendenti.cognome ASC
+                """)
+
+                return cursor.fetchall()
+
+            fetch_dipendenti_data = func
+        
+        else:
+            @fredbconn.connected_to_database
+            def func(cursor):
+                cursor.execute("""
+                SELECT 
+                    ditte.nome AS nome_ditta,
+                    dipendenti.nome AS nome_dipendente, 
+                    dipendenti.cognome,  
+                    dipendenti.is_badge_already_emesso, 
+                    dipendenti.accesso_bloccato,
+                    dipendenti.note,
+                    dipendenti.id,
+                    dipendenti.scadenza_autorizzazione,
+                    dipendenti.badge_sospeso,
+                    dipendenti.badge_annullato,
+                    dipendenti.is_badge_temporaneo,
+                    dipendenti.numero_badge
+                FROM 
+                    dipendenti
+                JOIN 
+                    ditte
+                ON 
+                    dipendenti.ditta_id = ditte.id
+                WHERE
+                    dipendenti.badge_annullato = 0
                 ORDER BY
                     dipendenti.cognome ASC
                 """)
@@ -720,6 +785,17 @@ def aggiungi_dipendenti():
             if ditta_name == '':
                 raise NoDittaSelectedException
             
+            # Get badge_temporaneo field and numero_badge
+            is_badge_temporaneo = 1 if request.form.get("is_badge_temporaneo") == "on" else 0
+            numero_badge = request.form.get("numero_badge", "")
+            
+            # If is_badge_temporaneo is False, ensure numero_badge is empty
+            if not is_badge_temporaneo:
+                numero_badge = ""
+                
+            # Get scadenza_autorizzazione
+            scadenza_autorizzazione = request.form.get("scadenza-autorizzazione")
+            
             # First get the ditta_id    
             @fredbconn.connected_to_database
             def get_ditta_id(cursor):
@@ -756,16 +832,43 @@ def aggiungi_dipendenti():
                 flash("Dipendente già esistente nella ditta", "error")
                 return redirect("/aggiungi-dipendenti")
                 
-            # If no duplicate, proceed with employee creation
-            dipendente = Dipendente.from_form()
-            dipendente.add_to_db()
+            is_badge_already_emesso = 0
+            accesso_bloccato = 0
+            badge_sospeso = 0
+            badge_annullato = 0
+            note = request.form.get("note", "")
+            
+            if scadenza_autorizzazione:
+                scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
+                
+            # If badge_temporaneo is True, ensure a valid expiration date exists
+            if is_badge_temporaneo and not scadenza_autorizzazione:
+                flash("È necessario specificare una data di scadenza per i badge temporanei", "error")
+                return redirect("/aggiungi-dipendenti")
+                
+            # If all checks pass, create the employee
+            @fredbconn.connected_to_database
+            def add_dipendente(cursor):
+                cursor.execute("""
+                INSERT INTO dipendenti(
+                    nome, cognome, ditta_id, is_badge_already_emesso, 
+                    accesso_bloccato, note, scadenza_autorizzazione, 
+                    badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    nome, cognome, ditta_id, is_badge_already_emesso,
+                    accesso_bloccato, note, scadenza_autorizzazione,
+                    badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge
+                ))
+                
+            add_dipendente()
             flash("Dipendente aggiunto con successo", "success")
             return redirect("/aggiungi-dipendenti")
                 
         except NoDittaSelectedException:
             flash("Selezionare una ditta", "error")
             return redirect("/aggiungi-dipendenti")
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

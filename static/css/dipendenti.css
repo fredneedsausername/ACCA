@@ -37,6 +37,10 @@ thead th {
     background-color: rgb(247, 164, 208);
 }
 
+.purple {
+    background-color: #d9b3ff;
+}
+
 tbody td {
     padding: 10px;
     
