@@ -591,9 +591,7 @@ def elimina_ditta():
 @app.route("/dipendenti")
 @fredauth.authorized("user")
 def show_dipendenti():
-
     if request.method == "GET":
-
         id_ditta = request.args.get("id_ditta")
         cognome = request.args.get("cognome")
         annullati = request.args.get("annullati")  # Parameter for filtered view
@@ -614,9 +612,7 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato,
-                    dipendenti.is_badge_temporaneo,
-                    dipendenti.numero_badge
+                    dipendenti.badge_annullato
                 FROM 
                     dipendenti
                 JOIN 
@@ -647,9 +643,7 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato,
-                    dipendenti.is_badge_temporaneo,
-                    dipendenti.numero_badge
+                    dipendenti.badge_annullato
                 FROM 
                     dipendenti
                 JOIN 
@@ -680,9 +674,7 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato,
-                    dipendenti.is_badge_temporaneo,
-                    dipendenti.numero_badge
+                    dipendenti.badge_annullato
                 FROM 
                     dipendenti
                 JOIN 
@@ -699,43 +691,8 @@ def show_dipendenti():
 
             fetch_dipendenti_data = func
         
-        else:
-            @fredbconn.connected_to_database
-            def func(cursor):
-                cursor.execute("""
-                SELECT 
-                    ditte.nome AS nome_ditta,
-                    dipendenti.nome AS nome_dipendente, 
-                    dipendenti.cognome,  
-                    dipendenti.is_badge_already_emesso, 
-                    dipendenti.accesso_bloccato,
-                    dipendenti.note,
-                    dipendenti.id,
-                    dipendenti.scadenza_autorizzazione,
-                    dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato,
-                    dipendenti.is_badge_temporaneo,
-                    dipendenti.numero_badge
-                FROM 
-                    dipendenti
-                JOIN 
-                    ditte
-                ON 
-                    dipendenti.ditta_id = ditte.id
-                WHERE
-                    dipendenti.badge_annullato = 0
-                ORDER BY
-                    dipendenti.cognome ASC
-                """)
-
-                return cursor.fetchall()
-
-            fetch_dipendenti_data = func
-        
-        fetched = None
-        
-        if fetch_dipendenti_data is not None:
-            fetched = fetch_dipendenti_data()
+        # Set fetched to an empty list when no filter is applied
+        fetched = [] if fetch_dipendenti_data is None else fetch_dipendenti_data()
 
         @fredbconn.connected_to_database
         def fetch_ditte_names(cursor):
