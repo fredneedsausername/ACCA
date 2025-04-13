@@ -28,6 +28,17 @@
             <label for="cognome">Cognome</label>
             <input type="text" id="cognome" name="cognome" value = "{{ cognome }}" required>
         </div>
+        
+        <div class="form-group-checkbox">
+            <input type="checkbox" id="is_badge_temporaneo" name="is_badge_temporaneo" {% if is_badge_temporaneo %}checked{% endif %}>
+            <label for="is_badge_temporaneo">Badge Temporaneo</label>
+        </div>
+        
+        <div class="form-group" id="numero_badge_container" style="display: {% if is_badge_temporaneo %}block{% else %}none{% endif %};">
+            <label for="numero_badge">Numero Badge</label>
+            <input type="text" id="numero_badge" name="numero_badge" value="{{ numero_badge }}" {% if not is_badge_temporaneo %}disabled{% endif %}>
+        </div>
+        
         <div class="form-group date-container">
             <label for="scadenza-autorizzazione">Scadenza documenti</label>
             <div class="date-input-container">
@@ -59,16 +70,6 @@
         <div class="form-group">
             <label for="note">Note</label>
             <input type="text" id="note" name="note" value="{{ note }}">
-        </div>
-
-        <div class="form-group-checkbox">
-            <input type="checkbox" id="is_badge_temporaneo" name="is_badge_temporaneo" {% if is_badge_temporaneo %}checked{% endif %}>
-            <label for="is_badge_temporaneo">Badge Temporaneo</label>
-        </div>
-        
-        <div class="form-group" id="numero_badge_container" style="display: {% if is_badge_temporaneo %}block{% else %}none{% endif %};">
-            <label for="numero_badge">Numero Badge</label>
-            <input type="text" id="numero_badge" name="numero_badge" value="{{ numero_badge }}" {% if not is_badge_temporaneo %}disabled{% endif %}>
         </div>
         
         <input type="hidden" name="dipendente_id" value="{{ dipendente_id }}">
