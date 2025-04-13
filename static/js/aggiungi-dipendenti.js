@@ -36,19 +36,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Handle cancellation button click
+    // MODIFIED: Handle cancellation button click - removed automatic date setting
     cancelDateBtn.addEventListener('click', function() {
         dateInput.value = '';
         clearDateFlag.value = "1";
         cancelDateBtn.style.opacity = '0';
         
-        // If badge_temporaneo is checked, set date again to 14 days from now
-        if (document.getElementById('is_badge_temporaneo').checked) {
-            setDefaultExpirationDate();
-        }
+        // No longer automatically setting the date when badge_temporaneo is checked
+        // Will be enforced by form validation instead
     });
 
-    // Show/hide the button based on date input value
+    // MODIFIED: Show/hide the button based on date input value - removed automatic date setting
     dateInput.addEventListener('input', function() {
         if (dateInput.value) {
             cancelDateBtn.style.opacity = '1';
@@ -57,14 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelDateBtn.style.opacity = '0';
             clearDateFlag.value = "1";
             
-            // If badge_temporaneo is checked and date was cleared, set date again
-            if (document.getElementById('is_badge_temporaneo').checked) {
-                setDefaultExpirationDate();
-            }
+            // No longer automatically setting the date when badge_temporaneo is checked
+            // Will be enforced by form validation instead
         }
     });
     
-    // Function to set expiration date to 14 days from now
+    // Function to set expiration date to 14 days from now (kept for reference but no longer called automatically)
     function setDefaultExpirationDate() {
         const twoWeeksFromNow = new Date();
         twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
@@ -79,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         cancelDateBtn.style.opacity = '1';
     }
     
-    // Badge temporaneo functionality
+    // MODIFIED: Badge temporaneo functionality - removed automatic date setting
     function toggleBadgeTemporaneo() {
         const isBadgeTemporaneo = document.getElementById('is_badge_temporaneo').checked;
         const numeroBadgeContainer = document.getElementById('numero_badge_container');
@@ -94,16 +90,14 @@ document.addEventListener('DOMContentLoaded', function() {
             numeroBadgeInput.value = '';
         }
         
-        // If badge_temporaneo is checked and no date is set, set a default date (2 weeks from now)
-        if (isBadgeTemporaneo && !dateInput.value) {
-            setDefaultExpirationDate();
-        }
+        // No longer automatically setting a date when badge_temporaneo is checked
+        // Form validation will still ensure a date is provided at submission
     }
     
     // Initialize badge_temporaneo behavior and add event listener
     document.getElementById('is_badge_temporaneo').addEventListener('change', toggleBadgeTemporaneo);
     
-    // Form validation
+    // Form validation - unchanged
     document.querySelector('form').addEventListener('submit', function(e) {
         const isBadgeTemporaneo = document.getElementById('is_badge_temporaneo').checked;
         
