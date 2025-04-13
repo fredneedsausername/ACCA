@@ -62,7 +62,12 @@
                     </button>
                 </td> <!-- badge annullato -->
                 
-                <td>{% if dipendente[10] == 1 %} ✅ {% else %} ❌ {% endif %}</td>
+                <td>
+                    <button class="checkbox-button" disabled>
+                        {% if dipendente[10] == 1 %} ✅ {% else %} ❌ {% endif %}
+                    </button>
+                </td>
+                
                 <td>{{ dipendente[11] or "" }}</td>
 
                 <td>{{ dipendente[5] or ""}}</td> <!-- note -->
