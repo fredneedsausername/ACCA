@@ -81,17 +81,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const numeroBadgeContainer = document.getElementById('numero_badge_container');
         const numeroBadgeInput = document.getElementById('numero_badge');
         
-        // Show/hide and enable/disable the numero_badge field
+        // Show/hide the container
         numeroBadgeContainer.style.display = isBadgeTemporaneo ? 'block' : 'none';
-        numeroBadgeInput.disabled = !isBadgeTemporaneo;
         
         // Clear the numero_badge field if badge_temporaneo is unchecked
         if (!isBadgeTemporaneo) {
             numeroBadgeInput.value = '';
         }
-        
-        // No longer automatically setting a date when badge_temporaneo is checked
-        // Form validation will still ensure a date is provided at submission
     }
     
     // Initialize badge_temporaneo behavior and add event listener

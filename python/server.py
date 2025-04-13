@@ -753,6 +753,11 @@ def aggiungi_dipendenti():
             # Get scadenza_autorizzazione
             scadenza_autorizzazione = request.form.get("scadenza-autorizzazione")
             
+            if not scadenza_autorizzazione:
+                scadenza_autorizzazione = None
+            else:
+                scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
+            
             # First get the ditta_id    
             @fredbconn.connected_to_database
             def get_ditta_id(cursor):
@@ -795,9 +800,6 @@ def aggiungi_dipendenti():
             badge_annullato = 0
             note = request.form.get("note", "")
             
-            if scadenza_autorizzazione:
-                scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
-                
             # If badge_temporaneo is True, ensure a valid expiration date exists
             if is_badge_temporaneo and not scadenza_autorizzazione:
                 flash("È necessario specificare una data di scadenza per i badge temporanei", "error")
@@ -826,7 +828,7 @@ def aggiungi_dipendenti():
         except NoDittaSelectedException:
             flash("Selezionare una ditta", "error")
             return redirect("/aggiungi-dipendenti")
-
+        
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":

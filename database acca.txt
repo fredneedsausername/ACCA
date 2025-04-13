@@ -32,8 +32,7 @@ CREATE TABLE IF NOT EXISTS dipendenti (
   accesso_bloccato TINYINT,
   badge_sospeso TINYINT,
   note VARCHAR(100),
-  badge_annullato TINYINT;
-  ALTER TABLE dipendenti
+  badge_annullato TINYINT,
   is_badge_temporaneo TINYINT,
   numero_badge VARCHAR(50);
 

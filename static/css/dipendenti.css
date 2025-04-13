@@ -380,3 +380,12 @@ tbody tr:hover {
         top: 61px; /* Original 91px - 30px */
     }
 }
+
+.checkbox-button.read-only {
+    cursor: default; /* Neutral cursor instead of wait cursor */
+}
+
+/* Override the existing wait cursor for this specific case */
+.checkbox-button.read-only:disabled {
+    cursor: default;
+}
