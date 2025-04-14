@@ -1,18 +1,18 @@
 1° PRIORITA' (Richieste direttamente):
 
     - Add new field in the management system: "Ruolo". When adding/editing an employee, a dropdown list appears with several options to select the employee's role: "Datore di lavoro", "Preposto", "Ditta individuale", or "Apprendista". It should be possible not to specify the role, leaving it blank (to indicate a regular worker). Just like in the existing employee insert and edit menus, it must be possible to delete the selected role, indicating that a mistake was made and that the employee should be considered a regular worker (as mentioned previously, regular workers have an empty "Ruolo" field). Remove the "note" field from the report, and add the "Ruolo" field instead. The "note" field remains in the management system.
-
-    - Implement a "badge temporaneo" tracking system with the following specifications: 1) Add a new boolean field called "badge temporaneo" to employee records (non-editable in standard view, only editable in "modifica dipendente" menu, configurable when adding new employees via "aggiungi dipendente" menu); 2) Add a "numero badge" field (only editable when "badge temporaneo" is true, must remain empty when false, automatically deleted if "badge temporaneo" changes from true to false); 3) In reports: employees with temporary badges appear first with a grey header row with bold black text reading "Badge temporanei" after standard header, followed by another header row with "Personale" for the remaining employees, and omit the "numero badge" column; 4) In forms: enable "numero badge" field only when "badge temporaneo" is checked, automatically set expiration date two weeks ahead when "badge temporaneo" is checked without date selection (user may modify), and require valid expiration date for submission when "badge temporaneo" is checked.
     
-    - At the end of the report, put the number of companies and the number of employees
+    - When badge temporaneo is ticked as "on" in aggiorna dipendente, it is ticked as "off" in the dipendenti view. This happened upon creating a new dipendente. On the db, it shows as "1", but the view does not reflect on this. Testing the "note" field, it updates normally, even with the given situation. The report generates without problems.
 
-    - Create a script that sends an email to an address stored in passwords.py, listing all people with expired "badge temporanei" (including their first name, last name, and company). The email should only be sent if there are people with expired badges; otherwise, a different email should be sent confirming that no expired badges exist. A script will be configured to run nightly except for Sundays. The list has to be an excel file.
+    - Create a script that sends an email to an address stored in passwords.py, listing all people with expired "badge temporanei" (including their first name, last name, and company). The email should only be sent if there are people with expired badges; otherwise, a different email should be sent confirming that no expired badges exist. A script will be configured to run nightly except for Sundays. The list has to be a simple excel file.
     
     - Update passwords.py for email recipients and roles on the deployment server BEFORE PULLING.
 
     - change from run to serve
 
     - update the database schema in the deploy server
+
+    - update also the report completo to have the rows with the grey background and the count of ditte and dipendenti at the end.
 
 2° PRIORITA' (Feature e fix necessari):
 
