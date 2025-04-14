@@ -23,12 +23,7 @@ def generate_report():
             dipendenti.nome AS dipendente_nome,
             dipendenti.cognome,
             dipendenti.note,
-            dipendenti.scadenza_autorizzazione,
-            dipendenti.is_badge_already_emesso,
-            dipendenti.badge_sospeso,
-            dipendenti.badge_annullato,
-            dipendenti.is_badge_temporaneo,
-            dipendenti.numero_badge
+            dipendenti.scadenza_autorizzazione
         FROM 
             dipendenti
         JOIN 
@@ -38,7 +33,6 @@ def generate_report():
         WHERE
             dipendenti.badge_annullato = 0
         ORDER BY
-            dipendenti.is_badge_temporaneo DESC,  -- Temporary badges first
             ditte.nome ASC
         """)
         return fredbconn.fetch_generator(cursor)
@@ -64,9 +58,8 @@ def generate_report():
         
         return company_count, employee_count
 
-    # Process data - separate temporary and regular badges
-    temp_badge_data = []
-    regular_data = []
+    # Process data
+    employee_data = []
 
     for dipendente in fetch_dipendenti():
         try:
@@ -75,14 +68,6 @@ def generate_report():
             dipendente_cognome = dipendente[3] if len(dipendente) > 3 else ""
             note = dipendente[4] if len(dipendente) > 4 else ""
             scadenza_autorizzazione = dipendente[5] if len(dipendente) > 5 else None
-            is_badge_emesso = dipendente[6] if len(dipendente) > 6 else 0
-            is_badge_sospeso = dipendente[7] if len(dipendente) > 7 else 0
-            is_badge_annullato = dipendente[8] if len(dipendente) > 8 else 0
-            is_badge_temporaneo = dipendente[9] if len(dipendente) > 9 and dipendente[9] is not None else 0
-            numero_badge = dipendente[10] if len(dipendente) > 10 and dipendente[10] is not None else ""
-            
-            badge_emesso = "X" if is_badge_emesso else ""
-            badge_valido = "X" if is_badge_sospeso else ""
             
             # Format the date if exists
             validita_documenti = ""
@@ -99,22 +84,17 @@ def generate_report():
                     except AttributeError:
                         validita_documenti = str(scadenza_autorizzazione)
             
-            # Base data row without numero_badge
+            # Data row with only requested fields
             row_data = (
                 ditta_nome,
                 dipendente_nome,
                 dipendente_cognome,
                 note,
-                validita_documenti,
-                badge_emesso,
-                badge_valido
+                validita_documenti
             )
             
-            # Add to appropriate list based on badge type
-            if is_badge_temporaneo:
-                temp_badge_data.append(row_data + (numero_badge,))
-            else:
-                regular_data.append(row_data)
+            # Add to data list
+            employee_data.append(row_data)
         except Exception as e:
             print(f"Error processing record: {str(dipendente)}, Error: {str(e)}")
             continue
@@ -147,11 +127,6 @@ def generate_report():
         'border': 1, 'bg_color': '#92D050', 'text_wrap': True
     })
     
-    badge_header_format = workbook.add_format({
-        'bold': True, 'font_size': 14, 'align': 'center', 'valign': 'vcenter',
-        'border': 1, 'bg_color': '#92D050', 'text_wrap': True
-    })
-    
     ditta_data_format = workbook.add_format({
         'bold': True, 'font_size': 13, 'align': 'center', 'valign': 'vcenter',
         'border': 1,
@@ -172,27 +147,17 @@ def generate_report():
         'border': 1, 'bold': True
     })
     
-    temp_section_format = workbook.add_format({
-        'bold': True, 'font_size': 14, 'align': 'center', 'valign': 'vcenter',
-        'border': 1, 'bg_color': '#D3D3D3', 'color': '#000000', 'text_wrap': True
-    })
-    
-    regular_section_format = workbook.add_format({
-        'bold': True, 'font_size': 14, 'align': 'center', 'valign': 'vcenter',
-        'border': 1, 'bg_color': '#D3D3D3', 'text_wrap': True
-    })
-    
     footer_format = workbook.add_format({
         'bold': True, 'font_size': 14, 'align': 'left', 'valign': 'vcenter',
         'border': 0
     })
     
-    # Write report title - Use "LISTA PERSONALE" as in the reduced version
+    # Write report title
     worksheet.write_rich_string(0, 0,
                             rich_format_18, "LISTA PERSONALE",
                             rich_format_14, aggiornato_string)
 
-    # Set up standard headers
+    # Set up headers
     header_row = 1
     worksheet.set_row(header_row, 45)
 
@@ -201,74 +166,21 @@ def generate_report():
     worksheet.write(header_row, 2, "COGNOME", nome_header_format)
     worksheet.write(header_row, 3, "NOTE", note_header_format)
     worksheet.write(header_row, 4, "SCADENZA\nDOCUMENTI", note_header_format)
-    worksheet.write(header_row, 5, "BADGE\nEMESSO", badge_header_format)
-    worksheet.write(header_row, 6, "BADGE\nVALIDO", badge_header_format)
 
     # Start data rows after the header
     current_row = header_row + 1
     
-    # Handle temporary badges if any exist
-    if temp_badge_data:
-        # Add "Badge temporanei" section header (span across all columns)
-        worksheet.merge_range(current_row, 0, current_row, 6, "Badge temporanei", temp_section_format)
+    # Write employee data
+    for data_row in employee_data:
+        worksheet.set_row(current_row, 15)
+        
+        worksheet.write(current_row, 0, data_row[0], ditta_data_format)
+        worksheet.write(current_row, 1, data_row[1], default_format)
+        worksheet.write(current_row, 2, data_row[2], default_format)
+        worksheet.write(current_row, 3, data_row[3], note_data_format)
+        worksheet.write(current_row, 4, data_row[4], default_format)
+        
         current_row += 1
-        
-        # Add temporary badge header row with numero_badge column
-        worksheet.write(current_row, 0, "DITTA", ditta_header_format)
-        worksheet.write(current_row, 1, "NOME", nome_header_format)
-        worksheet.write(current_row, 2, "COGNOME", nome_header_format)
-        worksheet.write(current_row, 3, "NOTE", note_header_format)
-        worksheet.write(current_row, 4, "SCADENZA\nDOCUMENTI", note_header_format)
-        worksheet.write(current_row, 5, "BADGE\nEMESSO", badge_header_format)
-        worksheet.write(current_row, 6, "BADGE\nVALIDO", badge_header_format)
-        worksheet.write(current_row, 7, "NUMERO\nBADGE", badge_header_format)
-        current_row += 1
-        
-        # Write temporary badge data with numero_badge
-        for data_row in temp_badge_data:
-            worksheet.set_row(current_row, 15)
-            
-            worksheet.write(current_row, 0, data_row[0], ditta_data_format)
-            worksheet.write(current_row, 1, data_row[1], default_format)
-            worksheet.write(current_row, 2, data_row[2], default_format)
-            worksheet.write(current_row, 3, data_row[3], note_data_format)
-            worksheet.write(current_row, 4, data_row[4], default_format)
-            worksheet.write(current_row, 5, data_row[5], default_format)
-            worksheet.write(current_row, 6, data_row[6], default_format)
-            worksheet.write(current_row, 7, data_row[7], default_format)  # Numero badge
-            
-            current_row += 1
-    
-    # Add "Personale" section for regular employees
-    if regular_data:
-        # Only add the section header if we have both types of badges
-        if temp_badge_data:
-            worksheet.merge_range(current_row, 0, current_row, 6, "Personale", regular_section_format)
-            current_row += 1
-            
-            # Regular header row (without numero_badge column)
-            worksheet.write(current_row, 0, "DITTA", ditta_header_format)
-            worksheet.write(current_row, 1, "NOME", nome_header_format)
-            worksheet.write(current_row, 2, "COGNOME", nome_header_format)
-            worksheet.write(current_row, 3, "NOTE", note_header_format)
-            worksheet.write(current_row, 4, "SCADENZA\nDOCUMENTI", note_header_format)
-            worksheet.write(current_row, 5, "BADGE\nEMESSO", badge_header_format)
-            worksheet.write(current_row, 6, "BADGE\nVALIDO", badge_header_format)
-            current_row += 1
-        
-        # Write regular employee data
-        for data_row in regular_data:
-            worksheet.set_row(current_row, 15)
-            
-            worksheet.write(current_row, 0, data_row[0], ditta_data_format)
-            worksheet.write(current_row, 1, data_row[1], default_format)
-            worksheet.write(current_row, 2, data_row[2], default_format)
-            worksheet.write(current_row, 3, data_row[3], note_data_format)
-            worksheet.write(current_row, 4, data_row[4], default_format)
-            worksheet.write(current_row, 5, data_row[5], default_format)
-            worksheet.write(current_row, 6, data_row[6], default_format)
-            
-            current_row += 1
 
     # Add footer with counts of companies and employees
     company_count, employee_count = count_companies_and_employees()
@@ -279,18 +191,12 @@ def generate_report():
     worksheet.write(current_row, 0, f"Numero dipendenti: {employee_count}", footer_format)
 
     # Set column widths
-    headers = ["DITTA", "NOME", "COGNOME", "NOTE", "VALIDITÁ DOCUMENTI", "BADGE EMESSO", "BADGE VALIDO", "NUMERO BADGE"]
+    headers = ["DITTA", "NOME", "COGNOME", "NOTE", "SCADENZA DOCUMENTI"]
     col_widths = [len(header) for header in headers]
     
     # Adjust widths based on content
-    for row in temp_badge_data:
+    for row in employee_data:
         for i in range(min(len(headers), len(row))):
-            cell_length = len(str(row[i]))
-            if cell_length > col_widths[i]:
-                col_widths[i] = cell_length
-    
-    for row in regular_data:
-        for i in range(min(len(headers) - 1, len(row))):  # -1 because no numero_badge
             cell_length = len(str(row[i]))
             if cell_length > col_widths[i]:
                 col_widths[i] = cell_length
@@ -300,10 +206,6 @@ def generate_report():
     
     reduced_padding = 0
     col_widths[4] = len(headers[4]) + reduced_padding
-    col_widths[5] = len(headers[5]) + reduced_padding
-    col_widths[6] = len(headers[6]) + reduced_padding
-    if len(col_widths) > 7:
-        col_widths[7] = len(headers[7]) + reduced_padding
     
     for i, width in enumerate(col_widths):
         worksheet.set_column(i, i, width)

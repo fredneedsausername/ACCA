@@ -33,10 +33,33 @@ def generate_report():
             ditte
         ON 
             dipendenti.ditta_id = ditte.id
+        WHERE
+            dipendenti.badge_annullato = 0
         ORDER BY
             ditte.nome ASC
         """)
         return fredbconn.fetch_generator(cursor)
+
+    @fredbconn.connected_to_database
+    def count_companies_and_employees(cursor):
+        # Count active companies with at least one active employee
+        cursor.execute("""
+        SELECT COUNT(DISTINCT ditte.id)
+        FROM ditte
+        JOIN dipendenti ON ditte.id = dipendenti.ditta_id
+        WHERE dipendenti.badge_annullato = 0
+        """)
+        company_count = cursor.fetchone()[0]
+        
+        # Count active employees
+        cursor.execute("""
+        SELECT COUNT(*)
+        FROM dipendenti
+        WHERE badge_annullato = 0
+        """)
+        employee_count = cursor.fetchone()[0]
+        
+        return company_count, employee_count
 
     # Process data
     custom_data = []
@@ -136,6 +159,11 @@ def generate_report():
         'border': 1, 'bold': True
     })
     
+    footer_format = workbook.add_format({
+        'bold': True, 'font_size': 14, 'align': 'left', 'valign': 'vcenter',
+        'border': 0
+    })
+    
     # Write report title
     worksheet.write_rich_string(0, 0,
                             rich_format_18, "LISTA PERSONALE AUTORIZZATO ALL'INGRESSO",
@@ -166,6 +194,14 @@ def generate_report():
         worksheet.write(current_row, 4, data_row[4], default_format)
         worksheet.write(current_row, 5, data_row[5], default_format)
         worksheet.write(current_row, 6, data_row[6], default_format)
+
+    # Add footer with counts of companies and employees
+    current_row = data_start_row + len(custom_data) + 1
+    company_count, employee_count = count_companies_and_employees()
+    
+    worksheet.write(current_row, 0, f"Numero aziende: {company_count}", footer_format)
+    current_row += 1
+    worksheet.write(current_row, 0, f"Numero dipendenti: {employee_count}", footer_format)
 
     # Set column widths
     headers = ["DITTA", "NOME", "COGNOME", "NOTE", "VALIDITÁ DOCUMENTI", "BADGE EMESSO", "BADGE VALIDO"]

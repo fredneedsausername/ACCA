@@ -14,7 +14,7 @@ import os
 import sys
 import logging
 import traceback
-import report_generator
+import report_generator_completo
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
@@ -868,7 +868,7 @@ def logout():
 def genera_report():
     
     # Get the report as a BytesIO object
-    output = report_generator.generate_report()
+    output = report_generator_completo.generate_report()
     
     # Send the in-memory file as an attachment
     return send_file(
