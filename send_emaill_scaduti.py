@@ -52,7 +52,7 @@ def get_email_recipients():
     return recipients
 
 
-def get_expired_temp_badges():
+def get_expired_badges():
     """Fetch ALL employees with expired badges, including the badge_temporaneo flag."""
     logger.info("Checking for ALL expired badges")
     
@@ -73,7 +73,7 @@ def get_expired_temp_badges():
         JOIN 
             ditte ON dipendenti.ditta_id = ditte.id
         WHERE 
-            dipendenti.scadenza_autorizzazione < %s
+            dipendenti.scadenza_autorizzazione <= %s
         ORDER BY
             dipendenti.is_badge_temporaneo DESC,
             ditte.nome ASC,
@@ -83,6 +83,7 @@ def get_expired_temp_badges():
         
         return list(fredbconn.fetch_generator(cursor))
     
+    return fetch_expired_badges()
 
 def generate_excel_report(expired_badges):
     """Generate Excel report with expired badges data."""
@@ -270,9 +271,10 @@ def send_email(has_expired_badges, excel_data=None):
         current_date = datetime.now().strftime("%d/%m/%Y")
         
         if has_expired_badges:
-            msg['Subject'] = f"ATTENZIONE: Badge temporanei scaduti {current_date}"
+            msg['Subject'] = f"ATTENZIONE: Badge scaduti {current_date}"
             body = (
-                f"In allegato si trova l'elenco dei badge temporanei scaduti al {current_date}.\n\n"
+                f"In allegato si trova l'elenco dei badge scaduti al {current_date}.\n\n"
+                "Il report include sia badge temporanei che badge non temporanei scaduti.\n\n"
                 "Si prega di verificare e prendere le necessarie azioni.\n\n"
                 "Questo è un messaggio automatico generato dal sistema."
             )
@@ -284,14 +286,14 @@ def send_email(has_expired_badges, excel_data=None):
             encoders.encode_base64(attachment)
             attachment.add_header(
                 'Content-Disposition', 
-                f'attachment; filename="Badge_Temporanei_Scaduti_{current_date.replace("/", "-")}.xlsx"'
+                f'attachment; filename="Badge_Scaduti_{current_date.replace("/", "-")}.xlsx"'
             )
             msg.attach(attachment)
             logger.info("Attaching Excel report to email")
         else:
-            msg['Subject'] = f"Informazione: Nessun badge temporaneo scaduto {current_date}"
+            msg['Subject'] = f"Informazione: Nessun badge scaduto {current_date}"
             body = (
-                f"Si informa che non ci sono badge temporanei scaduti alla data del {current_date}.\n\n"
+                f"Si informa che non ci sono badge scaduti alla data del {current_date}.\n\n"
                 "Questo è un messaggio automatico generato dal sistema."
             )
             msg.attach(MIMEText(body, 'plain'))
@@ -315,15 +317,15 @@ def send_email(has_expired_badges, excel_data=None):
 def main():
     """Main function to run the script."""
     try:
-        logger.info(f"Starting expired temporary badges check at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(f"Starting expired badges check at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
         # Initialize database
         logger.info("Initializing database connection")
         from python.passwords import database_config
         fredbconn.initialize_database(*database_config)
         
-        # Get list of expired temporary badges
-        expired_badges = get_expired_temp_badges()
+        # Get list of all expired badges
+        expired_badges = get_expired_badges()
         
         if expired_badges:
             # Generate Excel report
@@ -337,7 +339,7 @@ def main():
                 logger.error("Failed to send email with expired badges report")
                 return 1
         else:
-            logger.info("No expired temporary badges found")
+            logger.info("No expired badges found")
             
             # Send email informing no expired badges
             success = send_email(False)
