@@ -1,15 +1,5 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - Working on it: Create a script that sends an email to an address stored in passwords.py, listing all people with expired "badge temporanei" (including their first name, last name, and company). The email should only be sent if there are people with expired badges; otherwise, a different email should be sent confirming that no expired badges exist. A script will be configured to run nightly except for Sundays. The list has to be a simple excel file.
-    
-    - Update passwords.py for email recipients and roles on the deployment server BEFORE PULLING.
-
-    - change from run to serve
-
-    - update the database schema in the deploy server
-
-    - update also the report completo to have the rows with the grey background and the count of ditte and dipendenti at the end.
-
 2° PRIORITA' (Feature e fix necessari):
 
     - aggiungi vincoli di dimensioni campi frontend e backend quando aggiungi o aggiorni
