@@ -254,7 +254,8 @@ def set_column_widths(worksheet, data, headers):
     for i, width in enumerate(col_widths):
         worksheet.set_column(i, i, width)
 
-def send_email(has_expired_badges, excel_data=None):
+
+def send_email(has_expired_badges, excel_data=None, temp_count=0, non_temp_count=0, total_count=0):
     """Send email with or without the Excel attachment."""
     try:
         # Get email recipients from database
@@ -271,11 +272,12 @@ def send_email(has_expired_badges, excel_data=None):
         current_date = datetime.now().strftime("%d/%m/%Y")
         
         if has_expired_badges:
-            msg['Subject'] = f"ATTENZIONE: Badge scaduti {current_date}"
+            msg['Subject'] = f"Badge scaduti al {current_date}"
             body = (
                 f"In allegato si trova l'elenco dei badge scaduti al {current_date}.\n\n"
-                "Il report include sia badge temporanei che badge non temporanei scaduti.\n\n"
-                "Si prega di verificare e prendere le necessarie azioni.\n\n"
+                f"Totale badge temporanei: {temp_count}\n"
+                f"Totale badge non temporanei: {non_temp_count}\n"
+                f"Totale badge scaduti: {total_count}\n\n"
                 "Questo è un messaggio automatico generato dal sistema."
             )
             msg.attach(MIMEText(body, 'plain'))
@@ -291,7 +293,7 @@ def send_email(has_expired_badges, excel_data=None):
             msg.attach(attachment)
             logger.info("Attaching Excel report to email")
         else:
-            msg['Subject'] = f"Informazione: Nessun badge scaduto {current_date}"
+            msg['Subject'] = f"Badge scaduti al {current_date}"
             body = (
                 f"Si informa che non ci sono badge scaduti alla data del {current_date}.\n\n"
                 "Questo è un messaggio automatico generato dal sistema."
@@ -328,11 +330,23 @@ def main():
         expired_badges = get_expired_badges()
         
         if expired_badges:
+            # Calculate counts for email
+            temp_badges = []
+            non_temp_badges = []
+            for badge in expired_badges:
+                # Check is_badge_temporaneo (position 4 in the tuple)
+                is_temp = badge[4] if len(badge) > 4 else 0
+                
+                if is_temp:
+                    temp_badges.append(badge)
+                else:
+                    non_temp_badges.append(badge)
+            
             # Generate Excel report
             excel_data = generate_excel_report(expired_badges)
             
             # Send email with attachment
-            success = send_email(True, excel_data)
+            success = send_email(True, excel_data, len(temp_badges), len(non_temp_badges), len(expired_badges))
             if success:
                 logger.info(f"Process completed successfully: {len(expired_badges)} expired badge(s) reported")
             else:
