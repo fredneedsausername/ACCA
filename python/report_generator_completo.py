@@ -22,7 +22,7 @@ def generate_report():
             ditte.nome AS ditta_nome,
             dipendenti.nome AS dipendente_nome,
             dipendenti.cognome,
-            dipendenti.note,
+            ruoli.nome_ruolo,
             dipendenti.scadenza_autorizzazione,
             dipendenti.is_badge_already_emesso,
             dipendenti.badge_sospeso,
@@ -33,6 +33,10 @@ def generate_report():
             ditte
         ON 
             dipendenti.ditta_id = ditte.id
+        LEFT JOIN
+            ruoli
+        ON
+            dipendenti.ruolo_id = ruoli.id
         ORDER BY
             ditte.nome ASC
         """)
@@ -46,7 +50,7 @@ def generate_report():
             ditta_nome = dipendente[1] if len(dipendente) > 1 else ""
             dipendente_nome = dipendente[2] if len(dipendente) > 2 else ""
             dipendente_cognome = dipendente[3] if len(dipendente) > 3 else ""
-            note = dipendente[4] if len(dipendente) > 4 else ""
+            ruolo = dipendente[4] if len(dipendente) > 4 else ""  # Use ruolo instead of note
             scadenza_autorizzazione = dipendente[5] if len(dipendente) > 5 else None
             is_badge_emesso = dipendente[6] if len(dipendente) > 6 else 0
             is_badge_sospeso = dipendente[7] if len(dipendente) > 7 else 0
@@ -74,7 +78,7 @@ def generate_report():
                 ditta_nome,
                 dipendente_nome,
                 dipendente_cognome,
-                note,
+                ruolo,  # Use ruolo instead of note
                 validita_documenti,
                 badge_emesso,
                 badge_valido
@@ -121,7 +125,7 @@ def generate_report():
         'border': 1,
     })
     
-    note_data_format = workbook.add_format({
+    ruolo_data_format = workbook.add_format({  # Renamed from note_data_format
         'italic': True, 'font_size': 13, 'align': 'center', 'valign': 'vcenter',
         'border': 1,
     })
@@ -148,7 +152,7 @@ def generate_report():
     worksheet.write(header_row, 0, "DITTA", ditta_header_format)
     worksheet.write(header_row, 1, "NOME", nome_header_format)
     worksheet.write(header_row, 2, "COGNOME", nome_header_format)
-    worksheet.write(header_row, 3, "NOTE", note_header_format)
+    worksheet.write(header_row, 3, "RUOLO", note_header_format)  # Changed from NOTE to RUOLO
     worksheet.write(header_row, 4, "SCADENZA\nDOCUMENTI", note_header_format)
     worksheet.write(header_row, 5, "BADGE\nEMESSO", badge_header_format)
     worksheet.write(header_row, 6, "BADGE\nVALIDO", badge_header_format)
@@ -162,13 +166,13 @@ def generate_report():
         worksheet.write(current_row, 0, data_row[0], ditta_data_format)
         worksheet.write(current_row, 1, data_row[1], default_format)
         worksheet.write(current_row, 2, data_row[2], default_format)
-        worksheet.write(current_row, 3, data_row[3], note_data_format)
+        worksheet.write(current_row, 3, data_row[3], ruolo_data_format)  # Use ruolo instead of note
         worksheet.write(current_row, 4, data_row[4], default_format)
         worksheet.write(current_row, 5, data_row[5], default_format)
         worksheet.write(current_row, 6, data_row[6], default_format)
 
     # Set column widths
-    headers = ["DITTA", "NOME", "COGNOME", "NOTE", "VALIDITÁ DOCUMENTI", "BADGE EMESSO", "BADGE VALIDO"]
+    headers = ["DITTA", "NOME", "COGNOME", "RUOLO", "VALIDITÁ DOCUMENTI", "BADGE EMESSO", "BADGE VALIDO"]  # Updated to RUOLO
     col_widths = [len(header) for header in headers]
     
     for row in custom_data:

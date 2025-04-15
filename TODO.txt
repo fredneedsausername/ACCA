@@ -14,10 +14,6 @@
 
 2° PRIORITA' (Feature e fix necessari):
 
-    - assicurati che ci sia consistenza coi nomi, e che i nomi che appaiono graficamente siano gli stessi nel backend e nel database
-
-    - Migliora la architettura in modo che ci sia una autorizzazione in grado di premere badge emesso e una che no
-
     - aggiungi vincoli di dimensioni campi frontend e backend quando aggiungi o aggiorni
 
     - rendi esportabile il database per fare backup periodici / trova il modo di fare backup periodici. Ricorda di esportare anche l'id dei dipendenti, dato che lo usano internamente
@@ -49,12 +45,6 @@
     - Fai che tutti i bottoni checkbox siano cliccabili
 
     - rendi obsoleto il menù aggiorna ditta e aggiorna dipendente, rendendo tutto modificabile direttamente dal menù dipendenti e menù ditte come per le checkbox
-
-    - rimuovi:
-        - import xlsxwriter
-        - import io
-
-        se rimuovi la generazione del report, visto che sono import necessari solo a quello
 
     - rimuovi le classi dal server così puoi dire di non aver utilizzato neanche una classe
 
