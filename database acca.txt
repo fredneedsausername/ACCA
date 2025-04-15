@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS ACCA
   CHARACTER SET utf8mb4;
 
-use ACCA;
+USE ACCA;
 
 CREATE TABLE IF NOT EXISTS utenti (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -22,11 +22,18 @@ CREATE TABLE IF NOT EXISTS ditte (
   is_ditta_individuale TINYINT DEFAULT 0
 );
 
+CREATE TABLE IF NOT EXISTS ruoli (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50) NOT NULL,
+  descrizione VARCHAR(255)
+);
+
 CREATE TABLE IF NOT EXISTS dipendenti (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(50),
   cognome VARCHAR(50),
   ditta_id INT UNSIGNED,
+  ruolo_id INT UNSIGNED,
   is_badge_already_emesso TINYINT,
   scadenza_autorizzazione DATE,
   accesso_bloccato TINYINT,
@@ -34,23 +41,26 @@ CREATE TABLE IF NOT EXISTS dipendenti (
   note VARCHAR(100),
   badge_annullato TINYINT,
   is_badge_temporaneo TINYINT,
-  numero_badge VARCHAR(50) DEFAULT '';
-  ruolo VARCHAR(50) DEFAULT NULL;
-
+  numero_badge VARCHAR(50) DEFAULT '',
+  
   FOREIGN KEY (ditta_id) REFERENCES ditte(id)
     ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  FOREIGN KEY (ruolo_id) REFERENCES ruoli(id)
+    ON DELETE SET NULL
     ON UPDATE CASCADE
 );
 
 -- Create email_recipients table
 CREATE TABLE IF NOT EXISTS email_recipients (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(100) NOT NULL UNIQUE
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(100) NOT NULL UNIQUE
 );
 
 CREATE INDEX indice_nome ON dipendenti (nome);
 CREATE INDEX indice_cognome ON dipendenti (cognome);
 CREATE INDEX indice_ditta ON dipendenti (ditta_id);
+CREATE INDEX indice_ruolo ON dipendenti (ruolo_id);
 
-create user user_potente@localhost identified by [REDATTO];
+CREATE USER user_potente@localhost IDENTIFIED BY [redacted];
 GRANT ALL PRIVILEGES ON ACCA.* TO 'user_potente'@'localhost';

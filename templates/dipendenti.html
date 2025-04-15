@@ -18,6 +18,7 @@
                 <th class="yellow">DITTA</th>
                 <th class="blue">NOME</th>
                 <th class="blue">COGNOME</th>
+                <th class="purple">RUOLO</th>  <!-- New column -->
                 <th class="brown">SCADENZA</th>
                 <th class="brown">BADGE EMESSO</th>
                 <th class="brown">DATA AGGIORNATA</th>
@@ -37,13 +38,14 @@
                 <td>{{ dipendente[0] or ""}}</td> <!-- nome ditta -->
                 <td>{{ dipendente[1] or ""}}</td> <!-- nome dipendente -->
                 <td>{{ dipendente[2] or ""}}</td> <!-- cognome -->
+                <td>{{ dipendente[12] or ""}}</td> <!-- ruolo -->
                 <td>{{ dipendente[7] or ""}}</td> <!-- scad. autorizzazione -->
                 <td>
                     <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ dipendente[6] }}, 'badge')">
                         {% if dipendente[3] == 1 %} ✅ {% else %} ❌ {% endif %}
                     </button>
                 </td> <!-- badge emesso -->
-                                
+                                    
                 <td>
                     <button class="checkbox-button" onclick="handleCheckboxClick(this, {{ dipendente[6] }}, 'accesso')">
                         {% if dipendente[4] == 1 %} ✅ {% else %} ❌ {% endif %}
@@ -66,10 +68,10 @@
                     <button class="checkbox-button read-only" disabled>
                         {% if dipendente[10] == 1 %} ✅ {% else %} ❌ {% endif %}
                     </button>
-                </td> <!-- badge temporaneo -->
+                </td>
                 
                 <td>{{ dipendente[11] or "" }}</td>
-
+        
                 <td>{{ dipendente[5] or ""}}</td> <!-- note -->
                 <td class="action-buttons">
                     <form id="form-elimina-dipendente" action="/elimina-dipendente" method="POST">

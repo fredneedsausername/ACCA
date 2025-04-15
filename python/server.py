@@ -19,15 +19,16 @@ import report_generator_completo
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
 
+
 class NoDittaSelectedException(Exception):
     """Exception raised when no ditta (entity) is selected."""
     pass
 
-class Dipendente:
 
+class Dipendente:
     def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, 
              accesso_bloccato: int, note: str, scadenza_autorizzazione: date, badge_sospeso: int, 
-             badge_annullato: int, is_badge_temporaneo: int = None, numero_badge: str = ""):
+             badge_annullato: int, is_badge_temporaneo: int = None, numero_badge: str = "", ruolo_id: int = None):
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
@@ -39,6 +40,7 @@ class Dipendente:
         self.badge_annullato = badge_annullato
         self.is_badge_temporaneo = is_badge_temporaneo
         self.numero_badge = numero_badge
+        self.ruolo_id = ruolo_id
         
     @classmethod
     def from_form(cls):
@@ -60,6 +62,13 @@ class Dipendente:
         is_badge_temporaneo = 1 if request.form.get("is_badge_temporaneo") == "on" else 0
         numero_badge = request.form.get("numero_badge", "")
         
+        # Get role_id (could be None for regular worker)
+        ruolo_id = request.form.get("ruolo_id")
+        if ruolo_id == "":
+            ruolo_id = None
+        elif ruolo_id is not None:
+            ruolo_id = int(ruolo_id)
+        
         # If is_badge_temporaneo is False, ensure numero_badge is empty
         if not is_badge_temporaneo:
             numero_badge = ""
@@ -71,12 +80,12 @@ class Dipendente:
             scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
 
         return cls(nome, cognome, ditta_name, is_badge_already_emesso, accesso_bloccato, note, 
-                  scadenza_autorizzazione, badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge)   
+                  scadenza_autorizzazione, badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge, ruolo_id)
     
     def get_fields(self):
         return (self.nome, self.cognome, self.ditta_name, self.is_badge_already_emesso, 
                 self.accesso_bloccato, self.note, self.scadenza_autorizzazione, 
-                self.badge_sospeso, self.badge_annullato, self.is_badge_temporaneo, self.numero_badge)
+                self.badge_sospeso, self.badge_annullato, self.is_badge_temporaneo, self.numero_badge, self.ruolo_id)
 
     @fredbconn.connected_to_database
     def add_to_db(cursor, self):
@@ -102,10 +111,11 @@ class Dipendente:
         cursor.execute("""
         INSERT INTO dipendenti(nome, cognome, ditta_id, is_badge_already_emesso, accesso_bloccato, 
                             note, scadenza_autorizzazione, badge_sospeso, badge_annullato,
-                            is_badge_temporaneo, numero_badge)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            is_badge_temporaneo, numero_badge, ruolo_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (fields[0], fields[1], ditta_id, fields[3], fields[4], fields[5], 
-              scadenza_autorizzazione, fields[7], fields[8], fields[9], fields[10]))
+              scadenza_autorizzazione, fields[7], fields[8], fields[9], fields[10], fields[11]))
+
 
 class Ditta:
 
@@ -172,6 +182,7 @@ class Ditta:
 
         return cls(nome, piva, nome_cognome_referente, email_referente, telefono_referente, note)
 
+
 @app.route('/aggiorna-dipendente', methods=['GET', 'POST'])
 @fredauth.authorized("admin")
 def aggiorna_dipendente():
@@ -194,7 +205,8 @@ def aggiorna_dipendente():
                     badge_sospeso,
                     badge_annullato,
                     is_badge_temporaneo,
-                    numero_badge
+                    numero_badge,
+                    ruolo_id
                 FROM 
                     dipendenti
                 WHERE 
@@ -217,7 +229,8 @@ def aggiorna_dipendente():
                 "badge_sospeso": dipendente_tuple[7],
                 "badge_annullato": dipendente_tuple[8],
                 "is_badge_temporaneo": dipendente_tuple[9] if dipendente_tuple[9] is not None else 0,
-                "numero_badge": dipendente_tuple[10] if dipendente_tuple[10] is not None else ""
+                "numero_badge": dipendente_tuple[10] if dipendente_tuple[10] is not None else "",
+                "ruolo_id": dipendente_tuple[11]
             }
 
             cursor.execute("""
@@ -233,6 +246,15 @@ def aggiorna_dipendente():
 
             # Add the ditte entry to the dictionary
             ret["ditte"] = ditte
+
+            # Get all roles
+            cursor.execute("""
+                SELECT id, nome_ruolo
+                FROM ruoli
+                ORDER BY id ASC
+            """)
+            
+            ret["ruoli"] = cursor.fetchall()
 
             return ret
         
@@ -273,6 +295,13 @@ def aggiorna_dipendente():
         ditta = request.form.get('ditta')
         note = request.form.get('note')
         dipendente_id = request.form.get("dipendente_id")
+        
+        # Get role_id
+        ruolo_id = request.form.get("ruolo_id", "")
+        if ruolo_id == "":
+            ruolo_id = None
+        else:
+            ruolo_id = int(ruolo_id)
         
         # Get existing values for the fields we're no longer updating through the form
         @fredbconn.connected_to_database
@@ -336,16 +365,18 @@ def aggiorna_dipendente():
                 badge_sospeso = %s,
                 badge_annullato = %s,
                 is_badge_temporaneo = %s,
-                numero_badge = %s
+                numero_badge = %s,
+                ruolo_id = %s
             WHERE id = %s
             """, (nome, cognome, ditta, is_badge_already_emesso, accesso_bloccato, 
                  note, scadenza_autorizzazione, badge_sospeso, badge_annullato, 
-                 is_badge_temporaneo, numero_badge, dipendente_id))
+                 is_badge_temporaneo, numero_badge, ruolo_id, dipendente_id))
 
         update_db()
 
         flash("Dipendente aggiornato con successo", "success")
         return redirect("/dipendenti")
+
 
 @app.route('/elimina-dipendente', methods=['POST'])
 @fredauth.authorized("admin")
@@ -370,10 +401,12 @@ def elimina_dipendente():
     flash("Dipendente eliminato con successo", "success")
     return redirect(request.referrer or "/dipendenti")
 
+
 @app.route("/")
 @fredauth.authorized("user")
 def index():
     return render_template("index.html", username = session['user']) # username = session['user'] usato in jinja
+
 
 @app.route("/ditte")
 @fredauth.authorized("user")
@@ -445,6 +478,7 @@ def ditte():
     ditte_names = fetch_ditte_names()
 
     return render_template("ditte.html", ditte = fetched_ditte_info, ditte_names = ditte_names)
+
 
 @app.route("/aggiorna-ditta", methods = ["GET", "POST"])
 @fredauth.authorized("admin")
@@ -520,6 +554,7 @@ def aggiorna_ditta():
         flash("Ditta aggiornata con successo", "success")
         return redirect("/ditte")
 
+
 @app.route("/aggiungi-ditte", methods=["GET", "POST"])
 @fredauth.authorized("admin")
 def aggiungi_ditte():
@@ -565,6 +600,7 @@ def aggiungi_ditte():
         flash("Ditta aggiunta con successo", "success")
         return redirect("/aggiungi-ditte")
 
+
 @app.route("/elimina-ditta", methods=["POST"])
 @fredauth.authorized("admin")
 def elimina_ditta():
@@ -587,6 +623,7 @@ def elimina_ditta():
 
     flash("Ditta eliminata con successo", "success")
     return redirect(request.referrer or "/ditte")
+
 
 @app.route("/dipendenti")
 @fredauth.authorized("user")
@@ -614,13 +651,18 @@ def show_dipendenti():
                     dipendenti.badge_sospeso,
                     dipendenti.badge_annullato,
                     dipendenti.is_badge_temporaneo,
-                    dipendenti.numero_badge
+                    dipendenti.numero_badge,
+                    ruoli.nome_ruolo
                 FROM 
                     dipendenti
                 JOIN 
                     ditte
                 ON 
                     dipendenti.ditta_id = ditte.id
+                LEFT JOIN
+                    ruoli
+                ON
+                    dipendenti.ruolo_id = ruoli.id
                 WHERE
                     ditte.id = %s
                 ORDER BY
@@ -647,13 +689,18 @@ def show_dipendenti():
                     dipendenti.badge_sospeso,
                     dipendenti.badge_annullato,
                     dipendenti.is_badge_temporaneo,
-                    dipendenti.numero_badge
+                    dipendenti.numero_badge,
+                    ruoli.nome_ruolo
                 FROM 
                     dipendenti
                 JOIN 
                     ditte
                 ON 
                     dipendenti.ditta_id = ditte.id
+                LEFT JOIN
+                    ruoli
+                ON
+                    dipendenti.ruolo_id = ruoli.id
                 WHERE
                     INSTR(LOWER(dipendenti.cognome), LOWER(%s)) > 0 
                 ORDER BY
@@ -680,13 +727,18 @@ def show_dipendenti():
                     dipendenti.badge_sospeso,
                     dipendenti.badge_annullato,
                     dipendenti.is_badge_temporaneo,
-                    dipendenti.numero_badge
+                    dipendenti.numero_badge,
+                    ruoli.nome_ruolo
                 FROM 
                     dipendenti
                 JOIN 
                     ditte
                 ON 
                     dipendenti.ditta_id = ditte.id
+                LEFT JOIN
+                    ruoli
+                ON
+                    dipendenti.ruolo_id = ruoli.id
                 WHERE
                     dipendenti.badge_annullato = 1
                 ORDER BY
@@ -714,6 +766,7 @@ def show_dipendenti():
 
         return render_template("dipendenti.html", dipendenti = fetched, ditte = ditte)
 
+
 @app.route("/aggiungi-dipendenti", methods=["GET", "POST"])
 @fredauth.authorized("admin")
 def aggiungi_dipendenti():
@@ -735,8 +788,19 @@ def aggiungi_dipendenti():
             
             return ret
         
+        @fredbconn.connected_to_database
+        def fetch_ruoli(cursor):
+            cursor.execute("""
+            SELECT id, nome_ruolo
+            FROM ruoli
+            ORDER BY id ASC
+            """)
+            
+            return cursor.fetchall()
+        
         ditte = fetch_ditte()
-        return render_template("aggiungi-dipendenti.html", ditte=ditte)
+        ruoli = fetch_ruoli()
+        return render_template("aggiungi-dipendenti.html", ditte=ditte, ruoli=ruoli)
     
     if request.method == "POST":
         try:
@@ -751,6 +815,13 @@ def aggiungi_dipendenti():
             # Get badge_temporaneo field and numero_badge
             is_badge_temporaneo = 1 if request.form.get("is_badge_temporaneo") == "on" else 0
             numero_badge = request.form.get("numero_badge", "")
+            
+            # Get role_id
+            ruolo_id = request.form.get("ruolo_id", "")
+            if ruolo_id == "":
+                ruolo_id = None
+            else:
+                ruolo_id = int(ruolo_id)
             
             # If is_badge_temporaneo is False, ensure numero_badge is empty
             if not is_badge_temporaneo:
@@ -818,13 +889,15 @@ def aggiungi_dipendenti():
                 INSERT INTO dipendenti(
                     nome, cognome, ditta_id, is_badge_already_emesso, 
                     accesso_bloccato, note, scadenza_autorizzazione, 
-                    badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge
+                    badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge,
+                    ruolo_id
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     nome, cognome, ditta_id, is_badge_already_emesso,
                     accesso_bloccato, note, scadenza_autorizzazione,
-                    badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge
+                    badge_sospeso, badge_annullato, is_badge_temporaneo, numero_badge,
+                    ruolo_id
                 ))
                 
             add_dipendente()
@@ -834,7 +907,8 @@ def aggiungi_dipendenti():
         except NoDittaSelectedException:
             flash("Selezionare una ditta", "error")
             return redirect("/aggiungi-dipendenti")
-        
+
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -882,8 +956,6 @@ def genera_report():
         as_attachment=True,
         download_name="report.xlsx",
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-
-
 
 
 @app.route('/checkbox-pressed', methods=["POST"])

@@ -63,6 +63,15 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="ruolo_id">Ruolo</label>
+            <select id="ruolo_id" name="ruolo_id">
+                <option value="">Nessuno (lavoratore regolare)</option>
+                {% for ruolo in ruoli %}
+                <option value="{{ ruolo[0] }}">{{ ruolo[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>        
+        <div class="form-group">
             <label for="note">Note</label>
             <input type="text" id="note" name="note">
         </div>
