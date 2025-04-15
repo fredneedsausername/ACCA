@@ -612,7 +612,9 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato
+                    dipendenti.badge_annullato,
+                    dipendenti.is_badge_temporaneo,
+                    dipendenti.numero_badge
                 FROM 
                     dipendenti
                 JOIN 
@@ -643,7 +645,9 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato
+                    dipendenti.badge_annullato,
+                    dipendenti.is_badge_temporaneo,
+                    dipendenti.numero_badge
                 FROM 
                     dipendenti
                 JOIN 
@@ -674,7 +678,9 @@ def show_dipendenti():
                     dipendenti.id,
                     dipendenti.scadenza_autorizzazione,
                     dipendenti.badge_sospeso,
-                    dipendenti.badge_annullato
+                    dipendenti.badge_annullato,
+                    dipendenti.is_badge_temporaneo,
+                    dipendenti.numero_badge
                 FROM 
                     dipendenti
                 JOIN 

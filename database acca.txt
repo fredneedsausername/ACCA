@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS dipendenti (
   badge_annullato TINYINT,
   is_badge_temporaneo TINYINT,
   numero_badge VARCHAR(50) DEFAULT '';
+  ruolo VARCHAR(50) DEFAULT NULL;
 
   FOREIGN KEY (ditta_id) REFERENCES ditte(id)
     ON DELETE CASCADE
