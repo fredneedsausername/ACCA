@@ -57,6 +57,11 @@ CREATE TABLE IF NOT EXISTS email_recipients (
   email VARCHAR(100) NOT NULL UNIQUE
 );
 
+CREATE TABLE IF NOT EXISTS email_recipients_scaduti (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(100) NOT NULL UNIQUE
+);
+
 CREATE INDEX indice_nome ON dipendenti (nome);
 CREATE INDEX indice_cognome ON dipendenti (cognome);
 CREATE INDEX indice_ditta ON dipendenti (ditta_id);

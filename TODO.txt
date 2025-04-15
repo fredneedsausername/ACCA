@@ -1,8 +1,6 @@
 1° PRIORITA' (Richieste direttamente):
 
-    - Working on it: Add new field in the management system: "Ruolo". When adding/editing an employee, a dropdown list appears with several options to select the employee's role: "Datore di lavoro", "Preposto", "Ditta individuale", or "Apprendista". It should be possible not to specify the role, leaving it blank (to indicate a regular worker). Just like in the existing employee insert and edit menus, it must be possible to delete the selected role, in case a mistake was made and the employee should be considered a regular worker (as mentioned previously, regular workers have an empty "Ruolo" field). Remove the "note" field from both report (the report_completo that is used within the management system, and the report that is used in email generation), and add the "Ruolo" field instead. The "note" field remains in the management system.
-
-    - Create a script that sends an email to an address stored in passwords.py, listing all people with expired "badge temporanei" (including their first name, last name, and company). The email should only be sent if there are people with expired badges; otherwise, a different email should be sent confirming that no expired badges exist. A script will be configured to run nightly except for Sundays. The list has to be a simple excel file.
+    - Working on it: Create a script that sends an email to an address stored in passwords.py, listing all people with expired "badge temporanei" (including their first name, last name, and company). The email should only be sent if there are people with expired badges; otherwise, a different email should be sent confirming that no expired badges exist. A script will be configured to run nightly except for Sundays. The list has to be a simple excel file.
     
     - Update passwords.py for email recipients and roles on the deployment server BEFORE PULLING.
 
