@@ -29,6 +29,7 @@ class Dipendente:
     def __init__(self, nome: str, cognome: str, ditta_name: str, is_badge_already_emesso: int, 
              accesso_bloccato: int, note: str, scadenza_autorizzazione: date, badge_sospeso: int, 
              badge_annullato: int, is_badge_temporaneo: int = None, numero_badge: str = "", ruolo_id: int = None):
+        
         self.nome = nome
         self.cognome = cognome
         self.ditta_name = ditta_name
