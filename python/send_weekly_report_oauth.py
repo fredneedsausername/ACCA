@@ -7,7 +7,7 @@ from datetime import datetime
 import traceback
 
 # Set up logging
-log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "email-logs")
+log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "email-logs")
 os.makedirs(log_dir, exist_ok=True)
 log_file = os.path.join(log_dir, "weekly_report.log")
 
@@ -25,10 +25,10 @@ def main():
         logger.info("Starting weekly report generation and email process")
         
         # Import modules from python directory
-        from python import passwords
-        from python import fredbconn
-        from python import report_generator
-        from python import email_manager_oauth  # Use the OAuth version
+        import passwords
+        import fredbconn
+        import report_generator
+        import email_manager_oauth  # Use the OAuth version
         
         # Initialize database connection
         logger.info("Initializing database connection")

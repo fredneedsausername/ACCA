@@ -14,7 +14,7 @@ from passwords import email_config
 import email_manager_oauth  # Import OAuth version
 
 # Set up logging
-log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "email-logs")
+log_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "email-logs")
 os.makedirs(log_dir, exist_ok=True)
 log_file = os.path.join(log_dir, "scadenza_documenti.log")
 
@@ -321,7 +321,7 @@ def main():
         
         # Initialize database
         logger.info("Initializing database connection")
-        from python.passwords import database_config
+        from passwords import database_config
         fredbconn.initialize_database(*database_config)
         
         # Get list of all expired badges
