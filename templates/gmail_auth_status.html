@@ -1,0 +1,118 @@
+<!-- Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details. -->
+{% extends "base.html" %}
+
+{% block css %}
+<style>
+    .auth-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        border: 2px solid #87CEFA;
+    }
+
+    .auth-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #1E90FF;
+    }
+
+    .auth-status {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .auth-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .auth-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .auth-button {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin: 20px 0;
+        background-color: #1E90FF;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+    }
+
+    .auth-button:hover {
+        background-color: #0056b3;
+    }
+
+    .email-info {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 16px;
+        color: #6c757d;
+    }
+
+    .auth-note {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 4px;
+        color: #856404;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="{{ messages[0][0] }}">{{ messages[0][1] }}</div>
+{% endif %}
+{% endwith %}
+
+<div class="auth-container">
+    <h1>Stato Autorizzazione Gmail</h1>
+    
+    {% if is_authenticated %}
+    <div class="auth-status auth-success">
+        <strong>✓ Autorizzato</strong><br>
+        L'applicazione è autorizzata ad inviare email tramite Gmail
+    </div>
+    <div class="email-info">
+        Account email: <strong>{{ email }}</strong>
+    </div>
+    <div class="auth-note">
+        <strong>Nota:</strong> L'autorizzazione è stata completata correttamente. Non è necessario autorizzare nuovamente a meno che non vengano revocati i permessi o modificato l'account.
+    </div>
+    {% else %}
+    <div class="auth-status auth-error">
+        <strong>✗ Non autorizzato</strong><br>
+        L'applicazione non è autorizzata ad inviare email tramite Gmail
+    </div>
+    <div class="email-info">
+        Account email da autorizzare: <strong>{{ email }}</strong>
+    </div>
+    <a href="{{ url_for('oauth.authorize_gmail') }}" class="auth-button">Autorizza Gmail</a>
+    <div class="auth-note">
+        <strong>Nota:</strong> Dopo l'autorizzazione, questo sistema potrà inviare email automatiche tramite l'account Gmail specificato. Il processo richiede l'accesso al tuo account Google per concedere i permessi. L'autorizzazione viene eseguita una sola volta e rimane valida finché non viene revocata.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

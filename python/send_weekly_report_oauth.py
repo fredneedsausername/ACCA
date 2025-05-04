@@ -28,7 +28,7 @@ def main():
         from python import passwords
         from python import fredbconn
         from python import report_generator
-        from python import email_manager
+        from python import email_manager_oauth  # Use the OAuth version
         
         # Initialize database connection
         logger.info("Initializing database connection")
@@ -66,9 +66,20 @@ def main():
         logger.info("Generating weekly report (badge valido only)")
         report_data = report_generator.generate_weekly_report()
         
-        # Initialize the email manager
-        logger.info("Initializing email manager")
-        email_mgr = email_manager.EmailManager(passwords.email_config, logger)
+        # Initialize the email manager with OAuth support
+        logger.info("Initializing OAuth email manager")
+        email_mgr = email_manager_oauth.EmailManager(passwords.email_config, logger)
+        
+        # Check if OAuth is authenticated
+        if not email_mgr.oauth_handler.authenticate():
+            logger.error("""
+            Gmail OAuth not authenticated. Please authenticate first by:
+            1. Open your web browser
+            2. Go to http://localhost:16000/oauth/check_gmail_auth
+            3. Click 'Authorize Gmail' and follow the prompts
+            4. Once authorization is complete, run this script again
+            """)
+            sys.exit(1)
         
         # Send the email with the report
         logger.info(f"Sending report to {len(recipients)} recipients")

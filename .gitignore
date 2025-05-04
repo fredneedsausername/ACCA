@@ -181,3 +181,9 @@ passwords.py
 
 # Ignore the crash logs folder
 crash-logs/
+
+# Ignore the email-logs folder
+email-logs/
+
+# Ignore the Gmail credentials
+credentials.json

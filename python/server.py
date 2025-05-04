@@ -15,10 +15,10 @@ import sys
 import logging
 import traceback
 import report_generator_completo
+import oauth_routes
 
 app = Flask(__name__, template_folder="../templates", static_folder="../static")
 app.secret_key = passwords.app_secret_key
-
 
 class NoDittaSelectedException(Exception):
     """Exception raised when no ditta (entity) is selected."""
@@ -1210,6 +1210,8 @@ if __name__ == "__main__":
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
 
     crash_logger = CrashLogger()
+
+    oauth_routes.init_oauth_routes(app, passwords.email_config)
 
     serve(app, host='0.0.0.0', port=16000)
     # app.run(host="127.0.0.1", port="5000", debug=True)

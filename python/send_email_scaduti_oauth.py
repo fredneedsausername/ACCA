@@ -5,18 +5,13 @@ import io
 import os
 import sys
 import xlsxwriter
-import smtplib
 import logging
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email.mime.text import MIMEText
-from email.utils import formatdate
-from email import encoders
 from datetime import datetime
 import traceback
 
-from python import fredbconn
-from python.passwords import email_config
+import fredbconn
+from passwords import email_config
+import email_manager_oauth  # Import OAuth version
 
 # Set up logging
 log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "email-logs")
@@ -256,23 +251,31 @@ def set_column_widths(worksheet, data, headers):
 
 
 def send_email(has_expired_badges, excel_data=None, temp_count=0, non_temp_count=0, total_count=0):
-    """Send email with or without the Excel attachment."""
+    """Send email with or without the Excel attachment using OAuth."""
     try:
         # Get email recipients from database
         recipients = get_email_recipients()
         
         logger.info(f"Preparing to send email to {len(recipients)} recipients")
         
-        # Create message
-        msg = MIMEMultipart()
-        msg['From'] = email_config['sender_email']
-        msg['To'] = ", ".join(recipients)
-        msg['Date'] = formatdate(localtime=True)
+        # Initialize the OAuth email manager
+        email_mgr = email_manager_oauth.EmailManager(email_config, logger)
+        
+        # Check if OAuth is authenticated
+        if not email_mgr.oauth_handler.authenticate():
+            logger.error("""
+            Gmail OAuth not authenticated. Please authenticate first by:
+            1. Open your web browser
+            2. Go to http://localhost:16000/oauth/check_gmail_auth
+            3. Click 'Authorize Gmail' and follow the prompts
+            4. Once authorization is complete, run this script again
+            """)
+            return False
         
         current_date = datetime.now().strftime("%d/%m/%Y")
         
         if has_expired_badges:
-            msg['Subject'] = f"Badge scaduti al {current_date}"
+            subject = f"Badge scaduti al {current_date}"
             body = (
                 f"In allegato si trova l'elenco dei badge scaduti al {current_date}.\n\n"
                 f"Totale badge temporanei: {temp_count}\n"
@@ -280,36 +283,31 @@ def send_email(has_expired_badges, excel_data=None, temp_count=0, non_temp_count
                 f"Totale badge scaduti: {total_count}\n\n"
                 "Questo è un messaggio automatico generato dal sistema."
             )
-            msg.attach(MIMEText(body, 'plain'))
             
-            # Attach Excel file
-            attachment = MIMEBase('application', 'vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            attachment.set_payload(excel_data.getvalue())
-            encoders.encode_base64(attachment)
-            attachment.add_header(
-                'Content-Disposition', 
-                f'attachment; filename="Badge_Scaduti_{current_date.replace("/", "-")}.xlsx"'
-            )
-            msg.attach(attachment)
+            attachments = [{
+                'data': excel_data,
+                'filename': f"Badge_Scaduti_{current_date.replace('/', '-')}.xlsx",
+                'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            }]
+            
             logger.info("Attaching Excel report to email")
+            success = email_mgr.send_email(subject, recipients, body, attachments, use_bcc=True)
         else:
-            msg['Subject'] = f"Badge scaduti al {current_date}"
+            subject = f"Badge scaduti al {current_date}"
             body = (
                 f"Si informa che non ci sono badge scaduti alla data del {current_date}.\n\n"
                 "Questo è un messaggio automatico generato dal sistema."
             )
-            msg.attach(MIMEText(body, 'plain'))
+            
+            success = email_mgr.send_email(subject, recipients, body, None, use_bcc=True)
         
-        # Send email
-        logger.info(f"Connecting to SMTP server: {email_config['smtp_server']}:{email_config['smtp_port']}")
-        server = smtplib.SMTP(email_config['smtp_server'], email_config['smtp_port'])
-        server.starttls()
-        server.login(email_config['smtp_username'], email_config['smtp_password'])
-        server.send_message(msg)
-        server.quit()
-        
-        logger.info("Email sent successfully")
-        return True
+        if success:
+            logger.info("Email sent successfully")
+            return True
+        else:
+            logger.error("Failed to send email")
+            return False
+            
     except Exception as e:
         logger.error(f"Error sending email: {str(e)}")
         logger.error(traceback.format_exc())
