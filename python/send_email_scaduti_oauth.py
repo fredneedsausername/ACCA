@@ -47,8 +47,8 @@ def get_email_recipients():
 
 
 def get_expired_badges():
-    """Fetch ALL employees with expired badges, including the badge_temporaneo flag."""
-    logger.info("Checking for ALL expired badges")
+    """Fetch employees with expired badges, only including issued and valid badges that aren't canceled."""
+    logger.info("Checking for expired badges (only issued and valid badges that aren't canceled)")
     
     @fredbconn.connected_to_database
     def fetch_expired_badges(cursor):
@@ -68,6 +68,9 @@ def get_expired_badges():
             ditte ON dipendenti.ditta_id = ditte.id
         WHERE 
             dipendenti.scadenza_autorizzazione <= %s
+            AND dipendenti.is_badge_already_emesso = 1
+            AND dipendenti.badge_annullato = 0
+            AND dipendenti.badge_sospeso = 1
         ORDER BY
             dipendenti.is_badge_temporaneo DESC,
             ditte.nome ASC,
@@ -78,6 +81,7 @@ def get_expired_badges():
         return list(fredbconn.fetch_generator(cursor))
     
     return fetch_expired_badges()
+
 
 def generate_excel_report(expired_badges):
     """Generate Excel report with expired badges data."""
