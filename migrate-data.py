@@ -1,4 +1,3 @@
-# Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details
 """
 No manual preprocessing is needed, just feed the algorithm the raw csv data given by the company.
 This script takes the lines available and migrates the provided data to the db.

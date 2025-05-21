@@ -1,5 +1,3 @@
-# Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.
-
 import os
 import logging
 from datetime import datetime

@@ -1,5 +1,3 @@
-# Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.
-
 """Gmail OAuth 2.0 authentication module for web applications.
 
 This module handles OAuth 2.0 authentication for Gmail in a web application context,

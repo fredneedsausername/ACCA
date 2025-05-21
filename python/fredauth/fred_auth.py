@@ -1,4 +1,3 @@
-# Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details
 from functools import wraps
 from flask import flash, redirect, session, render_template, request, url_for
 import fredbconn

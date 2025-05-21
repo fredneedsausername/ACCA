@@ -1,4 +1,3 @@
-/* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
 document.addEventListener('DOMContentLoaded', function() {
     const selectedInput = document.getElementById('selected-ditta');
     const dropdown = document.getElementById('ditta-dropdown');

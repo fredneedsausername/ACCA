@@ -1,4 +1,3 @@
-# Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.
 """Uses pymysql to handle connections to the db, giving a decorator to connect to a database functions
 
 Initialization:

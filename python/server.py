@@ -1,5 +1,3 @@
-# Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details.
-
 from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session, send_file
 import passwords
 from werkzeug.security import generate_password_hash, check_password_hash

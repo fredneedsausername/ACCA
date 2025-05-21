@@ -1,4 +1,3 @@
-/* Licensed under the BSD 2-Clause License. See LICENSE file in the project root for details */
 async function confirmAction(action, id) {
     // Build a confirmation message
     const actionText = (action === 'elimina') ? 'eliminare' : 'aggiornare';
