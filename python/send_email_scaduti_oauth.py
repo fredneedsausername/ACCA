@@ -354,13 +354,17 @@ def main():
         else:
             logger.info("No expired badges found")
             
-            # Send email informing no expired badges
-            success = send_email(False)
-            if success:
-                logger.info("Process completed successfully: No expired badges to report")
-            else:
-                logger.error("Failed to send confirmation email")
-                return 1
+            # ----- Uncomment this if you want emails to be sent even when no expired badges are found -----
+
+            # # Send email informing no expired badges
+            # success = send_email(False)
+            # if success:
+            #     logger.info("Process completed successfully: No expired badges to report")
+            # else:
+            #     logger.error("Failed to send confirmation email")
+            #     return 1
+
+            # ----------------------------------------------------------------------------------------------
         
         return 0
     except Exception as e:
