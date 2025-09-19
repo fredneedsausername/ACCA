@@ -832,7 +832,11 @@ def aggiungi_dipendenti():
             if not scadenza_autorizzazione:
                 scadenza_autorizzazione = None
             else:
-                scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
+                try:
+                    scadenza_autorizzazione = datetime.strptime(scadenza_autorizzazione, "%Y-%m-%d").date()
+                except ValueError as e:
+                    flash("Formato data non valido. Utilizzare il formato YYYY-MM-DD", "error")
+                    return redirect("/aggiungi-dipendenti")
             
             # First get the ditta_id    
             @fredbconn.connected_to_database
