@@ -424,7 +424,7 @@ def ditte():
             FROM
                 ditte
             WHERE
-                INSTR(LOWER(ditte.nome), LOWER(%s)) > 0 
+                LOWER(ditte.nome) = LOWER(%s)
             ORDER BY
                 nome ASC
             """, (nome,))
