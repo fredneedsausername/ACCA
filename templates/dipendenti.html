@@ -92,7 +92,7 @@
     <button onclick="toggleDropdown()" class="cerca-ditta-dropdown-button">🔍 Cerca per ditta</button>
 
     <div id="cerca-ditta-dropdown-menu" class="cerca-ditta-dropdown-menu">
-        <input type="text" id="cerca-ditta-search" class="search-by-ditta-input" placeholder="Cerca ditta..." oninput="filterDitte(this.value)">
+        <input type="text" id="cerca-ditta-search" class="search-by-ditta-input" placeholder="Cerca ditta..." oninput="filterDitte(this.value)" autocomplete="off">
         {% if ditte %}
         {% for ditta in ditte %}
         <button onclick="handleDropDownCercaDitteItemSelected({{ ditta[0] }})">{{ ditta[1] }}</button>
@@ -104,7 +104,7 @@
     <button type="button" class="fixed-button-class" id="search-by-cognome-toggle">🔍 Cerca per cognome</button>
     
     <div class="search-by-cognome-dropdown-menu" id="search-by-cognome-dropdown">
-        <input type="text" class="search-by-cognome-input" id="search-by-cognome-input" placeholder="Inserisci cognome...">
+        <input type="text" class="search-by-cognome-input" id="search-by-cognome-input" placeholder="Inserisci cognome..." autocomplete="off">
         <button class="search-by-cognome-button" id="search-by-cognome-submit">Cerca</button>
     </div>
 
